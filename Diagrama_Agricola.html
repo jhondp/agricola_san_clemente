@@ -7,6 +7,7 @@
 <style>
   :root{color-scheme:light dark}
   *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   body{
     margin:0;
     font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -18,7 +19,7 @@
   }
   main{max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3.5rem}
 
-  .hub{text-align:center;max-width:720px;margin:0 auto 2.25rem}
+  .hub{text-align:center;max-width:720px;margin:0 auto 1.5rem}
   .hub .badge{
     display:inline-flex;align-items:center;justify-content:center;
     width:3.2rem;height:3.2rem;border-radius:50%;
@@ -28,11 +29,37 @@
   .hub h1{margin:0 0 .4rem;font-size:clamp(1.6rem,4vw,2.2rem);color:#114425}
   .hub p{margin:0;color:#4a5750;font-size:.98rem;line-height:1.5}
 
+  /* --- Overview radial diagram --- */
+  .overview{
+    position:relative;width:100%;max-width:480px;aspect-ratio:1;margin:0 auto 2.5rem;
+  }
+  .overview svg{position:absolute;inset:0;width:100%;height:100%}
+  .ov-center{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:clamp(84px,22vw,108px);height:clamp(84px,22vw,108px);border-radius:50%;
+    background:linear-gradient(135deg,#114425,#2d7644);color:#fff;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-weight:700;font-size:clamp(.7rem,2.2vw,.8rem);line-height:1.25;
+    box-shadow:0 8px 20px rgba(17,68,37,.3);padding:.4rem;
+  }
+  .branch{
+    position:absolute;transform:translate(-50%,-50%);
+    width:clamp(58px,15vw,80px);height:clamp(58px,15vw,80px);border-radius:50%;
+    background:var(--bc);color:#fff;text-decoration:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    box-shadow:0 6px 16px rgba(0,0,0,.18);transition:transform .15s ease,box-shadow .15s ease;
+    padding:.3rem;
+  }
+  .branch:hover{transform:translate(-50%,-50%) scale(1.08);box-shadow:0 10px 22px rgba(0,0,0,.26)}
+  .branch .oi{font-size:clamp(1rem,3.4vw,1.35rem);line-height:1}
+  .branch .ol{font-size:clamp(.55rem,1.8vw,.66rem);font-weight:700;margin-top:.15rem;line-height:1.15}
+
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.35rem}
 
   .node{
     background:#fff;border-radius:16px;padding:1.35rem 1.4rem 1.5rem;
     box-shadow:0 6px 20px rgba(17,68,37,.08);border-top:5px solid var(--accent);
+    scroll-margin-top:4.5rem;
   }
   .node-head{display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem}
   .node-num{
@@ -44,40 +71,79 @@
   .node-icon{font-size:1.15rem}
 
   h3.branch-title{
-    margin:1rem 0 .35rem;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;
+    margin:1.1rem 0 .35rem;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;
     color:var(--accent);font-weight:700;
   }
   h3.branch-title:first-of-type{margin-top:0}
+  p.hint{margin:0;font-size:.78rem;color:#5a685f;line-height:1.45}
 
-  ul.tree, ul.tree ul{
-    list-style:none;margin:.3rem 0 0;padding-left:1rem;border-left:2px solid #e2e8e3;
-  }
-  ul.tree{margin-top:.2rem}
-  ul.tree li{
-    position:relative;padding:.28rem 0 .28rem .85rem;font-size:.86rem;line-height:1.48;color:#2b3a31;
-  }
-  ul.tree li::before{
-    content:'';position:absolute;left:-2px;top:1.05rem;width:.75rem;height:2px;background:#e2e8e3;
-  }
-  ul.tree li strong{color:#16281c}
+  /* --- Crop calendar wheel (node 1) --- */
+  .wheel-wrap{width:100%;max-width:300px;margin:.4rem auto 0}
+  .wheel-legend{display:flex;flex-wrap:wrap;gap:.5rem .8rem;justify-content:center;margin-top:.6rem}
+  .lg{display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;color:#3d4a41}
+  .lg i{width:.6rem;height:.6rem;border-radius:50%;display:inline-block}
+  .wheel-caption{text-align:center;font-size:.72rem;color:#8a978f;margin:.4rem 0 0}
 
+  /* --- Flow chips (node 1 RNP, node 2 precosecha) --- */
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin-top:.5rem}
+  .flow .step{
+    background:#f6f4ef;border-radius:10px;padding:.4rem .65rem;font-size:.74rem;font-weight:600;
+    color:#16281c;white-space:nowrap;text-align:center;
+  }
+  .flow .step .fi{display:block;font-size:1rem;margin-bottom:.1rem}
+  .flow .step.result{background:var(--accent);color:#fff}
+  .flow .arrow{color:#aab5ac;font-size:.85rem}
+
+  /* --- Stat boxes --- */
+  .stats{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.7rem}
+  .stat{flex:1 1 190px;background:#f6f4ef;border-radius:10px;padding:.55rem .75rem;font-size:.78rem;color:#3d4a41}
+  .stat b{display:block;color:#16281c;font-size:.84rem;margin-bottom:.1rem}
+
+  /* --- Pills (node 3) --- */
+  .pills{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+  .pill{background:#fdf3da;color:#6b4f00;border-radius:999px;padding:.32rem .75rem;font-size:.74rem;font-weight:600}
+
+  /* --- Note callout --- */
   .note{
     margin-top:.9rem;padding:.7rem .85rem;border-radius:10px;
-    background:#fff7e6;border:1px solid #f0d999;font-size:.8rem;line-height:1.5;color:#6b4f00;
+    background:#fff7e6;border:1px solid #f0d999;font-size:.78rem;line-height:1.5;color:#6b4f00;
   }
   .note strong{color:#4a3800}
 
-  .zones{display:flex;flex-direction:column;gap:.55rem;margin-top:.3rem}
-  .zone{
-    display:flex;align-items:baseline;gap:.5rem;padding:.5rem .7rem;border-radius:10px;background:#f6f4ef;
-    font-size:.84rem;
+  /* --- Lifecycle timeline (node 4) --- */
+  .timeline{display:flex;width:100%;border-radius:10px;overflow:hidden;margin-top:.4rem}
+  .timeline .seg{
+    padding:.45rem .3rem;display:flex;flex-direction:column;justify-content:center;align-items:center;
+    color:#fff;font-size:.63rem;font-weight:700;text-align:center;line-height:1.25;min-width:0;
   }
-  .zone .zname{font-weight:700;color:#16281c;flex:0 0 auto;min-width:9.5rem}
+  .timeline .seg span{font-weight:500;font-size:.6rem;opacity:.9}
+  .tl-label{font-size:.72rem;font-weight:700;color:#16281c;margin:1rem 0 0}
+  .tl-label:first-of-type{margin-top:.2rem}
+
+  /* --- Geography zones --- */
+  .zones{display:flex;flex-direction:column;gap:.5rem;margin-top:.3rem}
+  .zone{
+    display:flex;align-items:baseline;gap:.5rem;padding:.45rem .7rem;border-radius:10px;background:#f6f4ef;
+    font-size:.8rem;
+  }
+  .zone .zname{font-weight:700;color:#16281c;flex:0 0 auto;min-width:9rem}
   .zone .zcrops{color:#3d4a41}
-  .intl{display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem}
-  .intl .irow{display:flex;gap:.5rem;font-size:.84rem;align-items:baseline}
+  .intl{display:flex;flex-direction:column;gap:.45rem;margin-top:.4rem}
+  .intl .irow{display:flex;gap:.5rem;font-size:.8rem;align-items:baseline}
   .intl .iflag{flex:0 0 auto;font-size:1rem}
-  .intl .iname{font-weight:700;color:#16281c;min-width:6.5rem}
+  .intl .iname{font-weight:700;color:#16281c;min-width:6.2rem}
+
+  /* --- Cuartel mini-hub (node 6) --- */
+  .cuartel-banner{
+    background:var(--accent);color:#fff;border-radius:10px;padding:.55rem .8rem;
+    font-size:.82rem;font-weight:700;text-align:center;
+  }
+  .cuartel-banner span{display:block;font-weight:500;font-size:.7rem;opacity:.9;margin-top:.1rem}
+  .var-grid{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:.7rem}
+  .var-chip{background:#f6f4ef;border-radius:10px;padding:.55rem .65rem}
+  .var-chip .vi{font-size:1.05rem}
+  .var-chip b{display:block;font-size:.78rem;color:#16281c;margin:.15rem 0 .1rem}
+  .var-chip p{margin:0;font-size:.68rem;color:#5a685f;line-height:1.35}
 
   .sources{
     margin-top:2rem;padding:1rem 1.2rem;border-radius:14px;background:#fff;
@@ -134,174 +200,269 @@
   <div class="hub">
     <div class="badge">🧠</div>
     <h1>Diagrama Agrícola</h1>
-    <p>Cómo se articula el negocio agrícola de principio a fin: el ciclo de cereza y manzana, las decisiones de precosecha, el árbol como activo biológico, la geografía productiva y las variables que se gestionan por cuartel.</p>
+    <p>Seis ramas de un mismo negocio. Toca cualquier nodo para saltar al detalle.</p>
+  </div>
+
+  <div class="overview">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <line x1="50" y1="50" x2="50" y2="8" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="86" y2="29" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="86" y2="71" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="50" y2="92" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="14" y2="71" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="14" y2="29" stroke="#c9d3cc" stroke-width="1"/>
+    </svg>
+    <div class="ov-center">Diagrama<br>Agrícola</div>
+    <a class="branch" style="--bc:#114425;left:50%;top:8%" href="#detail-1"><span class="oi">🍒🍎</span><span class="ol">Ciclo operativo</span></a>
+    <a class="branch" style="--bc:#8a1826;left:86%;top:29%" href="#detail-2"><span class="oi">🌦️</span><span class="ol">Ciclo biológico</span></a>
+    <a class="branch" style="--bc:#b8860b;left:86%;top:71%" href="#detail-3"><span class="oi">🌳</span><span class="ol">Árbol</span></a>
+    <a class="branch" style="--bc:#2d7644;left:50%;top:92%" href="#detail-4"><span class="oi">📈</span><span class="ol">Vida del activo</span></a>
+    <a class="branch" style="--bc:#1f5c8a;left:14%;top:71%" href="#detail-5"><span class="oi">🗺️</span><span class="ol">Geografía</span></a>
+    <a class="branch" style="--bc:#6a3d9a;left:14%;top:29%" href="#detail-6"><span class="oi">🧩</span><span class="ol">Gestión</span></a>
   </div>
 
   <div class="grid">
 
-    <article class="node" style="--accent:#114425">
+    <article class="node" id="detail-1" style="--accent:#114425">
       <div class="node-head">
         <span class="node-num">1</span>
         <h2><span class="node-icon">🍒🍎</span> Ciclo operativo: cereza y manzana</h2>
       </div>
 
-      <h3 class="branch-title">Cereza</h3>
-      <ul class="tree">
-        <li><strong>Precosecha (mayo–octubre)</strong>
-          <ul>
-            <li>Invierno (mayo–julio): dormancia y poda invernal (jun–ago)</li>
-            <li>Primavera (ago–oct): floración breve y sensible al clima (sep); raleo (ago–oct) para proteger calibre y firmeza</li>
-          </ul>
-        </li>
-        <li><strong>Cosecha (noviembre–enero)</strong>
-          <ul>
-            <li>Se cosecha en bandejas cosecheras, no en bins, para proteger la fruta</li>
-            <li>Requiere gran cantidad de mano de obra en poco tiempo</li>
-          </ul>
-        </li>
-        <li><strong>Post-cosecha (febrero–abril)</strong>
-          <ul>
-            <li>Recuperación de reservas del árbol y segunda poda (feb–mar)</li>
-            <li>Cierre de resultados y preparación técnica/presupuestaria del nuevo ciclo</li>
-          </ul>
-        </li>
-        <li><strong>Liquidación: 30 de abril</strong> · caja estándar <strong>5 kg</strong></li>
-      </ul>
+      <div class="wheel-wrap">
+        <svg id="cropWheel" viewBox="0 0 380 380" role="img" aria-label="Calendario agrícola anual de cereza y manzana, de mayo a abril"></svg>
+      </div>
+      <div class="wheel-legend">
+        <span class="lg"><i style="background:#5b7fae"></i>Dormancia y poda</span>
+        <span class="lg"><i style="background:#e0a72e"></i>Floración y raleo</span>
+        <span class="lg"><i style="background:#8a8f4f"></i>Crecimiento (manzana)</span>
+        <span class="lg"><i style="background:#c23b4b"></i>Cosecha</span>
+        <span class="lg"><i style="background:#4f9463"></i>Postcosecha (cereza)</span>
+      </div>
+      <p class="wheel-caption">Anillo exterior = cereza · anillo interior = manzana · año agrícola mayo→abril</p>
 
-      <h3 class="branch-title">Manzana</h3>
-      <ul class="tree">
-        <li><strong>Cosecha (febrero–abril)</strong>, con pico en marzo</li>
-        <li><strong>Liquidación: 30 de noviembre</strong> · caja estándar <strong>18,2 kg</strong>
-          <ul>
-            <li>Ciclo financiero largo: la fruta puede guardarse meses en atmósfera controlada antes de venderse</li>
-          </ul>
-        </li>
-        <li><strong>Retorno Neto Productor (RNP)</strong> = Ingreso FOB − comisión exportadora (6–8%) − fletes − materiales − costos de frío/packing − gastos de exportación</li>
-      </ul>
+      <h3 class="branch-title">Liquidación</h3>
+      <div class="stats">
+        <div class="stat"><b>🍒 Cereza</b>30 de abril · caja estándar 5 kg</div>
+        <div class="stat"><b>🍎 Manzana</b>30 de noviembre · caja estándar 18,2 kg — guarda en atmósfera controlada explica el ciclo financiero largo</div>
+      </div>
+
+      <h3 class="branch-title">Retorno Neto Productor (RNP)</h3>
+      <div class="flow">
+        <span class="step">Ingreso FOB</span>
+        <span class="arrow">→</span>
+        <span class="step">−Comisión 6–8%</span>
+        <span class="arrow">→</span>
+        <span class="step">−Fletes</span>
+        <span class="arrow">→</span>
+        <span class="step">−Materiales</span>
+        <span class="arrow">→</span>
+        <span class="step">−Frío/Packing</span>
+        <span class="arrow">→</span>
+        <span class="step">−Gastos export.</span>
+        <span class="arrow">→</span>
+        <span class="step result">RNP</span>
+      </div>
     </article>
 
-    <article class="node" style="--accent:#8a1826">
+    <article class="node" id="detail-2" style="--accent:#8a1826">
       <div class="node-head">
         <span class="node-num">2</span>
         <h2><span class="node-icon">🌦️</span> Ciclo biológico y decisiones de precosecha</h2>
       </div>
-      <p style="margin:0 0 .3rem;font-size:.8rem;color:#5a685f">Ejemplo sobre manzana — el ciclo biológico dicta cuándo se gasta y cuándo se recupera el dinero.</p>
+      <p class="hint">Ejemplo sobre manzana — el ciclo biológico dicta cuándo se gasta y cuándo se recupera el dinero.</p>
 
-      <ul class="tree">
-        <li><strong>Invierno (mayo–julio) · Dormancia y estructuración</strong>
-          <ul>
-            <li>Dormancia: se monitorean las <strong>horas frío</strong> (temperaturas bajo los <strong>7°C</strong>)</li>
-            <li>Poda invernal (may–jul)</li>
-          </ul>
-        </li>
-        <li><strong>Primavera (agosto–noviembre) · Floración y decisión de calibre</strong>
-          <ul>
-            <li>Floración y polinización (ago–sep): se arriendan colmenas para asegurar la cuaja</li>
-            <li>Raleo (sep–nov): impacto directo en kg exportables y precio final</li>
-          </ul>
-        </li>
-        <li><strong>Verano (diciembre–enero) · Crecimiento y proyección</strong>
-          <ul>
-            <li>Riego tecnificado y nutrición (sistema Galcon GSI, riego a distancia con alertas)</li>
-            <li>Mapeo final (apoyado en Farm Vision: cámaras que miden curvas de crecimiento de la fruta)</li>
-          </ul>
-        </li>
-        <li><strong>Cierre comercial: 30 de noviembre</strong> · caja estándar 18,2 kg</li>
-      </ul>
+      <div class="flow" style="margin-top:.8rem">
+        <span class="step"><span class="fi">❄️</span>Dormancia<br><span style="font-weight:400">may–ago · &lt;7°C</span></span>
+        <span class="arrow">→</span>
+        <span class="step"><span class="fi">✂️</span>Poda invernal<br><span style="font-weight:400">may–jul</span></span>
+        <span class="arrow">→</span>
+        <span class="step"><span class="fi">🌸</span>Floración<br><span style="font-weight:400">ago–sep · colmenas</span></span>
+        <span class="arrow">→</span>
+        <span class="step"><span class="fi">🍏</span>Raleo<br><span style="font-weight:400">sep–nov</span></span>
+        <span class="arrow">→</span>
+        <span class="step"><span class="fi">💧</span>Riego<br><span style="font-weight:400">Galcon GSI</span></span>
+        <span class="arrow">→</span>
+        <span class="step"><span class="fi">📷</span>Mapeo final<br><span style="font-weight:400">Farm Vision</span></span>
+        <span class="arrow">→</span>
+        <span class="step result">🧾 Cierre 30/nov</span>
+      </div>
+
+      <h3 class="branch-title">Por qué importa cada paso</h3>
+      <div class="stats">
+        <div class="stat"><b>❄️ Horas frío</b>Se acumulan bajo los 7°C; sin ellas no hay floración uniforme.</div>
+        <div class="stat"><b>🍏 Raleo</b>Impacto directo en kilos exportables y precio final.</div>
+        <div class="stat"><b>💧📷 Riego + mapeo</b>Galcon GSI programa riego a distancia; Farm Vision mide curvas de crecimiento con cámaras.</div>
+      </div>
     </article>
 
-    <article class="node" style="--accent:#b8860b">
+    <article class="node" id="detail-3" style="--accent:#b8860b">
       <div class="node-head">
         <span class="node-num">3</span>
         <h2><span class="node-icon">🌳</span> Arquitectura del árbol</h2>
       </div>
-      <ul class="tree">
-        <li><strong>Sistemas de conducción V-Trellis y 2D</strong>
-          <ul>
-            <li>Plantaciones de mayor densidad y formación en muro frutal</li>
-            <li>Usados con éxito en Nueva Zelanda, Australia y Estados Unidos</li>
-            <li>Facilitan el uso de plataformas de asistencia (poda, raleo, amarra y cosecha) y reducen el uso de escaleras</li>
-          </ul>
-        </li>
-      </ul>
+      <p class="hint">Sistema de conducción <strong>V-Trellis y 2D</strong>, confirmado por San Clemente.</p>
+      <div class="pills">
+        <span class="pill">Mayor densidad</span>
+        <span class="pill">Muro frutal</span>
+        <span class="pill">Menos escaleras</span>
+        <span class="pill">🇳🇿 🇦🇺 🇺🇸 usado en NZ, Australia y EE. UU.</span>
+      </div>
       <div class="note">
-        <strong>Nota de fuente:</strong> San Clemente confirma el uso de V-Trellis y 2D. La comparación técnica más detallada —sistemas "tridimensionales" tipo eje central/spindle, el porcentaje exacto de luz interceptada y su efecto en el color de la fruta— es conocimiento agronómico general y no un dato publicado por la empresa.
+        <strong>¿Qué significa esto?</strong> Un árbol se puede conducir como un <strong>muro plano (2D / V-Trellis)</strong> o dejarlo crecer en <strong>cono alrededor de un tronco central (3D / eje central o "spindle")</strong>, más parecido a su forma natural.
+        <br><br>
+        La <strong>intercepción de luz</strong> es cuánta luz solar alcanza efectivamente las hojas y la fruta. En un muro plano, casi toda la copa queda expuesta parejo al sol; en un cono, las ramas de más adentro quedan a la sombra de las de afuera.
+        <br><br>
+        Esa sombra interior es la razón por la que los sistemas 3D suelen <strong>"castigar" el color</strong>: la fruta necesita luz directa para desarrollar su color rojo, así que la que crece más escondida en el cono madura más pálida que la que crece sobre un muro bien iluminado.
       </div>
     </article>
 
-    <article class="node" style="--accent:#2d7644">
+    <article class="node" id="detail-4" style="--accent:#2d7644">
       <div class="node-head">
         <span class="node-num">4</span>
         <h2><span class="node-icon">📈</span> Ciclo de vida del activo biológico</h2>
       </div>
-      <p style="margin:0 0 .3rem;font-size:.8rem;color:#5a685f">Horizonte de evaluación de un proyecto de plantación: 15 años.</p>
-      <ul class="tree">
-        <li><strong>Inversión (pre-plantación)</strong>: limpieza y habilitación del suelo, cercado y hoyadura, hasta el momento previo a plantar</li>
-        <li><strong>Estado no productivo (años 1–3)</strong>: el huerto no genera fruta con estándar exportable</li>
-        <li><strong>Estado productivo</strong>
-          <ul>
-            <li>Entrada productiva: años 4–6</li>
-            <li>Óptimo productivo: años 7–10</li>
-            <li>Estabilización: años 10–20</li>
-            <li>Declive: 20+ años</li>
-          </ul>
-        </li>
-      </ul>
+      <p class="hint">Horizonte de evaluación de un proyecto de plantación: 15 años.</p>
+
+      <h3 class="tl-label">🍒 Cerezo (curva referencial extendida)</h3>
+      <div class="timeline">
+        <div class="seg" style="flex-grow:1;background:#8a8f4f">Inv.</div>
+        <div class="seg" style="flex-grow:3;background:#b8860b">No prod.<span>1–3</span></div>
+        <div class="seg" style="flex-grow:3;background:#e0a72e">Entrada<span>4–6</span></div>
+        <div class="seg" style="flex-grow:4;background:#2d7644">Óptimo<span>7–10</span></div>
+        <div class="seg" style="flex-grow:10;background:#114425">Estabilización<span>10–20</span></div>
+        <div class="seg" style="flex-grow:3;background:#8a1826">Declive<span>20+</span></div>
+      </div>
+
+      <h3 class="tl-label">🍎 Manzano (curva referencial)</h3>
+      <div class="timeline">
+        <div class="seg" style="flex-grow:1;background:#8a8f4f">Inv.</div>
+        <div class="seg" style="flex-grow:3;background:#b8860b">No prod.<span>1–3</span></div>
+        <div class="seg" style="flex-grow:3;background:#e0a72e">Crecim.<span>4–6</span></div>
+        <div class="seg" style="flex-grow:11;background:#2d7644">Régimen alto<span>desde año 7</span></div>
+      </div>
       <div class="note">
-        <strong>Nota:</strong> este desglose de 5 etapas es la curva referencial de <strong>cerezo</strong>. El manzano tiene su propia curva: formación (0–3/4 años), crecimiento productivo (4–6), régimen alto desde el año 7, y una vida útil técnica total de <strong>16–20 años</strong> (más corta que la de cerezo).
+        <strong>Nota:</strong> la curva de 5 etapas (con estabilización y declive a los 20+ años) es específica de <strong>cerezo</strong>. El <strong>manzano</strong> tiene una vida útil técnica total más corta: <strong>16–20 años</strong>, sin una etapa de declive documentada por separado.
       </div>
     </article>
 
-    <article class="node" style="--accent:#1f5c8a">
+    <article class="node" id="detail-5" style="--accent:#1f5c8a">
       <div class="node-head">
         <span class="node-num">5</span>
         <h2><span class="node-icon">🗺️</span> Distribución geográfica y variedades</h2>
       </div>
       <h3 class="branch-title">Zonas en Chile</h3>
       <div class="zones">
-        <div class="zone"><span class="zname">Zona Norte · Ovalle</span><span class="zcrops">Uvas, cítricos, duraznos (experimental)</span></div>
-        <div class="zone"><span class="zname">Zona Centro · Marchigüe</span><span class="zcrops">Uvas, duraznos, cítricos</span></div>
-        <div class="zone"><span class="zname">Centro Sur · Talca</span><span class="zcrops">Cerezas, manzanas, avellanos</span></div>
-        <div class="zone"><span class="zname">Zona Sur · Angol</span><span class="zcrops">Manzanas (~95%), cerezas</span></div>
-        <div class="zone"><span class="zname">Otros</span><span class="zcrops">Cerezas, manzanas · sin gerente agrícola propio</span></div>
+        <div class="zone"><span class="zname">Norte · Ovalle</span><span class="zcrops">Uvas, cítricos, duraznos (experimental)</span></div>
+        <div class="zone"><span class="zname">Centro · Marchigüe</span><span class="zcrops">Uvas, duraznos, cítricos</span></div>
+        <div class="zone"><span class="zname">Centro sur · Talca</span><span class="zcrops">Cerezas, manzanas, avellanos</span></div>
+        <div class="zone"><span class="zname">Sur · Angol</span><span class="zcrops">Manzanas (~95%), cerezas</span></div>
+        <div class="zone"><span class="zname">Otros</span><span class="zcrops">Cerezas, manzanas · sin gerente propio</span></div>
       </div>
       <h3 class="branch-title">Internacional</h3>
       <div class="intl">
-        <div class="irow"><span class="iflag">🇵🇪</span><span class="iname">Perú (Moquegua)</span><span>Arándanos orgánicos</span></div>
-        <div class="irow"><span class="iflag">🇨🇴</span><span class="iname">Colombia</span><span>Paltas (huerto Montecristo)</span></div>
-        <div class="irow"><span class="iflag">🇬🇧</span><span class="iname">Inglaterra (Kent)</span><span>Cerezas</span></div>
+        <div class="irow"><span class="iflag">🇵🇪</span><span class="iname">Perú · Moquegua</span><span>Arándanos orgánicos</span></div>
+        <div class="irow"><span class="iflag">🇨🇴</span><span class="iname">Colombia</span><span>Paltas · huerto Montecristo</span></div>
+        <div class="irow"><span class="iflag">🇬🇧</span><span class="iname">Inglaterra · Kent</span><span>Cerezas</span></div>
       </div>
     </article>
 
-    <article class="node" style="--accent:#6a3d9a">
+    <article class="node" id="detail-6" style="--accent:#6a3d9a">
       <div class="node-head">
         <span class="node-num">6</span>
         <h2><span class="node-icon">🧩</span> Gestión gerencial y variables críticas</h2>
       </div>
-      <ul class="tree">
-        <li><strong>Cuartel</strong> — unidad mínima de gestión, funciona como centro de costo
-          <ul>
-            <li>Debe ser completamente homogéneo para poder analizarse</li>
-          </ul>
-        </li>
-        <li><strong>Variables de análisis por cuartel</strong>
-          <ul>
-            <li><strong>Especie y variedad</strong>: determina el mercado objetivo y la curva de precios — ej. Envy, Jazz, EverCrisp, Cosmic Crisp y Giga, variedades de manzana con licencia vía las alianzas IPA y T&G Global</li>
-            <li><strong>Portainjerto (patrón)</strong>: factor crítico para la sanidad y el vigor del árbol</li>
-            <li><strong>Sistema de formación</strong>: estructura técnica que condiciona la eficiencia laboral y el costo de cosecha</li>
-            <li><strong>Año de plantación</strong>: define la posición del activo en su ciclo de vida (ver nodo 4)</li>
-          </ul>
-        </li>
-      </ul>
+      <div class="cuartel-banner">Cuartel<span>Unidad mínima de gestión · centro de costo · debe ser homogéneo</span></div>
+      <div class="var-grid">
+        <div class="var-chip"><span class="vi">🍎</span><b>Especie y variedad</b><p>Define mercado objetivo y curva de precios — ej. Envy, Jazz, EverCrisp, Cosmic Crisp, Giga (licencias IPA / T&amp;G Global)</p></div>
+        <div class="var-chip"><span class="vi">🌱</span><b>Portainjerto</b><p>Factor crítico para sanidad y vigor del árbol</p></div>
+        <div class="var-chip"><span class="vi">🪢</span><b>Sistema de formación</b><p>Condiciona la eficiencia laboral y el costo de cosecha</p></div>
+        <div class="var-chip"><span class="vi">📅</span><b>Año de plantación</b><p>Define la posición del activo en su ciclo de vida (nodo 4)</p></div>
+      </div>
     </article>
 
   </div>
 
   <div class="sources">
-    <strong>Fuentes:</strong> Compendios de cerezas y manzanas, infografía de Centrales Frutícolas, y contenido del sitio web sclem.cl (I+D Campos, I+D Packing, Alianzas Productivas, Nuevas Variedades) e informe de sostenibilidad.
+    <strong>Fuentes:</strong> transcripción de inducción de Control de Gestión, compendios de cerezas y manzanas, infografía de Centrales Frutícolas, y contenido del sitio web sclem.cl (I+D Campos, I+D Packing, Alianzas Productivas, Nuevas Variedades) e informe de sostenibilidad.
   </div>
 
   <footer>Agrícola San Clemente · Diagrama de estudio</footer>
 </main>
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  var svg=document.getElementById('cropWheel');
+  var cx=190, cy=190;
+  var months=['May','Jun','Jul','Ago','Sep','Oct','Nov','Dic','Ene','Feb','Mar','Abr'];
+
+  function polar(r,angDeg){
+    var a=(angDeg-90)*Math.PI/180;
+    return [cx+r*Math.cos(a), cy+r*Math.sin(a)];
+  }
+  function arcPath(rOuter,rInner,startA,endA){
+    var large=(endA-startA)>180?1:0;
+    var p1=polar(rOuter,startA), p2=polar(rOuter,endA), p3=polar(rInner,endA), p4=polar(rInner,startA);
+    return 'M'+p1[0].toFixed(2)+','+p1[1].toFixed(2)+
+           ' A'+rOuter+','+rOuter+' 0 '+large+' 1 '+p2[0].toFixed(2)+','+p2[1].toFixed(2)+
+           ' L'+p3[0].toFixed(2)+','+p3[1].toFixed(2)+
+           ' A'+rInner+','+rInner+' 0 '+large+' 0 '+p4[0].toFixed(2)+','+p4[1].toFixed(2)+' Z';
+  }
+  function el(tag,attrs){
+    var e=document.createElementNS(NS,tag);
+    for(var k in attrs){ e.setAttribute(k,attrs[k]); }
+    return e;
+  }
+
+  var rings=[
+    {rOuter:150,rInner:112,showText:true,segs:[
+      {label:'Dormancia y poda',months:'May–Jul',start:0,span:90,color:'#5b7fae'},
+      {label:'Floración y raleo',months:'Ago–Oct',start:90,span:90,color:'#e0a72e'},
+      {label:'Cosecha',months:'Nov–Ene',start:180,span:90,color:'#c23b4b'},
+      {label:'Postcosecha',months:'Feb–Abr',start:270,span:90,color:'#4f9463'}
+    ]},
+    {rOuter:100,rInner:64,showText:false,segs:[
+      {label:'Dormancia y poda',months:'May–Ago',start:0,span:120,color:'#5b7fae'},
+      {label:'Floración y raleo',months:'Sep–Oct',start:120,span:60,color:'#e0a72e'},
+      {label:'Crecimiento de fruto',months:'Nov–Ene',start:180,span:90,color:'#8a8f4f'},
+      {label:'Cosecha',months:'Feb–Abr',start:270,span:90,color:'#c23b4b'}
+    ]}
+  ];
+
+  rings.forEach(function(ring){
+    ring.segs.forEach(function(seg){
+      var d=arcPath(ring.rOuter,ring.rInner,seg.start,seg.start+seg.span);
+      var path=el('path',{d:d,fill:seg.color,stroke:'#fffdfa','stroke-width':'2'});
+      var title=document.createElementNS(NS,'title');
+      title.textContent=seg.label+' · '+seg.months;
+      path.appendChild(title);
+      svg.appendChild(path);
+      if(ring.showText){
+        var midA=seg.start+seg.span/2;
+        var midR=(ring.rOuter+ring.rInner)/2;
+        var tp=polar(midR,midA);
+        var text=el('text',{x:tp[0].toFixed(2),y:tp[1].toFixed(2),'text-anchor':'middle','dominant-baseline':'middle',fill:'#fff','font-size':'13','font-weight':'700','font-family':'system-ui,sans-serif'});
+        text.textContent=seg.months;
+        svg.appendChild(text);
+      }
+    });
+  });
+
+  months.forEach(function(m,i){
+    var p=polar(168,i*30);
+    var text=el('text',{x:p[0].toFixed(2),y:p[1].toFixed(2),'text-anchor':'middle','dominant-baseline':'middle',fill:'#5a685f','font-size':'11','font-weight':'600','font-family':'system-ui,sans-serif'});
+    text.textContent=m;
+    svg.appendChild(text);
+  });
+
+  svg.appendChild(el('circle',{cx:cx,cy:cy,r:55,fill:'#114425'}));
+  var t1=el('text',{x:cx,y:cy-8,'text-anchor':'middle','dominant-baseline':'middle',fill:'#fff','font-size':'16','font-weight':'700','font-family':'system-ui,sans-serif'});
+  t1.textContent='Ciclo';
+  svg.appendChild(t1);
+  var t2=el('text',{x:cx,y:cy+14,'text-anchor':'middle','dominant-baseline':'middle',fill:'#fff','font-size':'16','font-weight':'700','font-family':'system-ui,sans-serif'});
+  t2.textContent='anual';
+  svg.appendChild(t2);
+})();
+</script>
 </body>
 </html>
