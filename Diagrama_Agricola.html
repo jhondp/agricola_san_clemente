@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagrama Agrícola | Agrícola San Clemente</title>
+<style>
+  :root{color-scheme:light dark}
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(circle at 8% 0%, rgba(21,79,43,.10), transparent 30%),
+               radial-gradient(circle at 96% 4%, rgba(138,24,38,.08), transparent 26%),
+               linear-gradient(180deg,#fffcf8 0%,#f6f4ef 48%,#fffdfa 100%);
+    color:#1b2a20;
+    min-height:100vh;
+  }
+  main{max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3.5rem}
+
+  .hub{text-align:center;max-width:720px;margin:0 auto 2.25rem}
+  .hub .badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:3.2rem;height:3.2rem;border-radius:50%;
+    background:linear-gradient(135deg,#114425,#2d7644);color:#fff;font-size:1.5rem;
+    margin-bottom:.75rem;box-shadow:0 6px 16px rgba(17,68,37,.25);
+  }
+  .hub h1{margin:0 0 .4rem;font-size:clamp(1.6rem,4vw,2.2rem);color:#114425}
+  .hub p{margin:0;color:#4a5750;font-size:.98rem;line-height:1.5}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.35rem}
+
+  .node{
+    background:#fff;border-radius:16px;padding:1.35rem 1.4rem 1.5rem;
+    box-shadow:0 6px 20px rgba(17,68,37,.08);border-top:5px solid var(--accent);
+  }
+  .node-head{display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem}
+  .node-num{
+    flex:0 0 auto;width:2.1rem;height:2.1rem;border-radius:50%;
+    background:var(--accent);color:#fff;font-weight:700;font-size:.95rem;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .node-head h2{margin:0;font-size:1.05rem;color:#16281c;line-height:1.3}
+  .node-icon{font-size:1.15rem}
+
+  h3.branch-title{
+    margin:1rem 0 .35rem;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--accent);font-weight:700;
+  }
+  h3.branch-title:first-of-type{margin-top:0}
+
+  ul.tree, ul.tree ul{
+    list-style:none;margin:.3rem 0 0;padding-left:1rem;border-left:2px solid #e2e8e3;
+  }
+  ul.tree{margin-top:.2rem}
+  ul.tree li{
+    position:relative;padding:.28rem 0 .28rem .85rem;font-size:.86rem;line-height:1.48;color:#2b3a31;
+  }
+  ul.tree li::before{
+    content:'';position:absolute;left:-2px;top:1.05rem;width:.75rem;height:2px;background:#e2e8e3;
+  }
+  ul.tree li strong{color:#16281c}
+
+  .note{
+    margin-top:.9rem;padding:.7rem .85rem;border-radius:10px;
+    background:#fff7e6;border:1px solid #f0d999;font-size:.8rem;line-height:1.5;color:#6b4f00;
+  }
+  .note strong{color:#4a3800}
+
+  .zones{display:flex;flex-direction:column;gap:.55rem;margin-top:.3rem}
+  .zone{
+    display:flex;align-items:baseline;gap:.5rem;padding:.5rem .7rem;border-radius:10px;background:#f6f4ef;
+    font-size:.84rem;
+  }
+  .zone .zname{font-weight:700;color:#16281c;flex:0 0 auto;min-width:9.5rem}
+  .zone .zcrops{color:#3d4a41}
+  .intl{display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem}
+  .intl .irow{display:flex;gap:.5rem;font-size:.84rem;align-items:baseline}
+  .intl .iflag{flex:0 0 auto;font-size:1rem}
+  .intl .iname{font-weight:700;color:#16281c;min-width:6.5rem}
+
+  .sources{
+    margin-top:2rem;padding:1rem 1.2rem;border-radius:14px;background:#fff;
+    box-shadow:0 4px 14px rgba(17,68,37,.06);font-size:.78rem;color:#5a685f;line-height:1.6;
+  }
+  .sources strong{color:#16281c}
+
+  footer{margin-top:1.5rem;font-size:.78rem;color:#6b7a72;text-align:center}
+</style>
+</head>
+<body>
+<nav class="scnav">
+<style>
+.scnav{position:sticky;top:0;z-index:99999;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;padding:.55rem 1rem;background:#114425;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:.85rem;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.scnav a{color:#fff;text-decoration:none;opacity:.85}
+.scnav .scnav-home{font-weight:700;opacity:.9}
+.scnav .scnav-sep{opacity:.35}
+.scnav .scnav-current{font-weight:700;color:#fff;opacity:1}
+.scnav details{position:relative}
+.scnav summary{cursor:pointer;list-style:none;font-weight:700;display:inline-flex;align-items:center;gap:.3rem;color:#fff}
+.scnav summary::-webkit-details-marker{display:none}
+.scnav summary::after{content:'▾';font-size:.7em;transition:transform .15s ease}
+.scnav details[open] summary::after{transform:rotate(180deg)}
+.scnav .scnav-menu{position:absolute;top:calc(100% + .5rem);left:0;background:#fff;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.22);min-width:270px;overflow:hidden;padding:.35rem 0}
+.scnav .scnav-menu a{display:block;padding:.55rem 1rem;color:#16281c;font-weight:500;white-space:nowrap;opacity:1}
+.scnav .scnav-menu a:hover{background:#f1f4f0}
+.scnav .scnav-menu .scnav-current{display:block;padding:.55rem 1rem;color:#114425;font-weight:700;background:#eef5ef;white-space:nowrap}
+</style>
+  <a class="scnav-home" href="index.html">🏠 Inicio</a>
+  <span class="scnav-sep">|</span>
+    <a href="Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">🏭 Centrales Frutícolas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍒 Cerezas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍎 Manzanas</a>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📊 Infografías</summary>
+    <div class="scnav-menu">
+    <a href="Comparativa_Cerezas_vs_Manzanas.html">🍒🍎 Comparativa Cerezas vs Manzanas</a>
+    <span class="scnav-current">🧠 Diagrama Agrícola</span>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📝 Cuestionarios</summary>
+    <div class="scnav-menu">
+    <a href="Cuestionario_Agricola.html">📝 Cuestionario Agrícola</a>
+    </div>
+  </details>
+  <script>document.addEventListener('click',function(e){document.querySelectorAll('.scnav details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});</script>
+</nav>
+<main>
+  <div class="hub">
+    <div class="badge">🧠</div>
+    <h1>Diagrama Agrícola</h1>
+    <p>Cómo se articula el negocio agrícola de principio a fin: el ciclo de cereza y manzana, las decisiones de precosecha, el árbol como activo biológico, la geografía productiva y las variables que se gestionan por cuartel.</p>
+  </div>
+
+  <div class="grid">
+
+    <article class="node" style="--accent:#114425">
+      <div class="node-head">
+        <span class="node-num">1</span>
+        <h2><span class="node-icon">🍒🍎</span> Ciclo operativo: cereza y manzana</h2>
+      </div>
+
+      <h3 class="branch-title">Cereza</h3>
+      <ul class="tree">
+        <li><strong>Precosecha (mayo–octubre)</strong>
+          <ul>
+            <li>Invierno (mayo–julio): dormancia y poda invernal (jun–ago)</li>
+            <li>Primavera (ago–oct): floración breve y sensible al clima (sep); raleo (ago–oct) para proteger calibre y firmeza</li>
+          </ul>
+        </li>
+        <li><strong>Cosecha (noviembre–enero)</strong>
+          <ul>
+            <li>Se cosecha en bandejas cosecheras, no en bins, para proteger la fruta</li>
+            <li>Requiere gran cantidad de mano de obra en poco tiempo</li>
+          </ul>
+        </li>
+        <li><strong>Post-cosecha (febrero–abril)</strong>
+          <ul>
+            <li>Recuperación de reservas del árbol y segunda poda (feb–mar)</li>
+            <li>Cierre de resultados y preparación técnica/presupuestaria del nuevo ciclo</li>
+          </ul>
+        </li>
+        <li><strong>Liquidación: 30 de abril</strong> · caja estándar <strong>5 kg</strong></li>
+      </ul>
+
+      <h3 class="branch-title">Manzana</h3>
+      <ul class="tree">
+        <li><strong>Cosecha (febrero–abril)</strong>, con pico en marzo</li>
+        <li><strong>Liquidación: 30 de noviembre</strong> · caja estándar <strong>18,2 kg</strong>
+          <ul>
+            <li>Ciclo financiero largo: la fruta puede guardarse meses en atmósfera controlada antes de venderse</li>
+          </ul>
+        </li>
+        <li><strong>Retorno Neto Productor (RNP)</strong> = Ingreso FOB − comisión exportadora (6–8%) − fletes − materiales − costos de frío/packing − gastos de exportación</li>
+      </ul>
+    </article>
+
+    <article class="node" style="--accent:#8a1826">
+      <div class="node-head">
+        <span class="node-num">2</span>
+        <h2><span class="node-icon">🌦️</span> Ciclo biológico y decisiones de precosecha</h2>
+      </div>
+      <p style="margin:0 0 .3rem;font-size:.8rem;color:#5a685f">Ejemplo sobre manzana — el ciclo biológico dicta cuándo se gasta y cuándo se recupera el dinero.</p>
+
+      <ul class="tree">
+        <li><strong>Invierno (mayo–julio) · Dormancia y estructuración</strong>
+          <ul>
+            <li>Dormancia: se monitorean las <strong>horas frío</strong> (temperaturas bajo los <strong>7°C</strong>)</li>
+            <li>Poda invernal (may–jul)</li>
+          </ul>
+        </li>
+        <li><strong>Primavera (agosto–noviembre) · Floración y decisión de calibre</strong>
+          <ul>
+            <li>Floración y polinización (ago–sep): se arriendan colmenas para asegurar la cuaja</li>
+            <li>Raleo (sep–nov): impacto directo en kg exportables y precio final</li>
+          </ul>
+        </li>
+        <li><strong>Verano (diciembre–enero) · Crecimiento y proyección</strong>
+          <ul>
+            <li>Riego tecnificado y nutrición (sistema Galcon GSI, riego a distancia con alertas)</li>
+            <li>Mapeo final (apoyado en Farm Vision: cámaras que miden curvas de crecimiento de la fruta)</li>
+          </ul>
+        </li>
+        <li><strong>Cierre comercial: 30 de noviembre</strong> · caja estándar 18,2 kg</li>
+      </ul>
+    </article>
+
+    <article class="node" style="--accent:#b8860b">
+      <div class="node-head">
+        <span class="node-num">3</span>
+        <h2><span class="node-icon">🌳</span> Arquitectura del árbol</h2>
+      </div>
+      <ul class="tree">
+        <li><strong>Sistemas de conducción V-Trellis y 2D</strong>
+          <ul>
+            <li>Plantaciones de mayor densidad y formación en muro frutal</li>
+            <li>Usados con éxito en Nueva Zelanda, Australia y Estados Unidos</li>
+            <li>Facilitan el uso de plataformas de asistencia (poda, raleo, amarra y cosecha) y reducen el uso de escaleras</li>
+          </ul>
+        </li>
+      </ul>
+      <div class="note">
+        <strong>Nota de fuente:</strong> San Clemente confirma el uso de V-Trellis y 2D. La comparación técnica más detallada —sistemas "tridimensionales" tipo eje central/spindle, el porcentaje exacto de luz interceptada y su efecto en el color de la fruta— es conocimiento agronómico general y no un dato publicado por la empresa.
+      </div>
+    </article>
+
+    <article class="node" style="--accent:#2d7644">
+      <div class="node-head">
+        <span class="node-num">4</span>
+        <h2><span class="node-icon">📈</span> Ciclo de vida del activo biológico</h2>
+      </div>
+      <p style="margin:0 0 .3rem;font-size:.8rem;color:#5a685f">Horizonte de evaluación de un proyecto de plantación: 15 años.</p>
+      <ul class="tree">
+        <li><strong>Inversión (pre-plantación)</strong>: limpieza y habilitación del suelo, cercado y hoyadura, hasta el momento previo a plantar</li>
+        <li><strong>Estado no productivo (años 1–3)</strong>: el huerto no genera fruta con estándar exportable</li>
+        <li><strong>Estado productivo</strong>
+          <ul>
+            <li>Entrada productiva: años 4–6</li>
+            <li>Óptimo productivo: años 7–10</li>
+            <li>Estabilización: años 10–20</li>
+            <li>Declive: 20+ años</li>
+          </ul>
+        </li>
+      </ul>
+      <div class="note">
+        <strong>Nota:</strong> este desglose de 5 etapas es la curva referencial de <strong>cerezo</strong>. El manzano tiene su propia curva: formación (0–3/4 años), crecimiento productivo (4–6), régimen alto desde el año 7, y una vida útil técnica total de <strong>16–20 años</strong> (más corta que la de cerezo).
+      </div>
+    </article>
+
+    <article class="node" style="--accent:#1f5c8a">
+      <div class="node-head">
+        <span class="node-num">5</span>
+        <h2><span class="node-icon">🗺️</span> Distribución geográfica y variedades</h2>
+      </div>
+      <h3 class="branch-title">Zonas en Chile</h3>
+      <div class="zones">
+        <div class="zone"><span class="zname">Zona Norte · Ovalle</span><span class="zcrops">Uvas, cítricos, duraznos (experimental)</span></div>
+        <div class="zone"><span class="zname">Zona Centro · Marchigüe</span><span class="zcrops">Uvas, duraznos, cítricos</span></div>
+        <div class="zone"><span class="zname">Centro Sur · Talca</span><span class="zcrops">Cerezas, manzanas, avellanos</span></div>
+        <div class="zone"><span class="zname">Zona Sur · Angol</span><span class="zcrops">Manzanas (~95%), cerezas</span></div>
+        <div class="zone"><span class="zname">Otros</span><span class="zcrops">Cerezas, manzanas · sin gerente agrícola propio</span></div>
+      </div>
+      <h3 class="branch-title">Internacional</h3>
+      <div class="intl">
+        <div class="irow"><span class="iflag">🇵🇪</span><span class="iname">Perú (Moquegua)</span><span>Arándanos orgánicos</span></div>
+        <div class="irow"><span class="iflag">🇨🇴</span><span class="iname">Colombia</span><span>Paltas (huerto Montecristo)</span></div>
+        <div class="irow"><span class="iflag">🇬🇧</span><span class="iname">Inglaterra (Kent)</span><span>Cerezas</span></div>
+      </div>
+    </article>
+
+    <article class="node" style="--accent:#6a3d9a">
+      <div class="node-head">
+        <span class="node-num">6</span>
+        <h2><span class="node-icon">🧩</span> Gestión gerencial y variables críticas</h2>
+      </div>
+      <ul class="tree">
+        <li><strong>Cuartel</strong> — unidad mínima de gestión, funciona como centro de costo
+          <ul>
+            <li>Debe ser completamente homogéneo para poder analizarse</li>
+          </ul>
+        </li>
+        <li><strong>Variables de análisis por cuartel</strong>
+          <ul>
+            <li><strong>Especie y variedad</strong>: determina el mercado objetivo y la curva de precios — ej. Envy, Jazz, EverCrisp, Cosmic Crisp y Giga, variedades de manzana con licencia vía las alianzas IPA y T&G Global</li>
+            <li><strong>Portainjerto (patrón)</strong>: factor crítico para la sanidad y el vigor del árbol</li>
+            <li><strong>Sistema de formación</strong>: estructura técnica que condiciona la eficiencia laboral y el costo de cosecha</li>
+            <li><strong>Año de plantación</strong>: define la posición del activo en su ciclo de vida (ver nodo 4)</li>
+          </ul>
+        </li>
+      </ul>
+    </article>
+
+  </div>
+
+  <div class="sources">
+    <strong>Fuentes:</strong> Compendios de cerezas y manzanas, infografía de Centrales Frutícolas, y contenido del sitio web sclem.cl (I+D Campos, I+D Packing, Alianzas Productivas, Nuevas Variedades) e informe de sostenibilidad.
+  </div>
+
+  <footer>Agrícola San Clemente · Diagrama de estudio</footer>
+</main>
+</body>
+</html>
