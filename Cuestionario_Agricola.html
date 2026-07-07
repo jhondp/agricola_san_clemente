@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuestionario Agrícola | Agrícola San Clemente</title>
+<style>
+  :root{color-scheme:light dark}
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(circle at 8% 0%, rgba(21,79,43,.10), transparent 30%),
+               radial-gradient(circle at 96% 4%, rgba(138,24,38,.08), transparent 26%),
+               linear-gradient(180deg,#fffcf8 0%,#f6f4ef 48%,#fffdfa 100%);
+    color:#1b2a20;
+    min-height:100vh;
+  }
+  main{max-width:900px;margin:0 auto;padding:2rem 1.25rem 3.5rem}
+  h1{margin:0 0 .35rem;font-size:clamp(1.5rem,4vw,2.1rem);color:#114425}
+  p.sub{margin:0 0 1.5rem;color:#4a5750;font-size:1rem}
+  .toolbar{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-bottom:1.75rem}
+  .toolbar button{
+    border:none;border-radius:999px;padding:.5rem 1rem;font-size:.82rem;font-weight:600;
+    cursor:pointer;background:#114425;color:#fff;transition:background .15s ease;
+  }
+  .toolbar button:hover{background:#1a5c34}
+  .toolbar button.secondary{background:#fff;color:#114425;border:1px solid #cdd9d0}
+  .toolbar button.secondary:hover{background:#f1f4f0}
+  .toolbar .count{margin-left:auto;font-size:.82rem;color:#5a685f;font-weight:600}
+  .qsection{margin-bottom:2.25rem}
+  .qsection h2{
+    font-size:1.05rem;color:#114425;margin:0 0 .8rem;padding-bottom:.4rem;
+    border-bottom:2px solid #e4ded2;
+  }
+  .qlist{display:flex;flex-direction:column;gap:.6rem}
+  .qcard{
+    background:#fff;border-radius:12px;box-shadow:0 3px 12px rgba(17,68,37,.08);
+    padding:.2rem .9rem;overflow:hidden;
+  }
+  .qcard summary{
+    cursor:pointer;list-style:none;padding:.75rem .1rem;font-weight:600;font-size:.92rem;
+    display:flex;gap:.6rem;align-items:baseline;color:#1b2a20;
+  }
+  .qcard summary::-webkit-details-marker{display:none}
+  .qcard summary::before{content:'▸';color:#114425;font-size:.85em;flex:0 0 auto;transition:transform .15s ease}
+  .qcard[open] summary::before{transform:rotate(90deg)}
+  .qnum{
+    flex:0 0 auto;min-width:1.6rem;height:1.6rem;border-radius:50%;background:#eef5ef;color:#114425;
+    font-size:.75rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;
+  }
+  .qcard .answer{
+    padding:0 .1rem .9rem 2.9rem;font-size:.88rem;color:#33423a;line-height:1.5;
+  }
+  footer{margin-top:1rem;font-size:.78rem;color:#6b7a72;text-align:center}
+</style>
+</head>
+<body>
+<nav class="scnav">
+<style>
+.scnav{position:sticky;top:0;z-index:99999;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;padding:.55rem 1rem;background:#114425;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:.85rem;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.scnav a{color:#fff;text-decoration:none;opacity:.85}
+.scnav .scnav-home{font-weight:700;opacity:.9}
+.scnav .scnav-sep{opacity:.35}
+.scnav .scnav-current{font-weight:700;color:#fff;opacity:1}
+.scnav details{position:relative}
+.scnav summary{cursor:pointer;list-style:none;font-weight:700;display:inline-flex;align-items:center;gap:.3rem;color:#fff}
+.scnav summary::-webkit-details-marker{display:none}
+.scnav summary::after{content:'▾';font-size:.7em;transition:transform .15s ease}
+.scnav details[open] summary::after{transform:rotate(180deg)}
+.scnav .scnav-menu{position:absolute;top:calc(100% + .5rem);left:0;background:#fff;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.22);min-width:270px;overflow:hidden;padding:.35rem 0}
+.scnav .scnav-menu a{display:block;padding:.55rem 1rem;color:#16281c;font-weight:500;white-space:nowrap;opacity:1}
+.scnav .scnav-menu a:hover{background:#f1f4f0}
+.scnav .scnav-menu .scnav-current{display:block;padding:.55rem 1rem;color:#114425;font-weight:700;background:#eef5ef;white-space:nowrap}
+</style>
+  <a class="scnav-home" href="index.html">🏠 Inicio</a>
+  <span class="scnav-sep">|</span>
+    <a href="Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">🏭 Centrales Frutícolas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍒 Cerezas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍎 Manzanas</a>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📊 Infografías</summary>
+    <div class="scnav-menu">
+    <a href="Comparativa_Cerezas_vs_Manzanas.html">🍒🍎 Comparativa Cerezas vs Manzanas</a>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📝 Cuestionarios</summary>
+    <div class="scnav-menu">
+    <span class="scnav-current">📝 Cuestionario Agrícola</span>
+    </div>
+  </details>
+  <script>document.addEventListener('click',function(e){document.querySelectorAll('.scnav details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});</script>
+</nav>
+<main>
+  <h1>Cuestionario Agrícola</h1>
+  <p class="sub">100 preguntas de estudio basadas en la inducción del área de Control de Gestión. Haz clic en cada pregunta para ver la respuesta.</p>
+  <div class="toolbar">
+    <button type="button" id="expandAll">Expandir todo</button>
+    <button type="button" class="secondary" id="collapseAll">Colapsar todo</button>
+    <span class="count">100 preguntas · 6 temas</span>
+  </div>
+  <section class="qsection">
+    <h2>Unidades de negocio y modelo de ingresos</h2>
+    <div class="qlist">
+      <details class="qcard">
+        <summary><span class="qnum">1</span> ¿Cuál es la unidad de venta que utiliza la Agrícola para transar su fruta?</summary>
+        <div class="answer"><strong>Respuesta:</strong> La caja equivalente.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">2</span> ¿Cómo gana dinero la Agrícola?</summary>
+        <div class="answer"><strong>Respuesta:</strong> A través de la venta de su fruta, medida en cajas equivalentes.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">3</span> ¿Cómo gana dinero la Central Frutícola?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Por los kilogramos procesados; como resultado de su proceso entrega una caja equivalente.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">4</span> ¿Cómo gana dinero la Exportadora?</summary>
+        <div class="answer"><strong>Respuesta:</strong> A través de una comisión sobre la venta de la caja equivalente.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">5</span> ¿De dónde obtiene sus ingresos San Clemente Foods?</summary>
+        <div class="answer"><strong>Respuesta:</strong> De la venta de los subproductos que genera (purés, pulpas, jugos, etc.) a partir de fruta y materia prima de distintas especies.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">6</span> Si toda la fruta cosechada cumple la calidad para ser exportada y no queda descarte, ¿qué ocurre con San Clemente Foods?</summary>
+        <div class="answer"><strong>Respuesta:</strong> No gana, porque no tiene materia prima (descarte) disponible para procesar y vender.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">7</span> ¿Por qué se dice que, en términos simples, &quot;entre peor le vaya a un productor, mejor le va a Foods&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Porque un productor con más descarte o fruta de menor calidad genera más materia prima barata que Foods puede transformar en subproductos y vender.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">8</span> ¿Qué vende la Conservera, a diferencia de la Central Frutícola?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Un producto final o terminado (por ejemplo, durazno en conserva), no solo fruta procesada.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">9</span> ¿Por qué el rendimiento de la fruta (relación pulpa/cuesco) afecta directamente a la Conservera?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Porque una fruta con cuesco grande y poca pulpa implica pagar más por la fruta y obtener menos cantidad de producto vendible, afectando costos y ventas.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">10</span> En un modelo predictivo, si el precio de venta que comercializa la Exportadora baja, ¿qué unidad de negocio pierde proporcionalmente más?</summary>
+        <div class="answer"><strong>Respuesta:</strong> La Agrícola, porque el impacto se multiplica hacia atrás a través de los niveles de venta de toda la cadena.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">11</span> ¿Por qué es importante para el área de Control de Gestión poder construir modelos predictivos?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Para calcular anticipadamente cuánto impacta en la ganancia final una decisión, como dejar de producir una especie, antes de tomarla.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">12</span> Al evaluar el impacto de dejar de producir cerezas, ¿qué se debe comparar según lo explicado en la sesión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Cuánto representa esa decisión sobre el total de la ganancia de todos los productos y de toda la cadena, no solo su efecto aislado en una unidad.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">13</span> ¿Qué tipo de frutas procesa principalmente San Clemente Foods?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Distintas frutas (frutilla, durazno, plátano, etc.), elaborando pulpas y jugos, no una sola especie.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">14</span> ¿Qué relación de &quot;canibalismo&quot; se menciona entre unidades del mismo holding?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Que una unidad de negocio puede verse perjudicada cuando le va muy bien a otra dentro del mismo holding; por ejemplo, si a los productores les va muy bien, Foods tiene menos materia prima barata disponible.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">15</span> ¿Qué es una &quot;caja equivalente&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> La unidad de venta estándar en la que se mide y transa la fruta entre la Agrícola, la Central Frutícola y la Exportadora.</div>
+      </details>
+    </div>
+  </section>
+  <section class="qsection">
+    <h2>Zonas, campos y especies</h2>
+    <div class="qlist">
+      <details class="qcard">
+        <summary><span class="qnum">16</span> ¿Cuántas zonas agrícolas se mencionan en la inducción?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Cinco: Angol, Talca, Ovalle, Otros y Marchigüe.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">17</span> ¿Qué especie predomina en la zona de Angol?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Manzanas (cerca del 95%), además de cerezas.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">18</span> ¿Por qué se le llama a Angol &quot;la zona manzanera&quot; o &quot;la zona sur&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Porque es la zona donde predomina el cultivo de manzanas, ubicada en el sur del país.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">19</span> ¿Qué especies se producen en la zona de Talca?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Cerezas, manzanas y avellanos.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">20</span> ¿Por qué se considera a Talca &quot;la zona cerecera&quot; o &quot;zona centro sur&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Porque las cerezas representan la mayor proporción de su producción y la zona se ubica en el centro-sur de Chile.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">21</span> ¿Qué especies se producen en la zona de Ovalle?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Uvas, cítricos y duraznos, estos últimos en etapa experimental.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">22</span> ¿Qué porcentaje aproximado representaban los duraznos en Ovalle según la sesión, y por qué?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Alrededor de un 2%, porque estaban en etapa experimental.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">23</span> ¿Qué especies produce la zona &quot;Otros&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Cerezas y manzanas.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">24</span> ¿Qué especies produce la zona de Marchigüe?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Uvas, duraznos y cítricos.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">25</span> ¿Qué zonas cuentan con gerente agrícola propio y cuáles no?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Angol, Talca y Ovalle cuentan con gerente agrícola; Otros y Marchigüe no, principalmente por su menor cantidad de hectáreas.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">26</span> ¿Aproximadamente cuántas hectáreas plantadas tiene la zona de Angol?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Alrededor de 1.000 hectáreas, prácticamente todas productivas.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">27</span> ¿Aproximadamente cuántos campos tiene cada zona según la sesión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Angol unos 8 campos, Talca una cantidad similar en superficie a Angol, Ovalle 4 campos, Otros 2 campos y Marchigüe 1 campo.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">28</span> En Chile, ¿en qué zona del país se produce principalmente la manzana según lo explicado?</summary>
+        <div class="answer"><strong>Respuesta:</strong> En el sur de Chile.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">29</span> ¿En qué zona del país se producen principalmente los avellanos?</summary>
+        <div class="answer"><strong>Respuesta:</strong> En el centro-sur de Chile, concentrados en Talca.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">30</span> ¿En qué zona del país se producen principalmente las uvas y los cítricos?</summary>
+        <div class="answer"><strong>Respuesta:</strong> En el norte de Chile.</div>
+      </details>
+    </div>
+  </section>
+  <section class="qsection">
+    <h2>Activos biológicos y etapas de plantación</h2>
+    <div class="qlist">
+      <details class="qcard">
+        <summary><span class="qnum">31</span> ¿Qué es un &quot;bien biológico&quot; o &quot;activo biológico&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Un ser vivo, como una planta o un animal, del cual se puede obtener un beneficio económico (por ejemplo, un árbol del que se obtiene fruta), a diferencia de un bien no biológico como una máquina.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">32</span> ¿Qué norma contable rige la forma en que se contabilizan los árboles como activos?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Las Normas Internacionales de Información Financiera (NIIF).</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">33</span> Según la norma contable, ¿qué costos forman parte del valor de un activo fijo o biológico?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Todos los costos y gastos incurridos hasta que el activo está disponible para su uso, es decir, para generar beneficios.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">34</span> ¿Cuáles son los estados o etapas de plantación de un árbol mencionados en la sesión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Inversión, no productivo y productivo, con una etapa final de declive.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">35</span> ¿Qué comprende la etapa de &quot;inversión&quot; a nivel de control de gestión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Todos los trabajos y costos incurridos antes de plantar el árbol, como preparar el terreno, cercar y hacer los hoyos.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">36</span> ¿Cuánto dura aproximadamente la etapa de inversión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Entre 6 y 9 meses.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">37</span> ¿Qué es un &quot;estado no productivo&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> El período desde que se planta el árbol hasta que da fruta con calidad exportable, aproximadamente 3 años.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">38</span> ¿Qué es un &quot;estado productivo&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> El período en que el árbol ya produce fruta, aunque no llegue de inmediato a su rendimiento óptimo.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">39</span> Para el caso de la manzana, ¿aproximadamente en qué año se alcanza el rendimiento óptimo del árbol?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Alrededor del séptimo año.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">40</span> ¿Qué diferencia existe entre el concepto de &quot;inversión&quot; a nivel contable y a nivel de control de gestión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> A nivel contable, inversión incluye tanto la preparación del terreno como la etapa no productiva, ya que todo se activa como parte del bien biológico; a nivel de control de gestión, &quot;inversión&quot; es únicamente la etapa previa a la plantación.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">41</span> ¿Se presupuesta la etapa de inversión en el control de presupuesto de la Agrícola?</summary>
+        <div class="answer"><strong>Respuesta:</strong> No; solo se presupuestan la etapa no productiva y la etapa productiva, porque la inversión ocurre una única vez.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">42</span> ¿A cuántos años se proyecta típicamente un proyecto de plantación de árboles?</summary>
+        <div class="answer"><strong>Respuesta:</strong> A 15 años.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">43</span> ¿Qué ocurre con un árbol una vez que supera aproximadamente los 15 a 20 años según la sesión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Se empieza a considerar un árbol &quot;viejo&quot;, aunque puede seguir produciendo por mucho más tiempo, ya que un bien biológico puede durar hasta 100 años mientras su rendimiento no decline demasiado.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">44</span> ¿Qué significa &quot;arrancar&quot; un árbol?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Retirarlo del terreno, típicamente cuando entra en declive y deja de ser rentable mantenerlo.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">45</span> Si una plantación se pierde por un evento externo, como una inundación, ¿se considera técnicamente que &quot;la tierra dejó de producir&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> No; se considera que la planta dejó de producir, no la tierra, ya que el terreno sigue apto para volver a plantar.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">46</span> ¿Por qué la empresa busca ampliar su enfoque hacia la etapa de &quot;inversión&quot;, pese a no presupuestarla igual que las otras?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Porque el área de Control de Gestión busca ampliar su campo de visión y comenzar a abordar también esta etapa como parte del proyecto completo de plantación.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">47</span> ¿Qué determina que se deba &quot;invertir&quot; en un proyecto agrícola antes de obtener beneficios?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Que toda plantación requiere incurrir en costos, como preparación de terreno, riego, fertilización y cuidado, antes de poder obtener cualquier fruto vendible.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">48</span> Según la sesión, ¿de dónde suele obtenerse el financiamiento para cubrir los años sin ingresos de un proyecto agrícola nuevo?</summary>
+        <div class="answer"><strong>Respuesta:</strong> De deuda o préstamos (apalancamiento), o bien de recursos propios de la empresa.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">49</span> ¿Qué significa que el negocio de la Agrícola esté &quot;apalancado&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Que se financia en parte importante mediante deuda para cubrir los años de inversión y no producción, antes de generar beneficios.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">50</span> ¿Qué otro nombre recibe, en términos generales, un proyecto de plantación desde la perspectiva de negocio?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Un proyecto de inversión, ya que se espera obtener una rentabilidad sobre lo invertido.</div>
+      </details>
+    </div>
+  </section>
+  <section class="qsection">
+    <h2>Cuartel, mapeo, formación y patrón</h2>
+    <div class="qlist">
+      <details class="qcard">
+        <summary><span class="qnum">51</span> ¿Qué es un &quot;cuartel&quot; en el contexto agrícola de la empresa?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Un terreno segmentado dentro de un campo, con características homogéneas: especie, variedad, año de plantación, formación y patrón, entre otras.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">52</span> ¿Con qué concepto contable se equipara un cuartel?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Con un centro de costo.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">53</span> ¿Qué es una &quot;hilera&quot; dentro de un cuartel?</summary>
+        <div class="answer"><strong>Respuesta:</strong> La línea de árboles plantados de forma continua dentro del cuartel, separados entre sí por un espacio.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">54</span> ¿Qué diferencia hay entre &quot;espacio sobrehilera&quot; y &quot;espacio infilera&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> El espacio sobrehilera es el que separa una hilera de otra; el espacio infilera es el que separa un árbol de otro dentro de la misma hilera.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">55</span> ¿En qué unidad se mide la superficie de un cuartel?</summary>
+        <div class="answer"><strong>Respuesta:</strong> En hectáreas.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">56</span> ¿Qué es el &quot;mapeo&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> El archivo o registro donde se lleva el terreno junto con sus niveles de producción a la línea de acción de la empresa; es la base de la que nacen presupuestos, costos y ventas.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">57</span> ¿Por qué se dice que el mapeo es &quot;la base de todo&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Porque de ahí nacen los presupuestos, los costos, las ventas y prácticamente toda la información de gestión de la Agrícola.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">58</span> ¿Qué es la &quot;formación&quot; de un árbol?</summary>
+        <div class="answer"><strong>Respuesta:</strong> La técnica mediante la cual se guía el crecimiento de las ramas del árbol, por ejemplo con alambres, para lograr una estructura determinada.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">59</span> ¿Cómo impacta la formación de un árbol en los costos de cosecha?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Un árbol con formación más accesible o plana permite cosechar más rápido, reduciendo el costo de mano de obra por unidad de fruta cosechada.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">60</span> ¿Qué es el &quot;patrón&quot; de un árbol frutal?</summary>
+        <div class="answer"><strong>Respuesta:</strong> La base o tronco, muchas veces de otra especie o variedad, sobre la cual se injerta la variedad comercial que se quiere producir.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">61</span> ¿Por qué se elige un patrón distinto a la variedad comercial que se quiere exportar?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Porque algunos patrones ofrecen mayor resistencia a insectos, hongos u otras plagas del suelo, aunque su fruta no sea la que se busca exportar.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">62</span> ¿Cómo impacta el patrón elegido en los costos de la plantación?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Un patrón más resistente a plagas reduce el gasto en insumos como insecticidas y fungicidas.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">63</span> ¿Qué es &quot;injertar&quot; en el contexto frutícola?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Cortar la base o tronco de un árbol y unir sobre ella una variedad distinta, para que crezca aprovechando las características de esa base.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">64</span> ¿Qué caracteriza a la fruta orgánica según la sesión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Se controlan las plagas sin usar químicos, mediante control biológico donde una plaga combate a otra, lo que la hace más cara y con menor rentabilidad.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">65</span> ¿Qué riesgo adicional se menciona sobre la fruta orgánica?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Que puede quedar menos protegida frente a ciertos insectos que penetran la fruta, al no usarse químicos para eliminarlos.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">66</span> ¿Cuál es la jerarquía de clasificación de la información del terreno, de mayor a menor nivel?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Zona, luego campo, luego especie, luego variedad, luego año de plantación y finalmente el estado (productivo o no productivo).</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">67</span> ¿Por qué es importante controlar los costos incluso en los cuarteles que son productivos?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Porque un cuartel no productivo se arranca directamente, mientras que en los cuarteles productivos la gestión se enfoca en optimizar y controlar sus costos.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">68</span> ¿Qué se entiende por &quot;vigor&quot; de un árbol y por qué es relevante medirlo?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Es un indicador del estado de desarrollo o fuerza del árbol (muy vigoroso, poco vigoroso, medio); es relevante porque está asociado directamente a su nivel de producción.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">69</span> ¿Qué información concreta permite proyectar el mapeo sobre un árbol?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Cuánta fruta se proyecta que va a producir cada árbol, por ejemplo cuántas manzanas.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">70</span> ¿Qué concepto propio menciona el instructor para referirse a las variedades más relevantes que mueven el negocio?</summary>
+        <div class="answer"><strong>Respuesta:</strong> &quot;Power Brands&quot;: las variedades más potentes, que concentran el negocio, en contraste con las variedades secundarias.</div>
+      </details>
+    </div>
+  </section>
+  <section class="qsection">
+    <h2>Estructura y calidad de los datos</h2>
+    <div class="qlist">
+      <details class="qcard">
+        <summary><span class="qnum">71</span> ¿Cuál es, según la sesión, la parte más relevante y que sostiene todo el resto del trabajo de Control de Gestión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> La base de datos: si esa base está mal, todo lo construido sobre ella pierde credibilidad, aunque el resto se vea perfecto.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">72</span> ¿Cómo se recolectaba originalmente la información de producción en el campo, según lo comentado en la sesión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> De forma manual, en cuadernos u hojas de papel, que luego se transcribía a mano a una base de datos.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">73</span> ¿Qué problema se genera cuando un operario anota mal en qué máquina trabajó durante su turno?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Se generan costos asociados a una máquina en la que en realidad no trabajó, distorsionando la información de costos.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">74</span> ¿Por qué la inteligencia artificial no pudo resolver el problema de los datos mal ingresados en el ejemplo mencionado?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Porque si el dato ya estaba mal ingresado en el origen, la inteligencia artificial no tenía forma de recuperar el dato correcto desde ninguna otra fuente.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">75</span> ¿Qué mejora se logró en el tiempo de entrega de la información desde que llegó el actual subdirector de gestión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Se redujo de 60 días a 25 días, y posteriormente a una entrega el día 10 de cada mes.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">76</span> Además de reducir los tiempos, ¿qué otro entregable mensual se implementó?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Un informe escrito de alrededor de 120 páginas con el estado de situación completo de la unidad.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">77</span> ¿Cuál es la meta final hacia la que se busca avanzar en la frecuencia de entrega de información?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Que la información se entregue de forma diaria, no solo mensual.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">78</span> ¿Por qué es importante que la información de producción, costos y años de plantación esté bien estructurada desde el origen?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Porque toda la capacidad de responder preguntas de negocio, como predicciones y control de objetivos, depende de que los datos capturados sean correctos y relevantes.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">79</span> Según la sesión, ¿qué diferencia hay entre un dato &quot;interesante&quot; y un dato &quot;relevante&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Un dato interesante es llamativo pero no impacta la ejecución del trabajo ni la rentabilidad; un dato relevante sí impacta directamente la toma de decisiones y la rentabilidad del negocio.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">80</span> ¿Qué rol cumplen los analistas de datos, más allá de generar información visualmente atractiva, según el instructor?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Deben entender el negocio a fondo para asegurar que los datos realmente respondan las preguntas de gestión que la empresa necesita resolver.</div>
+      </details>
+    </div>
+  </section>
+  <section class="qsection">
+    <h2>Filosofía y principios de Control de Gestión</h2>
+    <div class="qlist">
+      <details class="qcard">
+        <summary><span class="qnum">81</span> ¿Qué significa la filosofía del &quot;100%&quot; mencionada repetidamente en la sesión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Que la información entregada por el área nunca puede ser incorrecta, porque un error de datos daña la credibilidad de todo el trabajo del área.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">82</span> ¿Por qué un dato erróneo afecta más allá del error puntual, según el instructor?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Porque genera dudas sobre la confiabilidad de los futuros datos entregados, incluso después de haber sido corregidos.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">83</span> ¿Cuáles son los pilares o principios estratégicos del área de Control de Gestión mencionados en la sesión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Estructura, Metodología, Planificación, Creatividad e Innovación, y Profesionalismo.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">84</span> ¿Qué implica el pilar de &quot;Estructura&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Que todo el trabajo, como carpetas, información y procesos, se organiza con una lógica clara, de forma que cualquier persona pueda entenderlo por sí sola, no solo quien lo creó.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">85</span> ¿Qué implica el pilar de &quot;Metodología&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Que todos los integrantes del equipo realizan su trabajo de la misma manera estandarizada, permitiendo que cualquiera pueda reemplazar a otro sin perder continuidad operativa.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">86</span> ¿Por qué se menciona que ninguno de los miembros del equipo puede tomar vacaciones al mismo tiempo?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Porque siempre debe haber alguien disponible como respaldo (backup) que conozca y pueda ejecutar el trabajo de quien está ausente, gracias a la metodología estandarizada.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">87</span> ¿Qué implica el pilar de &quot;Planificación&quot; según lo explicado?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Establecer objetivos ambiciosos pero alcanzables, y buscar siempre superarlos, no solo cumplirlos.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">88</span> ¿Qué se espera del equipo respecto al pilar de &quot;Creatividad e Innovación&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Que si encuentran una mejor forma de hacer las cosas la propongan y la fundamenten con análisis, en lugar de aceptar el modo actual sin cuestionarlo.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">89</span> ¿Qué es el &quot;pensamiento lateral&quot; mencionado en la sesión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Un enfoque, asociado al autor Edward de Bono, que plantea que no existe una única forma correcta de resolver un problema, invitando a salir del método habitual.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">90</span> ¿Qué relación se plantea entre autoconciencia e innovación?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Que solo si una persona es capaz de verse &quot;desde afuera&quot; y reconocer que está repitiendo soluciones habituales, puede lograr pensar de forma distinta e innovar.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">91</span> ¿Qué implica el pilar de &quot;Profesionalismo&quot; con la frase &quot;hay que ser y parecer&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Que el profesionalismo se demuestra con el trabajo mismo, sin necesidad de decir que se es bueno; los resultados deben hablar por sí solos.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">92</span> ¿Cuáles son los &quot;factores diferenciadores&quot; que el área busca mantener?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Información de calidad, información oportuna, planificación, reducción de tiempos y una curva de aprendizaje baja.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">93</span> ¿Qué significa tener una &quot;curva de aprendizaje baja&quot; en los procesos que construye el equipo?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Que los procesos y herramientas deben ser simples de entender y ejecutar por cualquier persona que se incorpore, evitando complejidad innecesaria.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">94</span> ¿Por qué se desaconseja crear macros o soluciones extremadamente complejas para tareas simples?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Porque generan dependencia de quien las creó y dificultan que otra persona continúe el trabajo si esa persona se va, como &quot;matar una mosca con un cañón&quot;.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">95</span> Según el instructor, ¿en qué consiste realmente la &quot;propuesta de valor&quot; de un profesional del equipo?</summary>
+        <div class="answer"><strong>Respuesta:</strong> No en ser indispensable o insustituible, sino en aportar procesos claros, simples y sostenibles que sigan funcionando aunque esa persona ya no esté.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">96</span> ¿Qué se busca lograr con la &quot;gestión del cambio&quot; al implementar nuevas formas de trabajo?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Convencer a las distintas zonas o áreas de adoptar cambios, como pasar de papel a una aplicación, preferentemente mostrando un beneficio concreto para quien debe adoptar el cambio.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">97</span> Según el instructor, ¿cuál es &quot;la forma más simple de gestionar el cambio&quot;?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Otorgar un beneficio a la persona que debe adoptar el cambio, por ejemplo reducir su tiempo de trabajo.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">98</span> ¿Qué distinción hace el instructor entre &quot;influencia&quot; y &quot;manipulación&quot; al hablar de gestión del cambio?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Dice estar de acuerdo con usar la influencia para lograr cambios, pero no con la manipulación.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">99</span> ¿Qué se recomienda hacer para medir el propio nivel de conocimiento del negocio, según la conversación final de la sesión?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Aplicar algún tipo de autoevaluación o cuestionario que permita determinar cuánto se sabe y qué porcentaje del negocio falta por aprender.</div>
+      </details>
+      <details class="qcard">
+        <summary><span class="qnum">100</span> Según la sesión, ¿qué diferencia hay entre estructurar el conocimiento partiendo por la historia de la empresa y partiendo por la rentabilidad?</summary>
+        <div class="answer"><strong>Respuesta:</strong> Partir por la historia aporta datos interesantes pero poco relevantes para ejecutar el trabajo; partir por la rentabilidad y las unidades de negocio enfoca el aprendizaje en lo que realmente impacta la toma de decisiones.</div>
+      </details>
+    </div>
+  </section>
+  <footer>Agrícola San Clemente · Cuestionario de estudio</footer>
+</main>
+<script>
+document.getElementById('expandAll').addEventListener('click', function(){
+  document.querySelectorAll('.qcard').forEach(function(d){ d.setAttribute('open',''); });
+});
+document.getElementById('collapseAll').addEventListener('click', function(){
+  document.querySelectorAll('.qcard').forEach(function(d){ d.removeAttribute('open'); });
+});
+</script>
+</body>
+</html>

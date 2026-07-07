@@ -65,7 +65,14 @@
     <span class="scnav-current">🍒🍎 Comparativa Cerezas vs Manzanas</span>
     </div>
   </details>
-  <script>(function(){var d=document.currentScript.closest('.scnav').querySelector('details');document.addEventListener('click',function(e){if(d&&d.hasAttribute('open')&&!d.contains(e.target))d.removeAttribute('open');});})();</script>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📝 Cuestionarios</summary>
+    <div class="scnav-menu">
+    <a href="Cuestionario_Agricola.html">📝 Cuestionario Agrícola</a>
+    </div>
+  </details>
+  <script>document.addEventListener('click',function(e){document.querySelectorAll('.scnav details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});</script>
 </nav>
 <main>
   <h1>Comparativa Cerezas vs Manzanas</h1>
