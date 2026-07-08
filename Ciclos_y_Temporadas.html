@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ciclos y Temporadas | Agrícola San Clemente</title>
+<style>
+  :root{color-scheme:light dark}
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(circle at 8% 0%, rgba(21,79,43,.10), transparent 30%),
+               radial-gradient(circle at 96% 4%, rgba(138,24,38,.08), transparent 26%),
+               linear-gradient(180deg,#fffcf8 0%,#f6f4ef 48%,#fffdfa 100%);
+    color:#1b2a20;
+    min-height:100vh;
+  }
+  main{max-width:980px;margin:0 auto;padding:2rem 1.25rem 3.5rem}
+
+  .hub{text-align:center;max-width:720px;margin:0 auto 1.75rem}
+  .hub .badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:3.2rem;height:3.2rem;border-radius:50%;
+    background:linear-gradient(135deg,#0e7a8a,#12a5b8);color:#fff;font-size:1.5rem;
+    margin-bottom:.75rem;box-shadow:0 6px 16px rgba(14,122,138,.3);
+  }
+  .hub h1{margin:0 0 .4rem;font-size:clamp(1.6rem,4vw,2.2rem);color:#114425}
+  .hub p{margin:0;color:#4a5750;font-size:.98rem;line-height:1.5}
+
+  .gantt-card{
+    background:#fff;border-radius:16px;padding:1.35rem 1.4rem 1.5rem;
+    box-shadow:0 6px 20px rgba(17,68,37,.08);border-top:5px solid #0e7a8a;margin-bottom:1.6rem;
+  }
+  .gantt-card h2{margin:0 0 .25rem;font-size:1.05rem;color:#16281c;display:flex;align-items:center;gap:.5rem}
+  .gantt-card p.hint{margin:0 0 1.1rem;font-size:.85rem;color:#4a5750;line-height:1.5}
+  .gantt-wrap{overflow-x:auto;padding-bottom:.3rem}
+  .gantt{
+    display:grid;grid-template-columns:118px repeat(12,minmax(36px,1fr));
+    grid-auto-rows:2.3rem;align-items:center;min-width:660px;column-gap:2px;
+  }
+  .g-month{font-size:.66rem;font-weight:700;color:#8a978f;text-align:center;text-transform:uppercase}
+  .g-label{font-size:.8rem;font-weight:700;color:#16281c;white-space:nowrap;padding-right:.6rem}
+  .g-track{grid-column:2/14;height:.85rem;background:#f0f0ec;border-radius:6px}
+  .g-bar{
+    height:1.55rem;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:.62rem;font-weight:700;padding:0 .3rem;white-space:nowrap;overflow:hidden;
+  }
+  .gantt-note{margin:.9rem 0 0;font-size:.74rem;color:#8a978f;line-height:1.5}
+
+  .legend{display:flex;flex-wrap:wrap;gap:.5rem .9rem;margin-top:1rem}
+  .legend .lg{display:inline-flex;align-items:center;gap:.35rem;font-size:.75rem;color:#3d4a41}
+  .legend .lg i{width:.65rem;height:.65rem;border-radius:50%;display:inline-block}
+
+  .process-gantt{grid-template-columns:158px repeat(12,minmax(30px,1fr))}
+  .process-gantt .g-label{font-size:.72rem;white-space:normal;line-height:1.2;font-weight:600}
+  .g-section{
+    grid-column:1/14;background:#eef5ef;border-radius:6px;padding:.4rem .7rem;
+    font-size:.82rem;font-weight:700;color:#114425;margin:.25rem 0 .05rem;
+  }
+  .stats{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
+  .stat{flex:1 1 220px;background:#f6f4ef;border-radius:10px;padding:.55rem .75rem;font-size:.8rem;color:#3d4a41}
+  .stat b{display:block;color:#16281c;font-size:.85rem;margin-bottom:.1rem}
+
+  .sources{
+    margin-top:1.5rem;padding:1rem 1.2rem;border-radius:14px;background:#fff;
+    box-shadow:0 4px 14px rgba(17,68,37,.06);font-size:.78rem;color:#5a685f;line-height:1.6;
+  }
+  .sources strong{color:#16281c}
+
+  footer{margin-top:1.5rem;font-size:.78rem;color:#6b7a72;text-align:center}
+</style>
+</head>
+<body>
+<nav class="scnav">
+<style>
+.scnav{position:sticky;top:0;z-index:99999;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;padding:.55rem 1rem;background:#114425;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:.85rem;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.scnav a{color:#fff;text-decoration:none;opacity:.85}
+.scnav .scnav-home{font-weight:700;opacity:.9}
+.scnav .scnav-sep{opacity:.35}
+.scnav .scnav-current{font-weight:700;color:#fff;opacity:1}
+.scnav details{position:relative}
+.scnav summary{cursor:pointer;list-style:none;font-weight:700;display:inline-flex;align-items:center;gap:.3rem;color:#fff}
+.scnav summary::-webkit-details-marker{display:none}
+.scnav summary::after{content:'▾';font-size:.7em;transition:transform .15s ease}
+.scnav details[open] summary::after{transform:rotate(180deg)}
+.scnav .scnav-menu{position:absolute;top:calc(100% + .5rem);left:0;background:#fff;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.22);min-width:270px;overflow:hidden;padding:.35rem 0}
+.scnav .scnav-menu a{display:block;padding:.55rem 1rem;color:#16281c;font-weight:500;white-space:nowrap;opacity:1}
+.scnav .scnav-menu a:hover{background:#f1f4f0}
+.scnav .scnav-menu .scnav-current{display:block;padding:.55rem 1rem;color:#114425;font-weight:700;background:#eef5ef;white-space:nowrap}
+</style>
+  <a class="scnav-home" href="index.html">🏠 Inicio</a>
+  <span class="scnav-sep">|</span>
+    <a href="Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">🏭 Centrales Frutícolas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍒 Cerezas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍎 Manzanas</a>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📊 Infografías</summary>
+    <div class="scnav-menu">
+    <a href="Comparativa_Cerezas_vs_Manzanas.html">🍒🍎 Comparativa Cerezas vs Manzanas</a>
+    <a href="Diagrama_Agricola.html">🧠 Diagrama Agrícola</a>
+    <span class="scnav-current">📅 Ciclos y Temporadas</span>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📝 Cuestionarios</summary>
+    <div class="scnav-menu">
+    <a href="Cuestionario_Agricola.html">📝 Cuestionario Agrícola</a>
+    </div>
+  </details>
+  <script>document.addEventListener('click',function(e){document.querySelectorAll('.scnav details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});</script>
+</nav>
+<main>
+  <div class="hub">
+    <div class="badge">📅</div>
+    <h1>Ciclos y Temporadas</h1>
+    <p>Todas las ventanas de cosecha de San Clemente en un mismo eje de tiempo, para comparar de un vistazo cuándo produce cada fruta.</p>
+  </div>
+
+  <section class="gantt-card">
+    <h2>📅 Calendario comparado de cosechas</h2>
+    <p class="hint">Año agrícola de mayo a abril (el mismo eje que usa la Agrícola para presupuestar). Cada barra marca la ventana de cosecha de esa fruta.</p>
+    <div class="gantt-wrap">
+      <div class="gantt">
+        <div style="grid-row:1;grid-column:1"></div>
+        <div style="grid-row:1;grid-column:2" class="g-month">May</div>
+        <div style="grid-row:1;grid-column:3" class="g-month">Jun</div>
+        <div style="grid-row:1;grid-column:4" class="g-month">Jul</div>
+        <div style="grid-row:1;grid-column:5" class="g-month">Ago</div>
+        <div style="grid-row:1;grid-column:6" class="g-month">Sep</div>
+        <div style="grid-row:1;grid-column:7" class="g-month">Oct</div>
+        <div style="grid-row:1;grid-column:8" class="g-month">Nov</div>
+        <div style="grid-row:1;grid-column:9" class="g-month">Dic</div>
+        <div style="grid-row:1;grid-column:10" class="g-month">Ene</div>
+        <div style="grid-row:1;grid-column:11" class="g-month">Feb</div>
+        <div style="grid-row:1;grid-column:12" class="g-month">Mar</div>
+        <div style="grid-row:1;grid-column:13" class="g-month">Abr</div>
+
+        <div style="grid-row:2;grid-column:1" class="g-label">🍒 Cerezas</div>
+        <div style="grid-row:2;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:2;grid-column:8/11;background:#c23b4b" class="g-bar">Nov–Ene</div>
+
+        <div style="grid-row:3;grid-column:1" class="g-label">🍎 Manzanas</div>
+        <div style="grid-row:3;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:3;grid-column:11/14;background:#2d7644" class="g-bar">Feb–Abr</div>
+
+        <div style="grid-row:4;grid-column:1" class="g-label">🍊 Mandarinas</div>
+        <div style="grid-row:4;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:4;grid-column:5/7;background:#e0a72e" class="g-bar">Ago–Sep</div>
+
+        <div style="grid-row:5;grid-column:1" class="g-label">🍊 Clementinas</div>
+        <div style="grid-row:5;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:5;grid-column:2/4;background:#b8860b" class="g-bar">May–Jun</div>
+        <div style="grid-row:5;grid-column:13/14;background:#b8860b" class="g-bar">Abr*</div>
+
+        <div style="grid-row:6;grid-column:1" class="g-label">🫐 Arándanos</div>
+        <div style="grid-row:6;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:6;grid-column:6/9;background:#1f5c8a" class="g-bar">Sep–Nov</div>
+      </div>
+    </div>
+    <p class="gantt-note">* Clementinas: la cosecha va de abril a junio, cruzando el cierre del año agrícola (por eso aparece partida en abril y en mayo–junio). 🍇 Uvas no se incluyen: las fuentes disponibles no especifican su ventana de cosecha.</p>
+  </section>
+
+  <section class="gantt-card">
+    <h2>🔄 Proceso completo: cereza y manzana</h2>
+    <p class="hint">De la dormancia del huerto hasta el packing en la central, fase por fase, en el mismo eje de tiempo. Mandarinas, clementinas y arándanos no aparecen aquí porque las Centrales Frutícolas (Talca, Angol, Lontué) solo procesan cereza y manzana.</p>
+    <div class="gantt-wrap">
+      <div class="gantt process-gantt">
+        <div style="grid-row:1;grid-column:1"></div>
+        <div style="grid-row:1;grid-column:2" class="g-month">May</div>
+        <div style="grid-row:1;grid-column:3" class="g-month">Jun</div>
+        <div style="grid-row:1;grid-column:4" class="g-month">Jul</div>
+        <div style="grid-row:1;grid-column:5" class="g-month">Ago</div>
+        <div style="grid-row:1;grid-column:6" class="g-month">Sep</div>
+        <div style="grid-row:1;grid-column:7" class="g-month">Oct</div>
+        <div style="grid-row:1;grid-column:8" class="g-month">Nov</div>
+        <div style="grid-row:1;grid-column:9" class="g-month">Dic</div>
+        <div style="grid-row:1;grid-column:10" class="g-month">Ene</div>
+        <div style="grid-row:1;grid-column:11" class="g-month">Feb</div>
+        <div style="grid-row:1;grid-column:12" class="g-month">Mar</div>
+        <div style="grid-row:1;grid-column:13" class="g-month">Abr</div>
+
+        <div style="grid-row:2" class="g-section">🍒 Cereza</div>
+
+        <div style="grid-row:3;grid-column:1" class="g-label">Dormancia y poda</div>
+        <div style="grid-row:3;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:3;grid-column:2/5;background:#5b7fae" class="g-bar">May–Jul</div>
+
+        <div style="grid-row:4;grid-column:1" class="g-label">Floración y raleo</div>
+        <div style="grid-row:4;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:4;grid-column:5/8;background:#e0a72e" class="g-bar">Ago–Oct</div>
+
+        <div style="grid-row:5;grid-column:1" class="g-label">Cosecha (huerto)</div>
+        <div style="grid-row:5;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:5;grid-column:8/11;background:#c23b4b" class="g-bar">Nov–Ene</div>
+
+        <div style="grid-row:6;grid-column:1" class="g-label">Central / Packing</div>
+        <div style="grid-row:6;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:6;grid-column:8/11;background:#114425" class="g-bar">Nov–Ene</div>
+
+        <div style="grid-row:7;grid-column:1" class="g-label">Postcosecha (huerto)</div>
+        <div style="grid-row:7;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:7;grid-column:11/14;background:#4f9463" class="g-bar">Feb–Abr</div>
+
+        <div style="grid-row:8;grid-column:1" class="g-label">💰 Liquidación (pago)</div>
+        <div style="grid-row:8;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:8;grid-column:13/14;background:#b8860b" class="g-bar">Abr</div>
+
+        <div style="grid-row:9" class="g-section">🍎 Manzana</div>
+
+        <div style="grid-row:10;grid-column:1" class="g-label">Dormancia y poda</div>
+        <div style="grid-row:10;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:10;grid-column:2/6;background:#5b7fae" class="g-bar">May–Ago</div>
+
+        <div style="grid-row:11;grid-column:1" class="g-label">Floración y raleo</div>
+        <div style="grid-row:11;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:11;grid-column:6/8;background:#e0a72e" class="g-bar">Sep–Oct</div>
+
+        <div style="grid-row:12;grid-column:1" class="g-label">Cosecha (huerto)</div>
+        <div style="grid-row:12;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:12;grid-column:11/14;background:#c23b4b" class="g-bar">Feb–Abr</div>
+
+        <div style="grid-row:13;grid-column:1" class="g-label">Central / Packing</div>
+        <div style="grid-row:13;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:13;grid-column:2/8;background:#114425" class="g-bar">May–Oct</div>
+        <div style="grid-row:13;grid-column:11/14;background:#114425" class="g-bar">Feb–Abr</div>
+
+        <div style="grid-row:14;grid-column:1" class="g-label">💰 Liquidación (pago)</div>
+        <div style="grid-row:14;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:14;grid-column:8/10;background:#b8860b" class="g-bar">Nov–Dic</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span class="lg"><i style="background:#5b7fae"></i>Dormancia y poda</span>
+      <span class="lg"><i style="background:#e0a72e"></i>Floración y raleo</span>
+      <span class="lg"><i style="background:#c23b4b"></i>Cosecha (huerto)</span>
+      <span class="lg"><i style="background:#114425"></i>Central / Packing</span>
+      <span class="lg"><i style="background:#4f9463"></i>Postcosecha (huerto, solo cereza)</span>
+      <span class="lg"><i style="background:#b8860b"></i>💰 Liquidación (pago)</span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b>🍒 Cereza</b>Central procesa la fruta de inmediato (frío convencional): cosecha y packing prácticamente al mismo tiempo, nov–ene. Se paga (liquidación) en abril, después de la postcosecha.</div>
+      <div class="stat"><b>🍎 Manzana</b>Central extiende el packing más allá de la cosecha gracias a la atmósfera controlada, vendiendo hasta octubre. Se paga (liquidación) entre noviembre y diciembre, ya cerrada la temporada de venta.</div>
+    </div>
+    <p class="gantt-note">La temporada de las Centrales Frutícolas va de noviembre a octubre del año siguiente: cerezas al inicio (nov–ene) y manzanas durante el resto del año operativo (feb–oct).</p>
+  </section>
+
+  <section class="gantt-card">
+    <h2>💰 Cuándo pagan: liquidaciones por producto</h2>
+    <p class="hint">El productor recibe la liquidación cuando la Exportadora cobra la venta — no coincide con el mes de cosecha.</p>
+    <div class="gantt-wrap">
+      <div class="gantt">
+        <div style="grid-row:1;grid-column:1"></div>
+        <div style="grid-row:1;grid-column:2" class="g-month">May</div>
+        <div style="grid-row:1;grid-column:3" class="g-month">Jun</div>
+        <div style="grid-row:1;grid-column:4" class="g-month">Jul</div>
+        <div style="grid-row:1;grid-column:5" class="g-month">Ago</div>
+        <div style="grid-row:1;grid-column:6" class="g-month">Sep</div>
+        <div style="grid-row:1;grid-column:7" class="g-month">Oct</div>
+        <div style="grid-row:1;grid-column:8" class="g-month">Nov</div>
+        <div style="grid-row:1;grid-column:9" class="g-month">Dic</div>
+        <div style="grid-row:1;grid-column:10" class="g-month">Ene</div>
+        <div style="grid-row:1;grid-column:11" class="g-month">Feb</div>
+        <div style="grid-row:1;grid-column:12" class="g-month">Mar</div>
+        <div style="grid-row:1;grid-column:13" class="g-month">Abr</div>
+
+        <div style="grid-row:2;grid-column:1" class="g-label">🍒 Cerezas</div>
+        <div style="grid-row:2;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:2;grid-column:13/14;background:#c23b4b" class="g-bar">Abr</div>
+
+        <div style="grid-row:3;grid-column:1" class="g-label">🍎 Manzanas</div>
+        <div style="grid-row:3;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:3;grid-column:8/10;background:#2d7644" class="g-bar">Nov–Dic</div>
+
+        <div style="grid-row:4;grid-column:1" class="g-label">🍇 Uvas</div>
+        <div style="grid-row:4;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:4;grid-column:3/5;background:#6a3d9a" class="g-bar">Jun–Jul</div>
+
+        <div style="grid-row:5;grid-column:1" class="g-label">🍊 Cítricos</div>
+        <div style="grid-row:5;grid-column:2/14" class="g-track"></div>
+        <div style="grid-row:5;grid-column:9/11;background:#e0a72e" class="g-bar">Dic–Ene</div>
+
+        <div style="grid-row:6;grid-column:1" class="g-label">🍑 Duraznos</div>
+        <div style="grid-row:6;grid-column:2/14" class="g-track"></div>
+      </div>
+    </div>
+    <p class="gantt-note">🍑 Duraznos no reciben liquidación: la fruta no se vende en fresco vía Exportadora, va a proceso interno (Conservera / San Clemente Foods). 🍊 "Cítricos" agrupa mandarinas y clementinas.</p>
+  </section>
+
+  <div class="sources">
+    <strong>Fuentes:</strong> compendios de cerezas y manzanas (fases del huerto, cosecha y liquidación), infografía de Centrales Frutícolas (calendario operacional de packing), páginas de producto de sclem.cl (mandarinas, clementinas, arándanos) y calendario de liquidaciones por producto. Ver también <a href="Diagrama_Agricola.html" style="color:#114425">Diagrama Agrícola</a> para el detalle del ciclo biológico completo de cereza y manzana.
+  </div>
+
+  <footer>Agrícola San Clemente · Ciclos y Temporadas</footer>
+</main>
+</body>
+</html>
