@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auditoría del modelo Power BI — Control de Gestión ASC</title>
+<style>
+  :root{color-scheme:light dark}
+  :root {
+    --bg: #EEF1EC;
+    --surface: #FFFFFF;
+    --surface-2: #E4E9E2;
+    --ink: #1F2A24;
+    --ink-soft: #55645B;
+    --ink-faint: #85958B;
+    --line: #C9D1C6;
+    --accent: #B8721C;
+    --accent-soft: #F2E2C9;
+    --teal: #2A6E63;
+    --teal-soft: #DCEAE6;
+    --danger: #A8452F;
+    --danger-soft: #F4E0DA;
+    --radius: 3px;
+    --serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+    --sans: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "Consolas", "Liberation Mono", monospace;
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #121815;
+    --surface: #1A231F;
+    --surface-2: #212C26;
+    --ink: #E7EDE7;
+    --ink-soft: #A3B3A9;
+    --ink-faint: #71827A;
+    --line: #2C3A33;
+    --accent: #E3A555;
+    --accent-soft: #3A2E1B;
+    --teal: #6FBBA9;
+    --teal-soft: #1D332E;
+    --danger: #E08672;
+    --danger-soft: #3A241E;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121815;
+      --surface: #1A231F;
+      --surface-2: #212C26;
+      --ink: #E7EDE7;
+      --ink-soft: #A3B3A9;
+      --ink-faint: #71827A;
+      --line: #2C3A33;
+      --accent: #E3A555;
+      --accent-soft: #3A2E1B;
+      --teal: #6FBBA9;
+      --teal-soft: #1D332E;
+      --danger: #E08672;
+      --danger-soft: #3A241E;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    margin: 0;
+    padding: 0 24px 96px;
+  }
+
+  .page { max-width: 920px; margin: 0 auto; }
+  .wide { max-width: 1180px; }
+
+  header.masthead {
+    padding: 64px 0 28px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin: 0 0 14px;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 1.16;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px;
+    text-wrap: balance;
+    max-width: 20ch;
+  }
+
+  .dek { font-size: 17px; color: var(--ink-soft); max-width: 66ch; margin: 0 0 18px; }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  section { margin: 56px 0; }
+
+  h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 26px;
+    letter-spacing: -0.005em;
+    margin: 0 0 6px;
+    text-wrap: balance;
+  }
+
+  h3.sub-h {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 19px;
+    color: var(--ink);
+    margin: 34px 0 8px;
+  }
+
+  .section-note { color: var(--ink-soft); max-width: 70ch; margin: 0 0 28px; font-size: 15px; }
+
+  p { max-width: 70ch; }
+  p.wide-p { max-width: 80ch; }
+  code.inline { font-family: var(--mono); font-size: 0.88em; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; color: var(--ink); }
+
+  /* ---------- Finding cards ---------- */
+  .findings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .finding { background: var(--surface); padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 10px; }
+  .finding .tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--danger); }
+  .finding h3 { font-family: var(--serif); font-size: 18px; font-weight: 400; margin: 0; }
+  .finding .src { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); margin-top: auto; padding-top: 8px; border-top: 1px dotted var(--line); }
+  .finding p { font-size: 14.5px; color: var(--ink-soft); margin: 0; max-width: none; }
+
+  /* ---------- Table ---------- */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); }
+  table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 13.5px; }
+  table.narrow { min-width: 560px; }
+  thead th {
+    text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-faint); font-weight: 500; padding: 10px 14px;
+    border-bottom: 1px solid var(--line); background: var(--surface-2); position: sticky; top: 0;
+  }
+  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--ink-soft); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr.group-head td {
+    background: var(--surface-2); font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink); padding: 8px 14px;
+  }
+  tbody td.col-field { font-family: var(--mono); font-size: 12px; color: var(--ink); white-space: nowrap; }
+  tbody td.num { font-family: var(--mono); font-size: 12.5px; color: var(--ink); white-space: nowrap; }
+
+  .verdict {
+    display: inline-block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.04em;
+    text-transform: uppercase; padding: 2px 7px; border-radius: var(--radius); white-space: nowrap;
+  }
+  .v-low, .v-alto-imp { background: var(--teal-soft); color: var(--teal); }
+  .v-high, .v-bajo-imp { background: var(--danger-soft); color: var(--danger); }
+  .v-med { background: var(--accent-soft); color: var(--accent); }
+
+  /* ---------- Code / lineage block ---------- */
+  .codeblock {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px 20px; overflow-x: auto; font-family: var(--mono); font-size: 12.5px;
+    line-height: 1.65; color: var(--ink-soft); white-space: pre;
+  }
+
+  /* ---------- Family grid (2.2) ---------- */
+  .family-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 8px; }
+  .family-card { background: var(--surface); padding: 20px 20px 22px; }
+  .family-card h4 { font-family: var(--serif); font-weight: 400; font-size: 16.5px; margin: 0 0 10px; color: var(--ink); }
+  .family-card p { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 8px; max-width: none; }
+  .family-card p b { color: var(--ink); }
+
+  /* ---------- Phase tracker ---------- */
+  .phases { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 8px; }
+  .phase { background: var(--surface); padding: 18px 18px 20px; }
+  .phase .ph-num { font-family: var(--mono); font-size: 11px; color: var(--teal); letter-spacing: 0.05em; }
+  .phase h4 { font-family: var(--serif); font-weight: 400; font-size: 16px; margin: 6px 0 6px; }
+  .phase p { font-size: 13px; color: var(--ink-soft); margin: 0; max-width: none; }
+
+  ol.rules { padding-left: 20px; max-width: 78ch; }
+  ol.rules li { margin-bottom: 14px; color: var(--ink-soft); font-size: 15px; }
+  ol.rules li b { color: var(--ink); font-weight: 600; }
+
+  footer { margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; color: var(--ink-faint); }
+  footer a { color: var(--teal); }
+
+  .scnav{position:sticky;top:0;z-index:99999;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;padding:.55rem 1rem;background:#114425;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:.85rem;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+  .scnav a{color:#fff;text-decoration:none;opacity:.85}
+  .scnav .scnav-home{font-weight:700;opacity:.9}
+  .scnav .scnav-sep{opacity:.35}
+  .scnav .scnav-current{font-weight:700;color:#fff;opacity:1}
+  .scnav details{position:relative}
+  .scnav summary{cursor:pointer;list-style:none;font-weight:700;display:inline-flex;align-items:center;gap:.3rem;color:#fff}
+  .scnav summary::-webkit-details-marker{display:none}
+  .scnav summary::after{content:'▾';font-size:.7em;transition:transform .15s ease}
+  .scnav details[open] summary::after{transform:rotate(180deg)}
+  .scnav .scnav-menu{position:absolute;top:calc(100% + .5rem);left:0;background:#fff;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.22);min-width:270px;overflow:hidden;padding:.35rem 0}
+  .scnav .scnav-menu a{display:block;padding:.55rem 1rem;color:#16281c;font-weight:500;white-space:nowrap;opacity:1}
+  .scnav .scnav-menu a:hover{background:#f1f4f0}
+  .scnav .scnav-menu .scnav-current{display:block;padding:.55rem 1rem;color:#114425;font-weight:700;background:#eef5ef;white-space:nowrap}
+
+  @media (max-width: 640px) {
+    h1 { font-size: 28px; max-width: none; }
+  }
+</style>
+</head>
+<body>
+<nav class="scnav">
+  <a class="scnav-home" href="../index.html">🏠 Inicio</a>
+  <span class="scnav-sep">|</span>
+  <a href="../Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">🏭 Centrales Frutícolas</a>
+  <span class="scnav-sep">|</span>
+  <a href="../Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍒 Cerezas</a>
+  <span class="scnav-sep">|</span>
+  <a href="../Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍎 Manzanas</a>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📊 Infografías</summary>
+    <div class="scnav-menu">
+    <a href="../Comparativa_Cerezas_vs_Manzanas.html">🍒🍎 Comparativa Cerezas vs Manzanas</a>
+    <a href="../Diagrama_Agricola.html">🧠 Diagrama Agrícola</a>
+    <a href="../Ciclos_y_Temporadas.html">📅 Ciclos y Temporadas</a>
+    <a href="../Indicadores_de_Gestion.html">📊 Indicadores de Gestión</a>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📝 Cuestionarios</summary>
+    <div class="scnav-menu">
+    <a href="../Cuestionario_Agricola.html">📝 Cuestionario Agrícola</a>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📈 Propuestas de mejora</summary>
+    <div class="scnav-menu">
+    <span class="scnav-current">🔍 Informe de Auditoría</span>
+    <a href="propuesta_flujo.html">🗺️ Propuesta de Arquitectura</a>
+    </div>
+  </details>
+  <script>document.addEventListener('click',function(e){document.querySelectorAll('.scnav details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});</script>
+</nav>
+
+<div class="page">
+  <header class="masthead">
+    <p class="eyebrow">Control de Gestión — ASC San Clemente</p>
+    <h1>Auditoría del modelo Power BI</h1>
+    <p class="dek">Elaborado a partir de metadatos INFO.VIEW, Model.bim/VertiPaq (.vpax), código M de las 125 particiones, layout del reporte (91 páginas) y muestras de datos. Un modelo de 2,4 GB y 169 millones de filas que se sostiene, en un 85 %, sobre una sola cadena de tablas.</p>
+    <div class="meta">
+      <span>08 jul 2026</span>
+      <span>Fuente: INFO.VIEW · Model.bim · 07_modelo.vpax · código M</span>
+      <span>Ver también: <a href="propuesta_flujo.html" style="color:inherit">propuesta de arquitectura →</a></span>
+    </div>
+  </header>
+
+  <section>
+    <h2>1. Entendimiento del negocio</h2>
+    <p class="section-note">Qué mide el modelo y cómo llegan los datos hoy, reconstruido a partir del código M y el layout del reporte.</p>
+
+    <h3 class="sub-h">1.1 Qué mide el modelo</h3>
+    <p class="wide-p">Control presupuestario de una operación frutícola (unidad <b>ASC — San Clemente</b>, con módulos en desarrollo para Centrales, Exportadora, Foods y Conservera). El eje analítico es el <b>Estado de Resultados (EERR) por temporada agrícola</b> (jul–jun aprox., 24 meses de columnas ENE→DIC×2 por temporada), comparando 4 escenarios (<code class="inline">ETAPA</code>): <code class="inline">PPTO</code> (presupuesto), <code class="inline">REAL</code>, <code class="inline">PROY</code> (proyección/forecast) y <code class="inline">ANT</code> (temporada anterior), en CLP y USD, con indicadores unitarios por hectárea, caja exportada y kg (cosechado/procesado/exportado).</p>
+    <p class="wide-p">La unidad de análisis operativa es el <b>cuartel/huerto</b> (<code class="inline">ID</code> = variedad + año plantación + estado + polinizante + grupo), agregable a campo → ubicación → especie. El plan de cuentas de gestión es <b>CONCEPTO → ITEM → DESCRIPCION</b> (con atributos FIJO/VAR, BASE, DISTRIBUCION).</p>
+
+    <h3 class="sub-h">1.2 Flujo de datos actual (linaje reconstruido)</h3>
+    <div class="codeblock">SAP (KSB1, export manual a Excel)          Excel PPTO/PROY (carga manual)
+        │                                          │
+        ▼                                          ▼
+G:\ (Google Drive compartido) — 44 archivos Excel/XLSB
+  • MAPEO * (xlsb): cuenta SAP → plan EERR + distribución de costos
+  • EERR PPTO/REAL/PROY - SCLEM.xlsx (hoja BASE, ~85–232 MB c/u):
+    ya traen los 24 meses en columnas, CLP y USD ya convertidos
+        │
+        ▼  Power Query (88 consultas M)
+19 × BASE_&lt;ETAPA&gt;_&lt;TEMPORADA&gt;  (una consulta por escenario×temporada,
+        │                       cada una lee la hoja BASE de su Excel)
+        ▼  Table.Combine + join MES_ACUM_ET (flag del mes de cierre)
+BASE_CONS_CIERRE_MENSUAL_EV      2,4 M filas × 110 cols (matriz ancha)
+        │                        + columnas MES_ACTUAL / ACUM / RESTO / TOTAL
+        ├──► EV_2   (unpivot 56 columnas)   ⚠ 126,7 M filas — 848 MB (35 % del modelo)
+        ├──► PER    (unpivot 8 períodos × 2 monedas + pivot ETAPA)  14,3 M filas
+        │      └──► PER_ING / PER_CJEX / PER_KGCOS / PER_PROD / PER_SUP
+        └──► PER_ID_ETAP_TEMP  (pivot por temporada)  14,3 M filas (copia)
+                                 + 63 medidas duplicadas por temporada
+
+BASE_SAP_23-24/24-25/25-26 ──► BASE_SAP_CONS (798 K filas × 76 cols, detalle documento)
+BASE_HIST_EERR_CONS (+8 derivadas)  — histórico EERR consolidado
+Módulo RRHH: FICHA COLABORADOR, REM, DIAS FALTAS, CAPACITACION, SINIESTRABILIDAD</div>
+
+    <h3 class="sub-h">1.3 Cifras clave del modelo</h3>
+    <div class="table-wrap">
+      <table class="narrow">
+        <thead><tr><th>Métrica</th><th>Valor</th><th>Comentario</th></tr></thead>
+        <tbody>
+          <tr><td>Tamaño pbix / memoria</td><td class="num">504 MB / 2,4 GB</td><td>Al límite de Pro (1 GB) si se publica</td></tr>
+          <tr><td>Filas totales</td><td class="num">169,4 M</td><td>75 % en EV_2 (126,7 M)</td></tr>
+          <tr><td>Tablas</td><td class="num">125 (55 ocultas)</td><td>88 M + 37 calculadas; ~15 son LocalDateTable automáticas</td></tr>
+          <tr><td>Columnas</td><td class="num">4.999</td><td>3.832 de texto</td></tr>
+          <tr><td>Medidas</td><td class="num">286</td><td>102 en PER + 63 duplicadas por temporada en PER_ID_ETAP_TEMP</td></tr>
+          <tr><td>Relaciones</td><td class="num">47</td><td>Mayoría hacia LocalDateTables o tablas ORDEN_* de ordenamiento; <b>no hay star schema</b></td></tr>
+          <tr><td>Páginas del reporte</td><td class="num">91</td><td>~48 son la misma plantilla repetida por métrica/escenario; 6 se llaman "Duplicado de…"</td></tr>
+          <tr><td>Orígenes</td><td class="num">44 archivos Excel/XLSB</td><td>Todos en G:\ — cero bases de datos</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-h">1.4 Concentración de uso</h3>
+    <p class="section-note">Cruce entre las 663 referencias de visuales del reporte y el tamaño en memoria de cada familia de tablas.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Familia</th><th>Memoria</th><th>Páginas donde aparece</th><th>Referencias en visuales</th></tr></thead>
+        <tbody>
+          <tr><td><b>CIERRE_MENSUAL</b> (EV → EV_2 → PER → PER_ID_ETAP_TEMP + VARIABLES)</td><td class="num"><b>1.419 MB (58,8 %)</b></td><td class="num"><b>63 de 74 (85 %)</b></td><td class="num">368 + 45 (61 %)</td></tr>
+          <tr><td>BASE_&lt;ETAPA&gt;_&lt;TEMP&gt; ×19 (solo alimentan a EV, no se visualizan)</td><td class="num">304 MB (12,6 %)</td><td class="num">0</td><td class="num">0</td></tr>
+          <tr><td>ESC (otra unidad de negocio)</td><td class="num">140 MB (5,8 %)</td><td class="num">pocas</td><td class="num">bajas</td></tr>
+          <tr><td>BASE_SAP_CONS (+3 anuales)</td><td class="num">129 MB (5,3 %)</td><td class="num">2 de 74</td><td class="num">6 (0,9 %)</td></tr>
+          <tr><td>RRHH</td><td class="num">120 MB (5,0 %)</td><td class="num">~8</td><td class="num">13</td></tr>
+          <tr><td>LocalDateTables automáticas</td><td class="num">78 MB (3,2 %)</td><td class="num">—</td><td class="num">0</td></tr>
+          <tr><td>HIST_EERR + MAPEO + CARGA_PPTO + lookups</td><td class="num">~45 MB</td><td class="num">resto</td><td class="num">resto</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="wide-p" style="margin-top:20px;"><b>Conclusión:</b> el pbix se sostiene sobre UNA cadena — <code class="inline">BASE_CONS_CIERRE_MENSUAL_PER</code> y sus derivadas. <code class="inline">BASE_SAP_CONS</code> es una fuente paralela casi sin uso en el reporte (solo páginas 000–002) y no alimenta a PER: son carriles separados. Optimizar la cadena EV→PER resuelve el 85 % del reporte.</p>
+    <p class="wide-p"><b>Aclaraciones de alcance:</b> <code class="inline">R_BCC_TOT_TOT_SCLEM</code> no es una tabla del pbix: es una hoja dentro de los Excel EERR (el "resumen por cuartel" que alimenta la hoja BASE) — se usa en este informe solo como evidencia de diseño para dim_cuartel. Existen 223 referencias de formato condicional a una tabla <code class="inline">BASE_CONS</code> que ya no existe en el modelo (residuo de copiar/pegar visuales); Power BI las ignora, pero confirman el patrón de plantillas clonadas.</p>
+
+    <h3 class="sub-h">1.5 Reglas de negocio desentrañadas del código M</h3>
+    <ol class="rules">
+      <li><b>Cierre mensual:</b> la tabla <code class="inline">MES_ACUM</code> / <code class="inline">MES_ACUM_ET</code> marca con un <code class="inline">2</code> el mes vigente de cada temporada×etapa. EV la cruza y calcula MES_ACTUAL, ACUM_ACTUAL, RESTO_AÑO_ACTUAL con cadenas de 24 if/else (×4 métricas ×2 monedas ≈ 200 líneas de M). El cierre se "ejecuta" editando ese flag en un Excel mantenedor.</li>
+      <li><b>Distribución de costos:</b> los costos SAP no asignables a cuartel se prorratean (columnas CECO_DISTR, % TEMP_DISTR, MONTO CLP DISTR., reglas HA-ESP, HA-CAM-PROD, SAP-DIR) — esta lógica vive en los Excel MAPEO/EERR, no en el pbix.</li>
+      <li><b>Conversión USD:</b> ocurre aguas arriba, en los Excel EERR (columnas *_USD ya vienen calculadas). No hay tabla de tipo de cambio en el modelo.</li>
+      <li><b>Llaves:</b> todo se une por claves concatenadas de texto (ID_FINAL = TEMPORADA&amp;ETAPA&amp;ID&amp;UBICACIÓN&amp;CAMPO; ID_ETAPA_EVOL = 7 campos con guiones). La sola columna ID_FINAL de EV_2 pesa 283 MB (388 K valores distintos).</li>
+      <li><b>Gasto real no presupuestado</b> cae a un ID NO PRESUPUESTADO por campo (fila comodín con dimensiones &lt;&gt;).</li>
+    </ol>
+  </section>
+
+  <section class="wide">
+    <h2>2. Auditoría de tablas y requerimientos</h2>
+
+    <h3 class="sub-h">2.1 Problemas estructurales transversales</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Problema</th><th>Evidencia</th><th>Impacto</th></tr></thead>
+        <tbody>
+          <tr><td class="col-field">P1</td><td><b>Granularidad artificial</b>: los hechos viajan en formato ancho (24 meses × 2 monedas = 53 columnas de valor) y luego se despivotan DENTRO del modelo</td><td>EV → EV_2 (×56), EV → PER (×16)</td><td>El mismo dato existe 3–4 veces; 126 M filas que deberían ser &lt; 5 M</td></tr>
+          <tr><td class="col-field">P2</td><td><b>Moneda como filas</b> (PERIODO = ACUM_ACTUAL vs ACUM_ACTUAL_USD) en vez de dos columnas de medida</td><td>muestra 09</td><td>Duplica filas de PER; obliga al slicer MONEDA</td></tr>
+          <tr><td class="col-field">P3</td><td><b>Temporada como columnas + medidas clonadas</b> (24-25 REAL/HA, 25-26 REAL/HA…)</td><td>PER_ID_ETAP_TEMP: 63 medidas</td><td>Cada temporada nueva = crear columnas y ~16 medidas a mano</td></tr>
+          <tr><td class="col-field">P4</td><td><b>Dimensiones incrustadas en los hechos</b>: atributos de cuartel (17 cols), plan de cuentas (7 cols) y cantidades productivas (12 cols) repetidos en cada fila de gasto</td><td>BASE_SAP_CONS 76 cols; EV 110 cols</td><td>Infla memoria (83 % del modelo es texto dimensional repetido) e impide consistencia</td></tr>
+          <tr><td class="col-field">P5</td><td><b>Sin relaciones entre hechos</b>: SAP_CONS, PER, HIST y RRHH son islas; los filtros no se propagan, cada página filtra su propia tabla</td><td>47 relaciones, ninguna entre tablas grandes</td><td>No se puede cruzar real SAP vs EERR sin duplicar lógica</td></tr>
+          <tr><td class="col-field">P6</td><td><b>Sin dimensión fecha real</b>: el período es una etiqueta de texto (01-ENE…24-DIC) ordenada por tablas ORDEN_*; Auto date/time encendido genera 15 LocalDateTables (≈ 90 MB)</td><td>vpax</td><td>Sin time-intelligence nativa; sin comparación inter-temporada por fecha calendario</td></tr>
+          <tr><td class="col-field">P7</td><td><b>Cantidades como texto</b>: 3.832 de 4.999 columnas son Text, incluyendo montos y kg en varias BASE_*</td><td>02_columnas</td><td>Errores silenciosos de agregación; peor compresión</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-h">2.2 Qué le falta a cada familia de tablas</h3>
+    <div class="family-grid">
+      <div class="family-card">
+        <h4>BASE_SAP_CONS <span style="color:var(--ink-faint);font-weight:400;font-size:12px;">(hecho transaccional, 798 K filas)</span></h4>
+        <p><b>Falta:</b> clave de documento estable (Nº doc + posición), tipo de cambio aplicado, separación de las ~30 columnas dimensionales a dimensiones.</p>
+        <p><b>Sobra:</b> columnas de auditoría del export (USUARIO, CLAVE REFERENCIA…) que nadie usa en visuales — solo 9 de 76 columnas aparecen en el reporte.</p>
+      </div>
+      <div class="family-card">
+        <h4>BASE_&lt;ETAPA&gt;_&lt;TEMPORADA&gt; ×19 + EV/EV_2/PER <span style="color:var(--ink-faint);font-weight:400;font-size:12px;">(hecho EERR)</span></h4>
+        <p><b>Falta:</b> columna fecha (primer día del mes) derivable de temporada+posición 1–24; monto CLP y USD como dos columnas; eliminar filas cero (la muestra REAL trae filas 100 % en cero).</p>
+        <p><b>Sobra:</b> EV_2 completa (existe solo para alimentar 3 tablas "VARIABLES |" de un informe dinámico — se reemplaza con field parameters sobre PER); PER_ID_ETAP_TEMP completa (es PER re-pivoteada; se reemplaza con calculation groups).</p>
+      </div>
+      <div class="family-card">
+        <h4>BASE_MAPEO_* ×8 y ORDEN_* ×5 <span style="color:var(--ink-faint);font-weight:400;font-size:12px;">(dimensiones de facto)</span></h4>
+        <p><b>Falta:</b> consolidarlas en una dimensión plan-de-cuentas única versionada por temporada, con el orden como atributo (no como tablas sueltas re-joineadas en cada BASE_*).</p>
+      </div>
+      <div class="family-card">
+        <h4>Módulo RRHH <span style="color:var(--ink-faint);font-weight:400;font-size:12px;">(00_*)</span></h4>
+        <p><b>Falta:</b> dimensión colaborador conformada (hoy FICHA_COLABORADOR y BASE_COLABORADOR coexisten casi idénticas) y relación con la dimensión campo/ubicación para cruzar dotación con costos.</p>
+      </div>
+      <div class="family-card">
+        <h4>Ausentes en todo el ecosistema</h4>
+        <p>Tabla de <b>tipo de cambio</b> (mes × TC) — hoy el USD es una caja negra de Excel.</p>
+        <p><b>Maestro de cuarteles</b> (dim huerto) independiente de los EERR.</p>
+        <p>Tabla de <b>parámetros de cierre</b> (temporada, mes cerrado) — hoy es el flag 2 en MES_ACUM.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wide">
+    <h2>3. Matriz de oportunidades de automatización</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Proceso manual actual</th><th>Dolor</th><th>Solución propuesta</th><th>Esfuerzo</th><th>Impacto</th></tr></thead>
+        <tbody>
+          <tr><td class="col-field">A1</td><td>Marcar el mes de cierre editando MES_ACUM (flag 2) y refrescar todo</td><td>Refresh completo de 169 M filas por un flag</td><td>Tabla param_cierre (temporada, mes); los acumulados se calculan en DAX/SQL contra ella</td><td><span class="verdict v-low">Bajo</span></td><td><span class="verdict v-alto-imp">Alto</span></td></tr>
+          <tr><td class="col-field">A2</td><td>Alta de temporada nueva: crear carpetas, 4+ consultas BASE_*_26_27, editar Table.Combine, clonar columnas y ~16 medidas</td><td>Días de trabajo y errores cada año</td><td>Ingesta por convención de carpeta (loop sobre G:\...\TEMPORADA *) + esquema largo: temporada es un dato, no una estructura</td><td><span class="verdict v-med">Medio</span></td><td><span class="verdict v-alto-imp">Alto</span></td></tr>
+          <tr><td class="col-field">A3</td><td>Export SAP KSB1 → Excel → pegar en carpeta</td><td>Sin trazabilidad ni validación</td><td>Script Python de ingesta con validaciones (totales, cuentas sin mapeo, duplicados) y log de carga; el archivo Excel sigue siendo el buzón de entrada</td><td><span class="verdict v-low">Bajo</span></td><td><span class="verdict v-alto-imp">Alto</span></td></tr>
+          <tr><td class="col-field">A4</td><td>Workbooks EERR de 85–232 MB que calculan distribución de costos y USD con fórmulas</td><td>Lentitud, riesgo de fórmula rota, un solo editor a la vez</td><td>Mover prorrateo y conversión FX a SQL (reglas DISTRIBUCION + tabla TC); el Excel queda solo como captura de PPTO/PROY</td><td><span class="verdict v-high">Alto</span></td><td><span class="verdict v-alto-imp">Muy alto</span></td></tr>
+          <tr><td class="col-field">A5</td><td>63 medidas clonadas por temporada + 88 medidas de variantes (/HA, /CJ, /KG × 4 escenarios)</td><td>Mantenimiento explosivo</td><td>Calculation groups (escenario, unitario, moneda): ~15 medidas base generan todas las combinaciones</td><td><span class="verdict v-med">Medio</span></td><td><span class="verdict v-alto-imp">Alto</span></td></tr>
+          <tr><td class="col-field">A6</td><td>~48 páginas-plantilla repetidas + 6 "Duplicado de" + tablas "VARIABLES |" manuales</td><td>Reporte inmantenible, 16,5 MB de layout</td><td>Field parameters nativos + 1 página por familia (ya existe el patrón en las páginas "DINAMICO")</td><td><span class="verdict v-med">Medio</span></td><td><span class="verdict v-alto-imp">Alto</span></td></tr>
+          <tr><td class="col-field">A7</td><td>EV_2 (126,7 M filas) recalculada en cada refresh solo para el informe dinámico</td><td>Refresh eterno, pbix de 504 MB</td><td>Eliminarla; el unpivot deja de existir cuando el hecho nace en formato largo</td><td><span class="verdict v-low">Bajo (tras A6)</span></td><td><span class="verdict v-alto-imp">Muy alto</span></td></tr>
+          <tr><td class="col-field">A8</td><td>Publicación manual del pbix de 504 MB</td><td>Subidas fallidas, sin versionado</td><td>Modelo delgado (&lt; 100 MB estimado post-limpieza) o conexión a SQL + refresh programado</td><td>—</td><td><span class="verdict v-med">Medio</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="wide">
+    <h2>4. Roadmap de migración a SQL</h2>
+
+    <h3 class="sub-h">4.1 Contexto de conectividad</h3>
+    <p class="wide-p">La empresa dispone de la arquitectura <b>SAP HANA → SAP Datasphere → ODBC</b>, con vistas preparadas por TI consumibles desde herramientas externas. Esto significa que el escenario <b>REAL puede extraerse por ODBC directamente desde Datasphere</b> (vía pyodbc en Python o conector ODBC en Power BI), eliminando el export manual KSB1→Excel. Los escenarios <b>PPTO / PROY y las cantidades productivas</b> seguirán naciendo en Excel del área (arquitectura híbrida): el Excel se conserva como formulario de entrada, nunca como motor de cálculo ni almacén.</p>
+    <p class="wide-p"><b>Solicitud a TI para habilitar la extracción</b> (4 ítems): (1) usuario de base de datos del space de Datasphere con acceso SQL habilitado (Database User); (2) host, puerto y nombre de las vistas expuestas — como mínimo, líneas de costo equivalentes a KSB1 (ceco, clase de coste, fecha contabilización, monto, moneda, material); (3) confirmación del driver SAP HANA Client (HDBODBC); (4) registro de la IP de salida del equipo en la allowlist de Datasphere.</p>
+
+    <h3 class="sub-h">4.2 Arquitectura objetivo (star schema)</h3>
+    <div class="codeblock">DIMENSIONES                            HECHOS
+dim_tiempo (fecha, mes_temp 1-24,      fact_eerr_mensual
+            temporada, año calend.)      grano: cuartel × cuenta × mes ×
+dim_cuartel (ID, variedad, año_plant,           escenario × temporada
+            estado, polinizante,         medidas: monto_clp, monto_usd
+            campo, ubicación, especie)  fact_sap_movimiento
+dim_cuenta (concepto&gt;item&gt;descripción,    grano: documento SAP línea
+            fijo/var, base, órdenes)      medidas: monto_clp, monto_distr, cantidad
+dim_escenario (PPTO/REAL/PROY/ANT)     fact_produccion
+dim_mapeo_sap (cta contable→dim_cuenta,   grano: cuartel × temporada × escenario
+            vigencia por temporada)       medidas: sup_ha, plantas, kg_*, cajas_*
+dim_tipo_cambio (mes, tc_clp_usd)      fact_rrhh_* (dotación, ausentismo, rem)
+param_cierre (temporada, mes_cerrado)</div>
+    <p class="wide-p" style="margin-top:18px;">Claves sustitutas enteras en lugar de ID_FINAL/ID_ETAPA_EVOL concatenados. Los acumulados (ACUM_ACTUAL, RESTO_AÑO, TOTAL) y todos los unitarios (/HA, /CJ, /KG) <b>dejan de ser columnas</b>: son medidas DAX (o vistas SQL) sobre el hecho mensual + param_cierre + fact_produccion. Tamaño estimado del hecho EERR sin filas cero: <b>3–6 M filas</b> (vs 141 M actuales entre EV_2+PER+copias).</p>
+
+    <h3 class="sub-h">4.3 Fases</h3>
+    <div class="phases">
+      <div class="phase">
+        <span class="ph-num">Fase 0 · 1–2 semanas · sin SQL</span>
+        <h4>Quick wins dentro del pbix</h4>
+        <p>Desactivar Auto date/time (−90 MB); quitar de la carga columnas no usadas de BASE_SAP_CONS y las llaves concatenadas donde no sostienen relaciones; borrar páginas duplicadas; reemplazar PER_ID_ETAP_TEMP por calculation groups. Meta: pbix &lt; 250 MB y refresh a la mitad, sin cambiar ningún número.</p>
+      </div>
+      <div class="phase">
+        <span class="ph-num">Fase 1 · 2–4 semanas</span>
+        <h4>Staging automatizado con Python</h4>
+        <p>Ya existe precedente (replicar_cierre_mensual_per.py). Dos ramas hacia PostgreSQL (esquema staging): REAL por ODBC desde Datasphere, incremental por fecha de contabilización; PPTO/PROY/cantidades/RRHH por convención de carpeta con validación. Humano-en-el-medio controlado: solo se re-exporta a Excel lo que requiere criterio.</p>
+      </div>
+      <div class="phase">
+        <span class="ph-num">Fase 2 · 4–6 semanas</span>
+        <h4>Modelo dimensional en SQL</h4>
+        <p>Dims y hechos con SQL versionado en Git (patrón dbt: staging → intermediate → marts). Migra aquí la lógica hoy repartida entre M y los Excel EERR: unpivot, prorrateo, conversión USD. Validación en paralelo contra totales del pbix actual hasta cuadrar al peso.</p>
+      </div>
+      <div class="phase">
+        <span class="ph-num">Fase 3 · 2–3 semanas</span>
+        <h4>Power BI delgado</h4>
+        <p>Nuevo pbix conectado a PostgreSQL: ~10 tablas, ~15 medidas base + calculation groups, field parameters. Reporte objetivo ≤ 25 páginas. El pbix actual queda congelado como respaldo hasta cerrar una temporada completa en paralelo.</p>
+      </div>
+      <div class="phase">
+        <span class="ph-num">Fase 4 · continuo</span>
+        <h4>Operación</h4>
+        <p>Refresh programado (Task Scheduler ejecuta la carga Python; gateway personal si se publica al Service), log de cargas, alertas de cuentas sin mapeo. Cuando TI disponga de un servidor, la base migra tal cual (PostgreSQL local → servidor es un pg_dump).</p>
+      </div>
+    </div>
+
+    <h3 class="sub-h">4.4 Viabilidad</h3>
+    <div class="table-wrap">
+      <table class="narrow">
+        <thead><tr><th>Factor</th><th>Evaluación</th></tr></thead>
+        <tbody>
+          <tr><td>Técnica</td><td><span class="verdict v-alto-imp" style="margin-right:6px;">Alta</span>orígenes 100 % archivos accesibles; lógica M ya extraída y documentada; script Python precedente que replica la transformación núcleo</td></tr>
+          <tr><td>Riesgo principal</td><td>Los Excel EERR encapsulan prorrateo y FX sin documentar → Fase 2 exige validación paralela contra el pbix actual</td></tr>
+          <tr><td>Dependencias</td><td>Ninguna externa para Fases 0–3 (PostgreSQL/Express locales, gratis). Publicar con refresh automático al Service requiere gateway</td></tr>
+          <tr><td>Retorno esperado</td><td>Modelo de 2,4 GB → &lt; 200 MB; refresh de horas → minutos incrementales; alta de temporada de días → 1 comando; mantenimiento de medidas ÷ 10</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>5. Anexos disponibles</h2>
+    <ul style="max-width:70ch;color:var(--ink-soft);font-size:15px;padding-left:20px;">
+      <li><code class="inline">05_particiones_codigo_m.csv</code> — código M completo por tabla (extraído a texto)</li>
+      <li><code class="inline">03_medidas.csv</code> — las 286 medidas con su DAX</li>
+      <li><code class="inline">07_modelo.vpax</code> — métricas VertiPaq por columna</li>
+      <li>Linaje detallado y tamaños: secciones 1.2 y 1.3 de este informe</li>
+    </ul>
+  </section>
+
+  <footer>
+    Auditoría del modelo Power BI — Área Control de Gestión (ASC / San Clemente). Ver la <a href="propuesta_flujo.html">propuesta de arquitectura de datos</a> derivada de este informe.
+  </footer>
+</div>
+</body>
+</html>

@@ -27,6 +27,7 @@
     color:#114425;
   }
   p.sub{margin:0 0 2rem;color:#4a5750;font-size:1rem}
+  h2.section-title{margin:2.2rem 0 1rem;font-size:1.1rem;color:#114425;border-top:1px solid rgba(17,68,37,.15);padding-top:1.6rem}
   .cards{display:grid;gap:1rem;grid-template-columns:1fr}
   @media (min-width:640px){.cards{grid-template-columns:repeat(2,1fr)}}
   @media (min-width:960px){.cards{grid-template-columns:repeat(3,1fr)}}
@@ -43,6 +44,7 @@
     transition:transform .15s ease, box-shadow .15s ease;
   }
   a.card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(17,68,37,.26)}
+  a.card.alt{background:linear-gradient(135deg,#8a1826,#b8721c)}
   a.card .icon{font-size:1.8rem}
   a.card .title{font-weight:700;font-size:1.05rem;line-height:1.25}
   a.card .desc{font-size:.82rem;opacity:.85}
@@ -84,10 +86,28 @@
         <span class="title">Ciclos y Temporadas</span>
         <span class="desc">Calendario comparado de cosechas</span>
       </a>
+      <a class="card" href="Indicadores_de_Gestion.html">
+        <span class="icon">📊</span>
+        <span class="title">Indicadores de Gestión</span>
+        <span class="desc">Productividad, calidad y financieros, de forma didáctica</span>
+      </a>
       <a class="card" href="Cuestionario_Agricola.html">
         <span class="icon">📝</span>
         <span class="title">Cuestionario Agrícola</span>
-        <span class="desc">100 preguntas de estudio</span>
+        <span class="desc">150 preguntas de estudio</span>
+      </a>
+    </div>
+    <h2 class="section-title">Propuestas de mejora</h2>
+    <div class="cards">
+      <a class="card alt" href="auditoria/INFORME_AUDITORIA.html">
+        <span class="icon">🔍</span>
+        <span class="title">Informe de Auditoría</span>
+        <span class="desc">Modelo Power BI — Control de Gestión</span>
+      </a>
+      <a class="card alt" href="auditoria/propuesta_flujo.html">
+        <span class="icon">🗺️</span>
+        <span class="title">Propuesta de Arquitectura</span>
+        <span class="desc">De 91 páginas y 2,4 GB a un flujo que se sostiene solo</span>
       </a>
     </div>
     <footer>Agrícola San Clemente</footer>

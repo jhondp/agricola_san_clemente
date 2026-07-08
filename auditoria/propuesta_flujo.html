@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Propuesta de arquitectura de datos — Control de Gestión ASC</title>
+<style>
+  :root{color-scheme:light dark}
+  :root {
+    --bg: #EEF1EC;
+    --surface: #FFFFFF;
+    --surface-2: #E4E9E2;
+    --ink: #1F2A24;
+    --ink-soft: #55645B;
+    --ink-faint: #85958B;
+    --line: #C9D1C6;
+    --accent: #B8721C;
+    --accent-soft: #F2E2C9;
+    --teal: #2A6E63;
+    --teal-soft: #DCEAE6;
+    --danger: #A8452F;
+    --danger-soft: #F4E0DA;
+    --radius: 3px;
+    --serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif;
+    --sans: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "Consolas", "Liberation Mono", monospace;
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #121815;
+    --surface: #1A231F;
+    --surface-2: #212C26;
+    --ink: #E7EDE7;
+    --ink-soft: #A3B3A9;
+    --ink-faint: #71827A;
+    --line: #2C3A33;
+    --accent: #E3A555;
+    --accent-soft: #3A2E1B;
+    --teal: #6FBBA9;
+    --teal-soft: #1D332E;
+    --danger: #E08672;
+    --danger-soft: #3A241E;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121815;
+      --surface: #1A231F;
+      --surface-2: #212C26;
+      --ink: #E7EDE7;
+      --ink-soft: #A3B3A9;
+      --ink-faint: #71827A;
+      --line: #2C3A33;
+      --accent: #E3A555;
+      --accent-soft: #3A2E1B;
+      --teal: #6FBBA9;
+      --teal-soft: #1D332E;
+      --danger: #E08672;
+      --danger-soft: #3A241E;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    margin: 0;
+    padding: 0 24px 96px;
+  }
+
+  .page {
+    max-width: 920px;
+    margin: 0 auto;
+  }
+
+  .wide {
+    max-width: 1180px;
+  }
+
+  header.masthead {
+    padding: 64px 0 28px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin: 0 0 14px;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 40px;
+    line-height: 1.14;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px;
+    text-wrap: balance;
+    max-width: 15ch;
+  }
+
+  .dek {
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 18px;
+  }
+
+  .meta {
+    display: flex;
+    gap: 24px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  section { margin: 56px 0; }
+
+  h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 26px;
+    letter-spacing: -0.005em;
+    margin: 0 0 6px;
+    text-wrap: balance;
+  }
+
+  .section-note {
+    color: var(--ink-soft);
+    max-width: 68ch;
+    margin: 0 0 28px;
+    font-size: 15px;
+  }
+
+  p { max-width: 68ch; }
+  p.wide-p { max-width: 78ch; }
+
+  /* ---------- Finding cards ---------- */
+  .findings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+
+  .finding {
+    background: var(--surface);
+    padding: 22px 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .finding .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--danger);
+  }
+
+  .finding h3 {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  .finding .src {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px dotted var(--line);
+  }
+
+  .finding p { font-size: 14.5px; color: var(--ink-soft); margin: 0; max-width: none; }
+
+  /* ---------- Table ---------- */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 900px;
+    font-size: 14px;
+  }
+
+  thead th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-2);
+    position: sticky;
+    top: 0;
+  }
+
+  tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    color: var(--ink-soft);
+  }
+
+  tbody tr.group-head td {
+    background: var(--surface-2);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+    padding: 8px 14px;
+  }
+
+  tbody td.col-field {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .verdict {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: var(--radius);
+    white-space: nowrap;
+  }
+  .v-keep { background: var(--teal-soft); color: var(--teal); }
+  .v-drop { background: var(--danger-soft); color: var(--danger); }
+  .v-transform { background: var(--accent-soft); color: var(--accent); }
+
+  /* ---------- Flow diagram ---------- */
+  .diagram-scroll {
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-width: 720px;
+  }
+
+  .stage {
+    display: grid;
+    grid-template-columns: 168px 1fr;
+    gap: 20px;
+    padding: 22px 0;
+  }
+
+  .stage-index {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--ink-faint);
+    padding-top: 2px;
+  }
+
+  .stage-index .n {
+    display: block;
+    font-family: var(--mono);
+    font-size: 34px;
+    line-height: 1;
+    color: var(--line);
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+
+  .stage-index .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .node-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .node {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    min-width: 190px;
+    flex: 1 1 190px;
+  }
+
+  .node .kind {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .node .title {
+    font-size: 14.5px;
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .node .desc {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.45;
+  }
+
+  .node.automated { border-color: var(--teal); background: var(--teal-soft); }
+  .node.automated .kind { color: var(--teal); }
+
+  .node.human {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    border-style: dashed;
+  }
+  .node.human .kind { color: var(--accent); }
+
+  .node.storage { border-color: var(--ink-faint); }
+  .node.storage .kind { color: var(--ink-faint); }
+
+  .node.consume { border-color: var(--ink); }
+  .node.consume .kind { color: var(--ink); }
+
+  .connector {
+    grid-column: 2 / 3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 2px;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+
+  .connector::before {
+    content: "";
+    width: 1px;
+    height: 26px;
+    background: var(--line);
+    margin-left: 5px;
+  }
+
+  .connector.loop::before {
+    background: repeating-linear-gradient(to bottom, var(--accent) 0 4px, transparent 4px 8px);
+    width: 1.5px;
+  }
+
+  .row-divider {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--line);
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+  }
+
+  .legend .swatch {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .legend .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+  }
+  .dot.automated { background: var(--teal); }
+  .dot.human { background: var(--accent); }
+  .dot.storage { background: var(--ink-faint); }
+  .dot.consume { background: var(--ink); }
+
+  /* ---------- Phase tracker ---------- */
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-top: 8px;
+  }
+
+  .phase {
+    background: var(--surface);
+    padding: 18px 18px 20px;
+  }
+
+  .phase .ph-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--teal);
+    letter-spacing: 0.05em;
+  }
+
+  .phase h4 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 16px;
+    margin: 6px 0 6px;
+  }
+
+  .phase p {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: none;
+  }
+
+  footer {
+    margin-top: 72px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  @media (max-width: 640px) {
+    h1 { font-size: 30px; max-width: none; }
+    .stage { grid-template-columns: 1fr; }
+    .stage-index { display: flex; align-items: baseline; gap: 10px; }
+    .stage-index .n { margin-bottom: 0; }
+    .connector { grid-column: 1 / -1; }
+  }
+
+  .scnav{position:sticky;top:0;z-index:99999;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;padding:.55rem 1rem;background:#114425;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:.85rem;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+  .scnav a{color:#fff;text-decoration:none;opacity:.85}
+  .scnav .scnav-home{font-weight:700;opacity:.9}
+  .scnav .scnav-sep{opacity:.35}
+  .scnav .scnav-current{font-weight:700;color:#fff;opacity:1}
+  .scnav details{position:relative}
+  .scnav summary{cursor:pointer;list-style:none;font-weight:700;display:inline-flex;align-items:center;gap:.3rem;color:#fff}
+  .scnav summary::-webkit-details-marker{display:none}
+  .scnav summary::after{content:'▾';font-size:.7em;transition:transform .15s ease}
+  .scnav details[open] summary::after{transform:rotate(180deg)}
+  .scnav .scnav-menu{position:absolute;top:calc(100% + .5rem);left:0;background:#fff;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.22);min-width:270px;overflow:hidden;padding:.35rem 0}
+  .scnav .scnav-menu a{display:block;padding:.55rem 1rem;color:#16281c;font-weight:500;white-space:nowrap;opacity:1}
+  .scnav .scnav-menu a:hover{background:#f1f4f0}
+  .scnav .scnav-menu .scnav-current{display:block;padding:.55rem 1rem;color:#114425;font-weight:700;background:#eef5ef;white-space:nowrap}
+</style>
+</head>
+<body>
+<nav class="scnav">
+  <a class="scnav-home" href="../index.html">🏠 Inicio</a>
+  <span class="scnav-sep">|</span>
+  <a href="../Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">🏭 Centrales Frutícolas</a>
+  <span class="scnav-sep">|</span>
+  <a href="../Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍒 Cerezas</a>
+  <span class="scnav-sep">|</span>
+  <a href="../Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍎 Manzanas</a>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📊 Infografías</summary>
+    <div class="scnav-menu">
+    <a href="../Comparativa_Cerezas_vs_Manzanas.html">🍒🍎 Comparativa Cerezas vs Manzanas</a>
+    <a href="../Diagrama_Agricola.html">🧠 Diagrama Agrícola</a>
+    <a href="../Ciclos_y_Temporadas.html">📅 Ciclos y Temporadas</a>
+    <a href="../Indicadores_de_Gestion.html">📊 Indicadores de Gestión</a>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📝 Cuestionarios</summary>
+    <div class="scnav-menu">
+    <a href="../Cuestionario_Agricola.html">📝 Cuestionario Agrícola</a>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📈 Propuestas de mejora</summary>
+    <div class="scnav-menu">
+    <a href="INFORME_AUDITORIA.html">🔍 Informe de Auditoría</a>
+    <span class="scnav-current">🗺️ Propuesta de Arquitectura</span>
+    </div>
+  </details>
+  <script>document.addEventListener('click',function(e){document.querySelectorAll('.scnav details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});</script>
+</nav>
+
+<div class="page">
+  <header class="masthead">
+    <p class="eyebrow">Control de Gestión — ASC San Clemente</p>
+    <h1>De 91 páginas y 2,4 GB a un flujo que se sostiene solo</h1>
+    <p class="dek">Propuesta de arquitectura de datos basada en la auditoría del modelo Power BI y en las hojas de control que hoy validan el cierre a mano. Qué columnas conservar, cuáles eliminar, y por dónde pasa el criterio humano.</p>
+    <div class="meta">
+      <span>08 jul 2026</span>
+      <span>Fuente: auditoría pbix + EERR REAL SCLEM 23-24 / 24-25</span>
+      <span>v3 — con linaje verificado</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>Lo que las hojas de control revelan</h2>
+    <p class="section-note">Antes de diseñar el pipeline, se revisaron las hojas de apoyo de los dos libros EERR REAL (<span style="font-family:var(--mono); font-size:13px;">DIFERENCIA</span>, <span style="font-family:var(--mono); font-size:13px;">CONTROL</span>, <span style="font-family:var(--mono); font-size:13px;">PARAM</span>, <span style="font-family:var(--mono); font-size:13px;">TEMPORADAS</span>, <span style="font-family:var(--mono); font-size:13px;">R_BCC_TOT_TOT_SCLEM</span>) — son la evidencia de qué validan tus compañeros hoy, a mano, cada cierre.</p>
+
+    <div class="findings">
+      <div class="finding">
+        <span class="tag">Linaje verificado</span>
+        <h3>El 85 % del reporte depende de una sola cadena</h3>
+        <p>De 74 páginas con datos, 63 consumen <b>BASE_CONS_CIERRE_MENSUAL_PER</b> o sus derivadas — la familia concentra el 58,8 % de la memoria (1,4 de 2,4 GB). <b>BASE_SAP_CONS</b> corre por un carril separado, aparece en solo 2 páginas y no alimenta a PER. Optimizar la cadena EV→PER resuelve casi todo el reporte.</p>
+        <div class="src">663 referencias de visuales × VertiPaq</div>
+      </div>
+      <div class="finding">
+        <span class="tag">Hallazgo crítico</span>
+        <h3>El tipo de cambio es una celda, no una tabla</h3>
+        <p>La hoja <b>PARAM</b> trae una sola celda <span style="font-family:var(--mono)">T/C = 910</span>, pegada a mano en cada cierre. Toda la conversión CLP↔USD del EERR depende de ese único valor estático — no existe un tipo de cambio por mes.</p>
+        <div class="src">PARAM!B3</div>
+      </div>
+      <div class="finding">
+        <span class="tag">Validación manual</span>
+        <h3>El cuadre CLP/USD se revisa a ojo</h3>
+        <p>La hoja <b>CONTROL</b> es una tabla dinámica que compara TOTAL (CLP) vs TOTAL_USD × TC por ITEM, buscando que la diferencia dé cero. Es exactamente la regla que hoy hace una persona, línea por línea.</p>
+        <div class="src">CONTROL — pivote ITEM × TOTAL/TOTAL_USD</div>
+      </div>
+      <div class="finding">
+        <span class="tag">Integridad de datos</span>
+        <h3>El maestro de cuarteles se coteja a mano</h3>
+        <p>La hoja <b>DIFERENCIA</b> compara dos listados de ID + Ubicación + Campo lado a lado, buscando huertos que aparecen en uno y no en el otro — el REAL cargado vs. el maestro de cuarteles.</p>
+        <div class="src">DIFERENCIA — 366 filas comparadas</div>
+      </div>
+      <div class="finding">
+        <span class="tag">Hallazgo crítico</span>
+        <h3>No hay un solo calendario de temporada</h3>
+        <p>La hoja <b>TEMPORADAS</b> define un mes-acumulado distinto por familia de especie: uva, cítricos Ovalle y cítricos Marchigüe inician temporada en meses distintos. El modelo actual asume 24 columnas de mes iguales para todos.</p>
+        <div class="src">TEMPORADAS!G:J — Temp. Uva / Cit. Ovalle / Cit. Marchigüe</div>
+      </div>
+      <div class="finding">
+        <span class="tag">Validación manual</span>
+        <h3>Las cantidades productivas también se controlan aparte</h3>
+        <p>Un pivote independiente (<b>Hoja2</b>) cruza superficie, kg y cajas por ubicación antes de que esas cifras se usen como denominador de los indicadores por HA, caja y kg.</p>
+        <div class="src">Hoja2 — pivote Superficie/KG/Cajas × Ubicación</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wide">
+    <h2>Qué columnas importan y qué hacer con cada una</h2>
+    <p class="section-note">Clasificación de los campos que sostienen la lógica de negocio real. Fuentes: <span style="font-family:var(--mono); font-size:13px;">BASE_CONS_CIERRE_MENSUAL_PER</span> (el corazón del pbix) y <span style="font-family:var(--mono); font-size:13px;">BASE_SAP_CONS</span> (detalle SAP, carril paralelo). La hoja <span style="font-family:var(--mono); font-size:13px;">R_BCC_TOT_TOT_SCLEM</span> del Excel EERR — que no entra al pbix — se usa solo como referencia de diseño del maestro de cuarteles.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Campo</th><th>Rol actual</th><th>Recomendación</th><th>Por qué</th></tr>
+        </thead>
+        <tbody>
+          <tr class="group-head"><td colspan="4">Dimensión cuartel (huerto) — se conserva como dim_cuartel</td></tr>
+          <tr><td class="col-field">ID</td><td>Llave de huerto (variedad+año+estado+polinizante+grupo)</td><td><span class="verdict v-keep">Conservar</span></td><td>Grano real de la operación agrícola</td></tr>
+          <tr><td class="col-field">DESC_UBICACIÓN / DESC_CAMPO</td><td>Jerarquía geográfica</td><td><span class="verdict v-keep">Conservar</span></td><td>Eje de todos los informes por zona/campo</td></tr>
+          <tr><td class="col-field">DESC_ESPECIE / DESC_VARIEDAD / AÑO_PLANT</td><td>Atributos varietales</td><td><span class="verdict v-keep">Conservar</span></td><td>Determinan el calendario de temporada (ver TEMPORADAS)</td></tr>
+          <tr><td class="col-field">ESTADO / POLINIZANTE / GRUPO</td><td>Atributos de manejo</td><td><span class="verdict v-keep">Conservar</span></td><td>Usados en filtros de todas las páginas del reporte</td></tr>
+
+          <tr class="group-head"><td colspan="4">Cantidades productivas — se separan a fact_produccion (grano cuartel × temporada, no por línea de gasto)</td></tr>
+          <tr><td class="col-field">SUPERFICIE (HA) / PLANTAS TOTALES</td><td>Denominador de indicadores /HA</td><td><span class="verdict v-transform">Transformar</span></td><td>Hoy se repite en cada fila de costo; cambia por temporada, no por mes</td></tr>
+          <tr><td class="col-field">ESTIMACIÓN KG COSECHADOS/ENVIADOS/EXPORTADOS</td><td>Denominador de indicadores /KG</td><td><span class="verdict v-transform">Transformar</span></td><td>Validado aparte en Hoja2 — debe vivir en su propio hecho</td></tr>
+          <tr><td class="col-field">CAJAS EXPORTADAS (+CAT-1 / SIN CAT-1)</td><td>Denominador de indicadores /CJ</td><td><span class="verdict v-transform">Transformar</span></td><td>Mismo caso — hoy triplicado en EV, PER y SUP</td></tr>
+
+          <tr class="group-head"><td colspan="4">Plan de cuentas — se conserva como dim_cuenta</td></tr>
+          <tr><td class="col-field">CONCEPTO / ITEM / DESCRIPCION</td><td>Jerarquía contable de gestión</td><td><span class="verdict v-keep">Conservar</span></td><td>Eje del EERR; hoy repetido en 19 tablas BASE_*</td></tr>
+          <tr><td class="col-field">FIJO/VAR / BASE / DISTRIBUCION</td><td>Regla de prorrateo de costos</td><td><span class="verdict v-keep">Conservar</span></td><td>Es la lógica de negocio más valiosa del modelo — hoy dispersa en fórmulas Excel</td></tr>
+          <tr><td class="col-field">data.ORDEN CONCEPTO / ORDEN ITEM / ORDEN DESCRIPCIÓN</td><td>Orden de despliegue visual</td><td><span class="verdict v-transform">Transformar</span></td><td>Pasa a ser un atributo de orden dentro de dim_cuenta, no 3 tablas ORDEN_* con join propio</td></tr>
+
+          <tr class="group-head"><td colspan="4">Tiempo y moneda — hoy implícitos, se vuelven dimensiones explícitas</td></tr>
+          <tr><td class="col-field">01-ENE … 24-DIC (× temporada) + TOTAL</td><td>24 columnas de mes por temporada</td><td><span class="verdict v-drop">Eliminar</span></td><td>Se reemplazan por una fila por mes + fecha real, ligada al calendario por especie de TEMPORADAS</td></tr>
+          <tr><td class="col-field">PERIODO (ACUM_ACTUAL / …_USD)</td><td>Moneda codificada como fila</td><td><span class="verdict v-drop">Eliminar</span></td><td>Duplica cada fila ×2; se reemplaza por dos columnas: monto_clp, monto_usd</td></tr>
+          <tr><td class="col-field">PARAM!T/C</td><td>Tipo de cambio fijo, pegado a mano</td><td><span class="verdict v-transform">Transformar</span></td><td>Pasa a dim_tipo_cambio (mes → TC), versionado y auditable</td></tr>
+          <tr><td class="col-field">MES_ACUM.* (flag de cierre)</td><td>Marca el mes vigente por temporada×etapa</td><td><span class="verdict v-transform">Transformar</span></td><td>Se vuelve una fila en param_cierre, no 24 columnas cruzadas por join</td></tr>
+
+          <tr class="group-head"><td colspan="4">Identificadores y campos de control — se automatiza la intención, no la columna</td></tr>
+          <tr><td class="col-field">ID_FINAL / ID_ETAPA_EVOL / ID_FINAL_INGRESOS</td><td>Llaves de texto concatenado</td><td><span class="verdict v-drop">Eliminar</span></td><td>Solo ID_FINAL pesa 283 MB en el modelo actual; se reemplaza por clave entera generada en SQL</td></tr>
+          <tr><td class="col-field">CONSIDERAR / ERROR / MATCH / MATCH_REG / CONTROL_ID</td><td>Flags manuales de conciliación SAP</td><td><span class="verdict v-transform">Transformar</span></td><td>La intención (detectar líneas sin mapeo) se vuelve una regla de validación Python que genera un log de excepciones</td></tr>
+          <tr><td class="col-field">USUARIO / TEXTO DE PEDIDO / N° REF.ANULACIÓN / CLAVE DE REFERENCIA</td><td>Metadatos de auditoría del export SAP</td><td><span class="verdict v-drop">Eliminar</span></td><td>0 apariciones en los 1.500 visuales del reporte; se conservan solo en staging crudo si se requiere trazabilidad</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="wide">
+    <h2>Diagrama de flujo propuesto</h2>
+    <p class="section-note">Seis etapas, de la fuente al tablero. Las cajas <span style="color:var(--teal); font-weight:600;">verdes</span> corren solas en Python; las <span style="color:var(--accent); font-weight:600;">ámbar punteadas</span> son los únicos puntos donde una persona decide algo — y son exactamente los mismos puntos que hoy resuelven las hojas DIFERENCIA, CONTROL y la proyección manual.</p>
+
+    <div class="diagram-scroll">
+      <div class="pipeline">
+
+        <div class="stage">
+          <div class="stage-index"><span class="n">01</span><span class="label">Fuentes</span></div>
+          <div class="node-row">
+            <div class="node storage">
+              <span class="kind">SAP HANA</span>
+              <div class="title">Vistas Datasphere (ODBC)</div>
+              <div class="desc">Costos reales — ceco, clase de coste, fecha contabilización, monto, moneda</div>
+            </div>
+            <div class="node storage">
+              <span class="kind">G:\ — Google Drive</span>
+              <div class="title">Excel PPTO / PROY / Cantidades</div>
+              <div class="desc">19 archivos por temporada×etapa, hoja BASE</div>
+            </div>
+            <div class="node storage">
+              <span class="kind">G:\ — Google Drive</span>
+              <div class="title">Excel RRHH</div>
+              <div class="desc">Ficha colaborador, remuneraciones, ausentismo</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="connector">↓ extracción</div>
+
+        <div class="stage">
+          <div class="stage-index"><span class="n">02</span><span class="label">Extracción</span></div>
+          <div class="node-row">
+            <div class="node automated">
+              <span class="kind">Python · pyodbc</span>
+              <div class="title">Lectura incremental Datasphere</div>
+              <div class="desc">Por fecha de contabilización — reemplaza el export manual KSB1</div>
+            </div>
+            <div class="node automated">
+              <span class="kind">Python · openpyxl</span>
+              <div class="title">Lectura por convención de carpeta</div>
+              <div class="desc">PPTO / PROY / cantidades / RRHH — un comando por temporada×etapa</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="connector">↓ reglas de negocio</div>
+
+        <div class="stage">
+          <div class="stage-index"><span class="n">03</span><span class="label">Reglas de negocio</span></div>
+          <div class="node-row">
+            <div class="node automated">
+              <span class="kind">Python</span>
+              <div class="title">Tipado y tabla larga</div>
+              <div class="desc">Elimina las 24 columnas de mes → una fila por mes con fecha real</div>
+            </div>
+            <div class="node automated">
+              <span class="kind">Python</span>
+              <div class="title">Mapeo cuenta → concepto/ítem</div>
+              <div class="desc">Contra dim_cuenta versionada por temporada</div>
+            </div>
+            <div class="node automated">
+              <span class="kind">Python</span>
+              <div class="title">Prorrateo de costos</div>
+              <div class="desc">Reglas DISTRIBUCION (HA-ESP, HA-CAM-PROD, SAP-DIR)</div>
+            </div>
+            <div class="node automated">
+              <span class="kind">Python</span>
+              <div class="title">Conversión CLP↔USD</div>
+              <div class="desc">Contra dim_tipo_cambio mensual, no una celda fija</div>
+            </div>
+            <div class="node automated">
+              <span class="kind">Python</span>
+              <div class="title">Calendario por especie</div>
+              <div class="desc">dim_tiempo con mes-acumulado propio por familia (uva / cítricos Ovalle / Marchigüe)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="connector loop">↓ excepciones detectadas</div>
+
+        <div class="stage">
+          <div class="stage-index"><span class="n">04</span><span class="label">Criterio humano</span></div>
+          <div class="node-row">
+            <div class="node human">
+              <span class="kind">Excel acotado</span>
+              <div class="title">Cuentas SAP sin mapeo</div>
+              <div class="desc">Reemplaza DIFERENCIA — solo las filas huérfanas, no el listado completo</div>
+            </div>
+            <div class="node human">
+              <span class="kind">Excel acotado</span>
+              <div class="title">Plantilla de proyección (PROY)</div>
+              <div class="desc">REAL acumulado precargado; la persona completa el resto del año</div>
+            </div>
+            <div class="node human">
+              <span class="kind">Parámetro</span>
+              <div class="title">Confirmación de cierre mensual</div>
+              <div class="desc">Un registro en param_cierre, no un flag cruzado en 24 columnas</div>
+            </div>
+            <div class="node human">
+              <span class="kind">Reporte de diferencias</span>
+              <div class="title">Revisión de cuadre CLP/USD</div>
+              <div class="desc">Reemplaza la hoja CONTROL — Python ya calculó la diferencia, la persona solo revisa lo que superó el umbral</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="connector loop">↓ vuelve al flujo automatizado</div>
+
+        <div class="stage">
+          <div class="stage-index"><span class="n">05</span><span class="label">Consolidación</span></div>
+          <div class="node-row">
+            <div class="node automated">
+              <span class="kind">Python</span>
+              <div class="title">Validación de plantillas devueltas</div>
+              <div class="desc">Esquema fijo, totales de control contra la etapa anterior</div>
+            </div>
+            <div class="node storage">
+              <span class="kind">PostgreSQL</span>
+              <div class="title">Esquema estrella</div>
+              <div class="desc">dim_cuartel · dim_cuenta · dim_tiempo · dim_escenario · dim_tipo_cambio · fact_eerr_mensual · fact_produccion</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="connector">↓ consumo</div>
+
+        <div class="stage">
+          <div class="stage-index"><span class="n">06</span><span class="label">Visualización</span></div>
+          <div class="node-row">
+            <div class="node consume">
+              <span class="kind">Power BI · Import</span>
+              <div class="title">Modelo delgado</div>
+              <div class="desc">~10 tablas, calculation groups, field parameters — ≤25 páginas</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="legend">
+        <span class="swatch"><span class="dot automated"></span>Automatizado (Python)</span>
+        <span class="swatch"><span class="dot human"></span>Requiere criterio humano</span>
+        <span class="swatch"><span class="dot storage"></span>Almacenamiento / origen</span>
+        <span class="swatch"><span class="dot consume"></span>Consumo final</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Cómo se implementa</h2>
+    <p class="section-note">Cuatro fases, cada una entregando valor por sí sola — no depende de que TI habilite Datasphere para empezar.</p>
+    <div class="phases">
+      <div class="phase">
+        <span class="ph-num">Fase 0 · 1–2 semanas · sin permisos de nadie</span>
+        <h4>Quick wins en el pbix actual</h4>
+        <p>Foco en la cadena EV→PER, que concentra el 85 % del reporte: eliminar EV_2 (126 M de filas que solo alimentan 3 tablas del informe dinámico), desactivar fechas automáticas, podar columnas muertas.</p>
+        <p style="margin-top:8px;"><b>Entregable:</b> pbix de 504 → ~200 MB, refresh a la mitad, mismos números.</p>
+      </div>
+      <div class="phase">
+        <span class="ph-num">Fase 1 · 2–4 semanas · en paralelo, pedir ODBC a TI</span>
+        <h4>Staging en Python</h4>
+        <p>Un script lee los Excel de PPTO/PROY/cantidades por convención de carpeta y valida (cuadre CLP/USD, IDs huérfanos — lo que hoy hacen las hojas CONTROL y DIFERENCIA a mano). Cuando TI habilite ODBC, el REAL llega solo.</p>
+        <p style="margin-top:8px;"><b>Entregable:</b> <span style="font-family:var(--mono); font-size:12px;">python cargar.py --temporada 25-26</span> reemplaza el refresh de 19 consultas.</p>
+      </div>
+      <div class="phase">
+        <span class="ph-num">Fase 2 · 4–6 semanas</span>
+        <h4>Esquema estrella</h4>
+        <p>dim/fact en PostgreSQL local (gratis, sin servidor). La lógica hoy oculta en fórmulas Excel — prorrateo, USD, calendario por especie — queda escrita, versionada y auditable.</p>
+        <p style="margin-top:8px;"><b>Entregable:</b> totales SQL = totales pbix, cuadrados temporada por temporada.</p>
+      </div>
+      <div class="phase">
+        <span class="ph-num">Fase 3 · 2–3 semanas</span>
+        <h4>Power BI delgado</h4>
+        <p>Nuevo pbix conectado a SQL: ~10 tablas, ~15 medidas base con calculation groups, ≤25 páginas. El actual queda congelado de respaldo hasta cerrar una temporada completa en paralelo.</p>
+        <p style="margin-top:8px;"><b>Entregable:</b> mismo informe, abre y refresca en minutos, cierre mensual = 1 comando + 1 revisión.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>En palabras simples</h2>
+    <p class="section-note">Para compartir con quien no necesita el detalle técnico.</p>
+
+    <p class="wide-p">Hoy nuestro informe de gestión funciona, pero funciona <b>a pulso</b>. Cada mes, los datos de SAP se descargan a mano a un Excel, se combinan con otros 40 archivos en el Drive, y un archivo Power BI gigante (del tamaño de una película en HD) hace todos los cálculos de nuevo, desde cero, cada vez que se actualiza. Por eso tarda horas, por eso a veces falla, y por eso agregar una temporada nueva toma días de trabajo.</p>
+
+    <p class="wide-p">Además, varios controles importantes se hacen a ojo: una persona revisa en una planilla que los pesos y los dólares cuadren, otra compara listas de huertos buscando cuáles faltan, y el valor del dólar que se usa en todo el informe es <b>un número pegado a mano en una celda</b>.</p>
+
+    <p class="wide-p">La propuesta es reordenar la cocina, no cambiar el menú: <b>los informes que ve la gerencia siguen siendo los mismos</b>. Lo que cambia es lo de atrás —</p>
+
+    <p class="wide-p"><b>1.</b> Los datos de SAP llegarán solos, por una conexión directa que TI ya tiene disponible, en vez de descargarse a mano.<br>
+    <b>2.</b> Un programa hará automáticamente los cálculos y los controles que hoy se hacen a ojo, y avisará solo cuando encuentre algo raro (una cuenta nueva sin clasificar, un descuadre entre pesos y dólares).<br>
+    <b>3.</b> Las personas dejan de copiar y pegar, y pasan a decidir: clasificar lo nuevo, proyectar el resto del año, confirmar el cierre. Eso no se puede automatizar ni conviene.<br>
+    <b>4.</b> Power BI vuelve a ser solo el visor: liviano, rápido y fácil de mantener.</p>
+
+    <p class="wide-p">El resultado esperado: el cierre mensual pasa de varios días de trabajo manual a <b>un proceso de minutos más una revisión</b>, con menos errores, y donde cualquier número del informe se puede rastrear hasta su origen. Y se hace por etapas — la primera mejora se nota en dos semanas, sin pedirle nada a nadie, y el informe actual no se toca hasta que el nuevo demuestre que entrega exactamente los mismos números.</p>
+  </section>
+
+  <footer>
+    Basado en: INFORME_AUDITORIA.md · INFO.VIEW (tablas/columnas/medidas/relaciones) · Model.bim · 07_modelo.vpax · hojas DIFERENCIA / CONTROL / PARAM / TEMPORADAS / R_BCC_TOT_TOT_SCLEM de los libros EERR REAL SCLEM 23-24 y 24-25.
+  </footer>
+</div>
+</body>
+</html>

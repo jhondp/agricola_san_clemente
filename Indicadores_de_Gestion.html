@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Indicadores de Gestión | Agrícola San Clemente</title>
+<style>
+  :root{color-scheme:light dark}
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(circle at 8% 0%, rgba(21,79,43,.10), transparent 30%),
+               radial-gradient(circle at 96% 4%, rgba(138,24,38,.08), transparent 26%),
+               linear-gradient(180deg,#fffcf8 0%,#f6f4ef 48%,#fffdfa 100%);
+    color:#1b2a20;
+    min-height:100vh;
+  }
+  main{max-width:1040px;margin:0 auto;padding:2rem 1.25rem 3.5rem}
+
+  .hub{text-align:center;max-width:760px;margin:0 auto 1.75rem}
+  .hub .badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:3.2rem;height:3.2rem;border-radius:50%;
+    background:linear-gradient(135deg,#8a1826,#b8721c);color:#fff;font-size:1.5rem;
+    margin-bottom:.75rem;box-shadow:0 6px 16px rgba(138,24,38,.3);
+  }
+  .hub h1{margin:0 0 .4rem;font-size:clamp(1.6rem,4vw,2.2rem);color:#114425}
+  .hub p{margin:0;color:#4a5750;font-size:.98rem;line-height:1.5}
+
+  .card{
+    background:#fff;border-radius:16px;padding:1.35rem 1.4rem 1.5rem;
+    box-shadow:0 6px 20px rgba(17,68,37,.08);margin-bottom:1.6rem;
+  }
+  .card h2{margin:0 0 .25rem;font-size:1.05rem;color:#16281c;display:flex;align-items:center;gap:.5rem}
+  .card p.hint{margin:0 0 1.1rem;font-size:.85rem;color:#4a5750;line-height:1.5}
+
+  /* KPI category groups */
+  .kpi-group{border-top:5px solid #2d7644}
+  .kpi-group.calidad{border-top-color:#e0a72e}
+  .kpi-group.financieros{border-top-color:#2b6fc9}
+  .kpi-group h2 .tag{
+    font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+    padding:.15rem .55rem;border-radius:999px;background:#eef5ef;color:#2d7644;
+  }
+  .kpi-group.calidad h2 .tag{background:#fbf1dc;color:#8a5f0a}
+  .kpi-group.financieros h2 .tag{background:#e9f1fb;color:#1a4c85}
+
+  .kpi-grid{display:grid;gap:.85rem;grid-template-columns:1fr}
+  @media (min-width:720px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+  .kpi-card{
+    background:#f9f8f5;border-radius:12px;padding:.95rem 1.05rem;border:1px solid #eee7d8;
+  }
+  .kpi-card .kname{font-weight:700;font-size:.92rem;color:#16281c;margin-bottom:.25rem;display:flex;align-items:center;gap:.4rem}
+  .kpi-card .kformula{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.78rem;
+    color:#2d7644;background:#eef5ef;border-radius:6px;padding:.35rem .55rem;display:inline-block;margin:.2rem 0 .5rem;
+  }
+  .kpi-group.calidad .kpi-card .kformula{color:#8a5f0a;background:#fbf1dc}
+  .kpi-group.financieros .kpi-card .kformula{color:#1a4c85;background:#e9f1fb}
+  .kpi-card p{margin:0;font-size:.82rem;color:#4a5750;line-height:1.5}
+  .kpi-card .example{margin-top:.5rem;font-size:.78rem;color:#5a685f;background:#fff;border:1px dashed #d8d2c2;border-radius:8px;padding:.4rem .6rem}
+  .kpi-card .example b{color:#33423a}
+
+  /* Segmented mix bar */
+  .mixbar-wrap{margin-top:.4rem}
+  .mixbar{display:flex;height:1.9rem;border-radius:8px;overflow:hidden;gap:2px;background:#fff}
+  .mixbar .seg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:.7rem;font-weight:700;white-space:nowrap;overflow:hidden;padding:0 .3rem}
+  .mixbar .seg.exp{background:#2d7644}
+  .mixbar .seg.nac{background:#2b6fc9}
+  .mixbar .seg.desc{background:#c23b4b}
+  .mix-legend{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin-top:.6rem;font-size:.76rem;color:#3d4a41}
+  .mix-legend .lg{display:inline-flex;align-items:center;gap:.35rem}
+  .mix-legend i{width:.65rem;height:.65rem;border-radius:3px;display:inline-block}
+  .mix-legend .exp i{background:#2d7644}
+  .mix-legend .nac i{background:#2b6fc9}
+  .mix-legend .desc i{background:#c23b4b}
+
+  /* Liquidación comparison */
+  .liq-grid{display:grid;gap:1rem;grid-template-columns:1fr}
+  @media (min-width:640px){.liq-grid{grid-template-columns:repeat(2,1fr)}}
+  .liq-card{border-radius:12px;padding:1rem 1.1rem;color:#fff}
+  .liq-card.cerezas{background:linear-gradient(135deg,#8a1826,#c23b4b)}
+  .liq-card.manzanas{background:linear-gradient(135deg,#114425,#2d7644)}
+  .liq-card .lname{font-weight:700;font-size:1rem;display:flex;align-items:center;gap:.4rem;margin-bottom:.6rem}
+  .liq-card .lrow{display:flex;justify-content:space-between;font-size:.85rem;padding:.3rem 0;border-top:1px solid rgba(255,255,255,.22)}
+  .liq-card .lrow:first-of-type{border-top:none}
+  .liq-card .lrow b{font-weight:700}
+
+  .flow{display:flex;flex-direction:column;gap:.4rem;margin-top:.8rem}
+  .flow .frow{
+    display:flex;align-items:center;gap:.7rem;background:#f9f8f5;border-radius:10px;
+    padding:.55rem .8rem;font-size:.85rem;
+  }
+  .flow .fop{
+    flex:0 0 auto;width:1.7rem;height:1.7rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+    font-weight:700;color:#fff;font-size:.9rem;
+  }
+  .flow .fop.plus{background:#2d7644}
+  .flow .fop.minus{background:#c23b4b}
+  .flow .fop.eq{background:#114425}
+  .flow .flabel{flex:1 1 auto;color:#33423a}
+  .flow .frow.total{background:#eef5ef;font-weight:700;color:#114425}
+
+  /* Calculator */
+  .calc-grid{display:grid;gap:1.4rem;grid-template-columns:1fr}
+  @media (min-width:820px){.calc-grid{grid-template-columns:1fr 1fr}}
+  .calc-inputs{display:grid;gap:.7rem;grid-template-columns:1fr 1fr}
+  .calc-inputs label{display:flex;flex-direction:column;gap:.25rem;font-size:.78rem;font-weight:600;color:#33423a}
+  .calc-inputs input{
+    font-size:.9rem;padding:.45rem .55rem;border-radius:8px;border:1px solid #d8d2c2;
+    font-family:inherit;color:#1b2a20;background:#fff;
+  }
+  .calc-inputs input:focus{outline:2px solid #2d7644;outline-offset:1px}
+  .calc-results{display:flex;flex-direction:column;gap:.55rem}
+  .result-tile{
+    display:flex;justify-content:space-between;align-items:baseline;
+    background:#f9f8f5;border-radius:10px;padding:.55rem .85rem;
+  }
+  .result-tile .rname{font-size:.8rem;color:#4a5750}
+  .result-tile .rval{font-size:1.05rem;font-weight:700;color:#114425}
+  .calc-note{font-size:.74rem;color:#8a978f;margin-top:.4rem;line-height:1.5}
+
+  .sources{
+    margin-top:1.5rem;padding:1rem 1.2rem;border-radius:14px;background:#fff;
+    box-shadow:0 4px 14px rgba(17,68,37,.06);font-size:.78rem;color:#5a685f;line-height:1.6;
+  }
+  .sources strong{color:#16281c}
+
+  footer{margin-top:1.5rem;font-size:.78rem;color:#6b7a72;text-align:center}
+</style>
+</head>
+<body>
+<nav class="scnav">
+<style>
+.scnav{position:sticky;top:0;z-index:99999;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;padding:.55rem 1rem;background:#114425;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:.85rem;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.scnav a{color:#fff;text-decoration:none;opacity:.85}
+.scnav .scnav-home{font-weight:700;opacity:.9}
+.scnav .scnav-sep{opacity:.35}
+.scnav .scnav-current{font-weight:700;color:#fff;opacity:1}
+.scnav details{position:relative}
+.scnav summary{cursor:pointer;list-style:none;font-weight:700;display:inline-flex;align-items:center;gap:.3rem;color:#fff}
+.scnav summary::-webkit-details-marker{display:none}
+.scnav summary::after{content:'▾';font-size:.7em;transition:transform .15s ease}
+.scnav details[open] summary::after{transform:rotate(180deg)}
+.scnav .scnav-menu{position:absolute;top:calc(100% + .5rem);left:0;background:#fff;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.22);min-width:270px;overflow:hidden;padding:.35rem 0}
+.scnav .scnav-menu a{display:block;padding:.55rem 1rem;color:#16281c;font-weight:500;white-space:nowrap;opacity:1}
+.scnav .scnav-menu a:hover{background:#f1f4f0}
+.scnav .scnav-menu .scnav-current{display:block;padding:.55rem 1rem;color:#114425;font-weight:700;background:#eef5ef;white-space:nowrap}
+</style>
+  <a class="scnav-home" href="index.html">🏠 Inicio</a>
+  <span class="scnav-sep">|</span>
+    <a href="Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">🏭 Centrales Frutícolas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍒 Cerezas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍎 Manzanas</a>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📊 Infografías</summary>
+    <div class="scnav-menu">
+    <a href="Comparativa_Cerezas_vs_Manzanas.html">🍒🍎 Comparativa Cerezas vs Manzanas</a>
+    <a href="Diagrama_Agricola.html">🧠 Diagrama Agrícola</a>
+    <a href="Ciclos_y_Temporadas.html">📅 Ciclos y Temporadas</a>
+    <span class="scnav-current">📊 Indicadores de Gestión</span>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📝 Cuestionarios</summary>
+    <div class="scnav-menu">
+    <a href="Cuestionario_Agricola.html">📝 Cuestionario Agrícola</a>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📈 Propuestas de mejora</summary>
+    <div class="scnav-menu">
+    <a href="auditoria/INFORME_AUDITORIA.html">🔍 Informe de Auditoría</a>
+    <a href="auditoria/propuesta_flujo.html">🗺️ Propuesta de Arquitectura</a>
+    </div>
+  </details>
+  <script>document.addEventListener('click',function(e){document.querySelectorAll('.scnav details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});</script>
+</nav>
+<main>
+  <div class="hub">
+    <div class="badge">📊</div>
+    <h1>Indicadores de Gestión</h1>
+    <p>Los indicadores que usa Control de Gestión para leer el negocio agrícola: cuánto se produce, cuánta de esa producción captura valor comercial, y cuánto retorno deja al final. Fórmula, para qué sirve y un ejemplo de cómo se calcula.</p>
+  </div>
+
+  <section class="card kpi-group">
+    <h2>📦 Productividad <span class="tag">Capacidad del activo agrícola</span></h2>
+    <p class="hint">Miden cuánto produce cada hectárea y cada cuartel, y qué tan bien se cumplió lo proyectado.</p>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kname">Kg / ha</div>
+        <div class="kformula">kg cosechados ÷ ha productivas</div>
+        <p>Kilos cosechados por cada hectárea productiva. Es la métrica base para comparar campos y cuarteles de distinto tamaño.</p>
+        <div class="example"><b>Ejemplo:</b> 18.000 kg ÷ 12 ha = <b>1.500 kg/ha</b></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kname">Cajas / ha</div>
+        <div class="kformula">cajas exportables ÷ ha productivas</div>
+        <p>Igual que Kg/ha, pero en unidad comercial. La caja estándar equivale a <b>5 kg en cerezas</b> y a <b>18,2 kg en manzanas</b>, así que no son comparables directamente entre especies.</p>
+        <div class="example"><b>Ejemplo (cerezas):</b> 3.000 cajas ÷ 12 ha = <b>250 cajas/ha</b></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kname">Kg por cuartel</div>
+        <div class="kformula">seguimiento a nivel de cuartel</div>
+        <p>El cuartel es la unidad mínima de gestión (variedad + año de plantación + estado + polinizante). Bajar el indicador a este nivel permite comparar rendimiento entre cuarteles de una misma especie.</p>
+      </div>
+      <div class="kpi-card">
+        <div class="kname">Variación vs mapeo</div>
+        <div class="kformula">kg real cosechado − kg mapeo (proyectado)</div>
+        <p>El mapeo es la proyección de cosecha por cuartel hecha antes de temporada. Comparar lo real contra el mapeo muestra qué tan certera fue la proyección y anticipa desvíos de ingreso.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card kpi-group calidad">
+    <h2>⭐ Calidad <span class="tag">Cuánto captura valor comercial</span></h2>
+    <p class="hint">De todo lo cosechado, qué porcentaje termina en exportación (el destino de mayor valor) y qué porcentaje se pierde como descarte.</p>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kname">% Exportación</div>
+        <div class="kformula">kg exportación ÷ kg cosechados</div>
+        <p>Porción del volumen cosechado que cumple calibre y condición para salir al mercado externo, el canal de mayor retorno.</p>
+      </div>
+      <div class="kpi-card">
+        <div class="kname">% Descarte</div>
+        <div class="kformula">kg descarte ÷ kg cosechados</div>
+        <p>Porción que no cumple calidad exportable ni de mercado nacional. En cerezas y manzanas alimenta a San Clemente Foods como materia prima para jugo concentrado o similares.</p>
+      </div>
+      <div class="kpi-card">
+        <div class="kname">Mix de calibres</div>
+        <div class="kformula">participación % por tramo de calibre</div>
+        <p>Distribución del volumen entre tramos de calibre. Un mix concentrado en calibres altos generalmente se traduce en mejor precio promedio.</p>
+      </div>
+      <div class="kpi-card">
+        <div class="kname">Mix comercial / de categorías</div>
+        <div class="kformula">exportación · nacional · descarte</div>
+        <p>En cerezas se lee como exportación / mercado nacional / descarte-merma (no usa categoría). En manzanas se agrega el mix de categorías: CAT1, XAA, XFCY, PREM, HG, entre otras.</p>
+      </div>
+    </div>
+    <div class="mixbar-wrap">
+      <p class="hint" style="margin:.9rem 0 .4rem">Ejemplo ilustrativo de mix comercial sobre el total cosechado:</p>
+      <div class="mixbar" role="img" aria-label="Mix comercial ilustrativo: 70% exportación, 20% mercado nacional, 10% descarte">
+        <div class="seg exp" style="flex:70">70% Exportación</div>
+        <div class="seg nac" style="flex:20">20% Nacional</div>
+        <div class="seg desc" style="flex:10">10%</div>
+      </div>
+      <div class="mix-legend">
+        <span class="lg exp"><i></i>Exportación</span>
+        <span class="lg nac"><i></i>Mercado nacional</span>
+        <span class="lg desc"><i></i>Descarte / merma</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="card kpi-group financieros">
+    <h2>💰 Financieros <span class="tag">Resultado físico → rentabilidad</span></h2>
+    <p class="hint">Conectan el volumen y la calidad cosechada con el retorno económico del huerto.</p>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kname">Ingresos / ha</div>
+        <div class="kformula">ingresos totales ÷ ha productivas</div>
+        <p>Ingreso generado por cada hectárea productiva, sumando todos los canales de venta (exportación, nacional, descarte).</p>
+      </div>
+      <div class="kpi-card">
+        <div class="kname">Costos / ha</div>
+        <div class="kformula">costos directos ÷ ha productivas</div>
+        <p>Costo directo de producción por hectárea: labores de campo, insumos, cosecha y demás gastos atribuibles al cuartel.</p>
+      </div>
+      <div class="kpi-card">
+        <div class="kname">Margen / ha</div>
+        <div class="kformula">Ingresos/ha − Costos/ha</div>
+        <p>El resultado que realmente compara la rentabilidad entre campos, cuarteles y especies, más allá del volumen bruto.</p>
+      </div>
+      <div class="kpi-card">
+        <div class="kname">Precio promedio</div>
+        <div class="kformula">ingresos ÷ cajas o kg comercializados</div>
+        <p>Precio efectivo obtenido por unidad vendida. Para comparar en cajas, se debe homologar con la caja estándar de cada especie (5 kg cerezas, 18,2 kg manzanas).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🧾 Liquidación: del campo al Retorno Neto Productor</h2>
+    <p class="hint">La liquidación es el hito financiero que consolida el resultado económico de la fruta entregada, separando exportación y mercado nacional. Fija la fecha de cierre y la unidad de conversión (caja estándar) para leer los indicadores anteriores en pesos.</p>
+    <div class="liq-grid">
+      <div class="liq-card cerezas">
+        <div class="lname">🍒 Cerezas</div>
+        <div class="lrow"><span>Fecha de liquidación</span><b>30 de abril</b></div>
+        <div class="lrow"><span>Caja estándar</span><b>5 kg</b></div>
+      </div>
+      <div class="liq-card manzanas">
+        <div class="lname">🍎 Manzanas</div>
+        <div class="lrow"><span>Fecha de liquidación</span><b>30 de noviembre</b></div>
+        <div class="lrow"><span>Caja estándar</span><b>18,2 kg</b></div>
+      </div>
+    </div>
+    <p class="hint" style="margin-top:1.1rem">Determinación simplificada del Retorno Neto Productor, el principal ingreso del resultado agrícola:</p>
+    <div class="flow">
+      <div class="frow"><span class="fop plus">+</span><span class="flabel">Ingresos FOB (venta de fruta)</span></div>
+      <div class="frow"><span class="fop minus">−</span><span class="flabel">Comisión de exportadora (6% – 8%)</span></div>
+      <div class="frow"><span class="fop minus">−</span><span class="flabel">Costos de fletes</span></div>
+      <div class="frow"><span class="fop minus">−</span><span class="flabel">Costos de materiales</span></div>
+      <div class="frow"><span class="fop minus">−</span><span class="flabel">Costos de frío y packing</span></div>
+      <div class="frow"><span class="fop minus">−</span><span class="flabel">Gastos de exportación y embarque</span></div>
+      <div class="frow total"><span class="fop eq">=</span><span class="flabel">Retorno Neto Productor</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🧮 Calculadora rápida de indicadores</h2>
+    <p class="hint">Ingresa datos de un campo o cuartel para ver cómo se calculan los indicadores en la práctica. Los resultados se actualizan al escribir; nada se envía ni se guarda.</p>
+    <div class="calc-grid">
+      <div>
+        <div class="calc-inputs">
+          <label>Kg cosechados
+            <input type="number" id="cKg" min="0" step="1" value="18000">
+          </label>
+          <label>Hectáreas productivas
+            <input type="number" id="cHa" min="0.01" step="0.1" value="12">
+          </label>
+          <label>Kg exportación
+            <input type="number" id="cExp" min="0" step="1" value="12600">
+          </label>
+          <label>Kg descarte
+            <input type="number" id="cDesc" min="0" step="1" value="1800">
+          </label>
+          <label>Ingresos totales ($)
+            <input type="number" id="cIng" min="0" step="1000" value="12500000">
+          </label>
+          <label>Costos directos ($)
+            <input type="number" id="cCost" min="0" step="1000" value="7200000">
+          </label>
+        </div>
+        <p class="calc-note">Kg mercado nacional se calcula como el resto: cosechados − exportación − descarte.</p>
+      </div>
+      <div>
+        <div class="calc-results">
+          <div class="result-tile"><span class="rname">Kg / ha</span><span class="rval" id="rKgHa">–</span></div>
+          <div class="result-tile"><span class="rname">% Exportación</span><span class="rval" id="rExp">–</span></div>
+          <div class="result-tile"><span class="rname">% Mercado nacional</span><span class="rval" id="rNac">–</span></div>
+          <div class="result-tile"><span class="rname">% Descarte</span><span class="rval" id="rDesc">–</span></div>
+          <div class="result-tile"><span class="rname">Ingresos / ha</span><span class="rval" id="rIngHa">–</span></div>
+          <div class="result-tile"><span class="rname">Costos / ha</span><span class="rval" id="rCostHa">–</span></div>
+          <div class="result-tile"><span class="rname">Margen / ha</span><span class="rval" id="rMargHa">–</span></div>
+        </div>
+        <div class="mixbar-wrap">
+          <div class="mixbar" id="rMixBar" role="img" aria-label="Mix comercial calculado"></div>
+          <div class="mix-legend">
+            <span class="lg exp"><i></i>Exportación</span>
+            <span class="lg nac"><i></i>Mercado nacional</span>
+            <span class="lg desc"><i></i>Descarte / merma</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sources">
+    <strong>Fuentes:</strong> sección &quot;Indicadores clave de gestión&quot; y &quot;Liquidación&quot; de los compendios de Cerezas y Manzanas (Mundo Agrícola), y definiciones de cuartel/mapeo del Manual de Inducción del Holding San Clemente.
+  </div>
+
+  <footer>Agrícola San Clemente · Indicadores de Gestión</footer>
+</main>
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var fmtPct = function(n){ return isFinite(n) ? (n*100).toFixed(1) + '%' : '–'; };
+  var fmtNum = function(n, d){ return isFinite(n) ? n.toLocaleString('es-CL', {maximumFractionDigits: d||0}) : '–'; };
+  var fmtMoney = function(n){ return isFinite(n) ? '$' + n.toLocaleString('es-CL', {maximumFractionDigits:0}) : '–'; };
+
+  function recalc(){
+    var kg = parseFloat($('cKg').value) || 0;
+    var ha = parseFloat($('cHa').value) || 0;
+    var exp = parseFloat($('cExp').value) || 0;
+    var desc = parseFloat($('cDesc').value) || 0;
+    var ing = parseFloat($('cIng').value) || 0;
+    var cost = parseFloat($('cCost').value) || 0;
+    var nac = Math.max(kg - exp - desc, 0);
+
+    $('rKgHa').textContent = ha > 0 ? fmtNum(kg/ha, 0) + ' kg/ha' : '–';
+    $('rExp').textContent = kg > 0 ? fmtPct(exp/kg) : '–';
+    $('rNac').textContent = kg > 0 ? fmtPct(nac/kg) : '–';
+    $('rDesc').textContent = kg > 0 ? fmtPct(desc/kg) : '–';
+    $('rIngHa').textContent = ha > 0 ? fmtMoney(ing/ha) : '–';
+    $('rCostHa').textContent = ha > 0 ? fmtMoney(cost/ha) : '–';
+    $('rMargHa').textContent = ha > 0 ? fmtMoney((ing-cost)/ha) : '–';
+
+    var bar = $('rMixBar');
+    bar.innerHTML = '';
+    if (kg > 0) {
+      var segs = [
+        {cls:'exp', v:exp, label:'Exportación'},
+        {cls:'nac', v:nac, label:'Nacional'},
+        {cls:'desc', v:desc, label:'Descarte'}
+      ];
+      segs.forEach(function(s){
+        if (s.v <= 0) return;
+        var pct = (s.v/kg*100);
+        var div = document.createElement('div');
+        div.className = 'seg ' + s.cls;
+        div.style.flex = pct;
+        div.textContent = pct >= 8 ? pct.toFixed(0) + '% ' + s.label : pct.toFixed(0) + '%';
+        bar.appendChild(div);
+      });
+    }
+  }
+
+  ['cKg','cHa','cExp','cDesc','cIng','cCost'].forEach(function(id){
+    $(id).addEventListener('input', recalc);
+  });
+  recalc();
+})();
+</script>
+</body>
+</html>
