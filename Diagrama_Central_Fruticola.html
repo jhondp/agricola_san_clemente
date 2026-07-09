@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagrama Central Frutícola | Agrícola San Clemente</title>
+<style>
+  :root{color-scheme:light dark}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(circle at 8% 0%, rgba(21,79,43,.10), transparent 30%),
+               radial-gradient(circle at 96% 4%, rgba(138,24,38,.08), transparent 26%),
+               linear-gradient(180deg,#fffcf8 0%,#f6f4ef 48%,#fffdfa 100%);
+    color:#1b2a20;
+    min-height:100vh;
+  }
+  main{max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3.5rem}
+
+  .hub{text-align:center;max-width:760px;margin:0 auto 1.5rem}
+  .hub .badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:3.2rem;height:3.2rem;border-radius:50%;
+    background:linear-gradient(135deg,#114425,#2d7644);color:#fff;font-size:1.5rem;
+    margin-bottom:.75rem;box-shadow:0 6px 16px rgba(17,68,37,.25);
+  }
+  .hub h1{margin:0 0 .4rem;font-size:clamp(1.6rem,4vw,2.2rem);color:#114425}
+  .hub p{margin:0;color:#4a5750;font-size:.98rem;line-height:1.5}
+
+  /* --- Overview radial diagram --- */
+  .overview{
+    position:relative;width:100%;max-width:480px;aspect-ratio:1;margin:0 auto 2.5rem;
+  }
+  .overview svg{position:absolute;inset:0;width:100%;height:100%}
+  .ov-center{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:clamp(84px,22vw,108px);height:clamp(84px,22vw,108px);border-radius:50%;
+    background:linear-gradient(135deg,#114425,#2d7644);color:#fff;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-weight:700;font-size:clamp(.65rem,2vw,.76rem);line-height:1.25;
+    box-shadow:0 8px 20px rgba(17,68,37,.3);padding:.4rem;
+  }
+  .branch{
+    position:absolute;transform:translate(-50%,-50%);
+    width:clamp(58px,15vw,80px);height:clamp(58px,15vw,80px);border-radius:50%;
+    background:var(--bc);color:#fff;text-decoration:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    box-shadow:0 6px 16px rgba(0,0,0,.18);transition:transform .15s ease,box-shadow .15s ease;
+    padding:.3rem;
+  }
+  .branch:hover{transform:translate(-50%,-50%) scale(1.08);box-shadow:0 10px 22px rgba(0,0,0,.26)}
+  .branch .oi{font-size:clamp(1rem,3.4vw,1.35rem);line-height:1}
+  .branch .ol{font-size:clamp(.55rem,1.8vw,.66rem);font-weight:700;margin-top:.15rem;line-height:1.15}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.35rem}
+
+  .node{
+    background:#fff;border-radius:16px;padding:1.35rem 1.4rem 1.5rem;
+    box-shadow:0 6px 20px rgba(17,68,37,.08);border-top:5px solid var(--accent);
+    scroll-margin-top:4.5rem;
+  }
+  .node-head{display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem}
+  .node-num{
+    flex:0 0 auto;width:2.1rem;height:2.1rem;border-radius:50%;
+    background:var(--accent);color:#fff;font-weight:700;font-size:.95rem;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .node-head h2{margin:0;font-size:1.05rem;color:#16281c;line-height:1.3}
+  .node-icon{font-size:1.15rem}
+
+  h3.branch-title{
+    margin:1.1rem 0 .35rem;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--accent);font-weight:700;
+  }
+  h3.branch-title:first-of-type{margin-top:0}
+  p.hint{margin:0;font-size:.78rem;color:#5a685f;line-height:1.45}
+
+  /* --- Flow chips --- */
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin-top:.5rem}
+  .flow .step{
+    background:#f6f4ef;border-radius:10px;padding:.4rem .65rem;font-size:.74rem;font-weight:600;
+    color:#16281c;white-space:nowrap;text-align:center;
+  }
+  .flow .step .fi{display:block;font-size:1rem;margin-bottom:.1rem}
+  .flow .step.result{background:var(--accent);color:#fff}
+  .flow .arrow{color:#aab5ac;font-size:.85rem}
+
+  /* --- Stat boxes --- */
+  .stats{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.7rem}
+  .stat{flex:1 1 190px;background:#f6f4ef;border-radius:10px;padding:.55rem .75rem;font-size:.78rem;color:#3d4a41}
+  .stat b{display:block;color:#16281c;font-size:.84rem;margin-bottom:.1rem}
+
+  /* --- Pills --- */
+  .pills{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+  .pill{background:#fdf3da;color:#6b4f00;border-radius:999px;padding:.32rem .75rem;font-size:.74rem;font-weight:600}
+
+  /* --- Note callout --- */
+  .note{
+    margin-top:.9rem;padding:.7rem .85rem;border-radius:10px;
+    background:#fff7e6;border:1px solid #f0d999;font-size:.78rem;line-height:1.5;color:#6b4f00;
+  }
+  .note strong{color:#4a3800}
+
+  .sources{
+    margin-top:2rem;padding:1rem 1.2rem;border-radius:14px;background:#fff;
+    box-shadow:0 4px 14px rgba(17,68,37,.06);font-size:.78rem;color:#5a685f;line-height:1.6;
+  }
+  .sources strong{color:#16281c}
+
+  footer{margin-top:1.5rem;font-size:.78rem;color:#6b7a72;text-align:center}
+</style>
+</head>
+<body>
+<nav class="scnav">
+<style>
+.scnav{position:sticky;top:0;z-index:99999;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;padding:.55rem 1rem;background:#114425;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:.85rem;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.scnav a{color:#fff;text-decoration:none;opacity:.85}
+.scnav .scnav-home{font-weight:700;opacity:.9}
+.scnav .scnav-sep{opacity:.35}
+.scnav .scnav-current{font-weight:700;color:#fff;opacity:1}
+.scnav details{position:relative}
+.scnav summary{cursor:pointer;list-style:none;font-weight:700;display:inline-flex;align-items:center;gap:.3rem;color:#fff}
+.scnav summary::-webkit-details-marker{display:none}
+.scnav summary::after{content:'▾';font-size:.7em;transition:transform .15s ease}
+.scnav details[open] summary::after{transform:rotate(180deg)}
+.scnav .scnav-menu{position:absolute;top:calc(100% + .5rem);left:0;background:#fff;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.22);min-width:270px;overflow:hidden;padding:.35rem 0}
+.scnav .scnav-menu a{display:block;padding:.55rem 1rem;color:#16281c;font-weight:500;white-space:nowrap;opacity:1}
+.scnav .scnav-menu a:hover{background:#f1f4f0}
+.scnav .scnav-menu .scnav-current{display:block;padding:.55rem 1rem;color:#114425;font-weight:700;background:#eef5ef;white-space:nowrap}
+</style>
+  <a class="scnav-home" href="index.html">🏠 Inicio</a>
+  <span class="scnav-sep">|</span>
+    <a href="Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">🏭 Centrales Frutícolas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍒 Cerezas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍎 Manzanas</a>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📊 Infografías</summary>
+    <div class="scnav-menu">
+    <a href="Comparativa_Cerezas_vs_Manzanas.html">🍒🍎 Comparativa Cerezas vs Manzanas</a>
+    <a href="Diagrama_Agricola.html">🧠 Diagrama Agrícola</a>
+    <a href="Diagrama_Conservera.html">🥫 Diagrama Conservera</a>
+    <span class="scnav-current">🏭 Diagrama Central Frutícola</span>
+    <a href="Diagrama_Exportadora.html">🚢 Diagrama Exportadora</a>
+    <a href="Ciclos_y_Temporadas.html">📅 Ciclos y Temporadas</a>
+    <a href="Indicadores_de_Gestion.html">📊 Indicadores de Gestión</a>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📝 Cuestionarios</summary>
+    <div class="scnav-menu">
+    <a href="Cuestionario_Agricola.html">📝 Cuestionario Agrícola</a>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📈 Propuestas de mejora</summary>
+    <div class="scnav-menu">
+    <a href="auditoria/INFORME_AUDITORIA.html">🔍 Informe de Auditoría</a>
+    <a href="auditoria/propuesta_flujo.html">🗺️ Propuesta de Arquitectura</a>
+    </div>
+  </details>
+  <script>document.addEventListener('click',function(e){document.querySelectorAll('.scnav details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});</script>
+</nav>
+<main>
+  <div class="hub">
+    <div class="badge">🏭</div>
+    <h1>Diagrama Central Frutícola</h1>
+    <p>Ocho ramas del modelo de negocio de Talca, Angol y Lontué. Datos reales acumulados a octubre 2025. Toca cualquier nodo para saltar al detalle.</p>
+  </div>
+
+  <div class="overview">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <line x1="50" y1="50" x2="50" y2="10" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="78.28" y2="21.72" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="90" y2="50" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="78.28" y2="78.28" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="50" y2="90" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="21.72" y2="78.28" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="10" y2="50" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="21.72" y2="21.72" stroke="#c9d3cc" stroke-width="1"/>
+    </svg>
+    <div class="ov-center">Central<br>Frutícola</div>
+    <a class="branch" style="--bc:#114425;left:50%;top:10%" href="#detail-1"><span class="oi">🏭</span><span class="ol">Modelo operativo</span></a>
+    <a class="branch" style="--bc:#1f5c8a;left:78.28%;top:21.72%" href="#detail-2"><span class="oi">❄️</span><span class="ol">Frío</span></a>
+    <a class="branch" style="--bc:#8a1826;left:90%;top:50%" href="#detail-3"><span class="oi">📅</span><span class="ol">Temporada</span></a>
+    <a class="branch" style="--bc:#b8860b;left:78.28%;top:78.28%" href="#detail-4"><span class="oi">🏛️</span><span class="ol">Tres centrales</span></a>
+    <a class="branch" style="--bc:#6a3d9a;left:50%;top:90%" href="#detail-5"><span class="oi">💰</span><span class="ol">Estado de resultado</span></a>
+    <a class="branch" style="--bc:#c0622a;left:21.72%;top:78.28%" href="#detail-6"><span class="oi">📦</span><span class="ol">Ingresos</span></a>
+    <a class="branch" style="--bc:#0e7c86;left:10%;top:50%" href="#detail-7"><span class="oi">🤖</span><span class="ol">Tecnología</span></a>
+    <a class="branch" style="--bc:#2d7644;left:21.72%;top:21.72%" href="#detail-8"><span class="oi">🌍</span><span class="ol">Valor generado</span></a>
+  </div>
+
+  <div class="grid">
+
+    <article class="node" id="detail-1" style="--accent:#114425">
+      <div class="node-head">
+        <span class="node-num">1</span>
+        <h2><span class="node-icon">🏭</span> Modelo operativo</h2>
+      </div>
+      <p class="hint">El flujo es secuencial, pero la gestión es simultánea: cada decisión sobre selección, embalaje o frío impacta calidad, productividad y rentabilidad.</p>
+      <div class="flow">
+        <span class="step"><span class="fi">📥</span>Recepción<br><span style="font-weight:400">origen y calidad</span></span>
+        <span class="arrow">→</span>
+        <span class="step"><span class="fi">🔍</span>Selección<br><span style="font-weight:400">calibre, color, firmeza</span></span>
+        <span class="arrow">→</span>
+        <span class="step"><span class="fi">📦</span>Embalaje<br><span style="font-weight:400">formato por cliente</span></span>
+        <span class="arrow">→</span>
+        <span class="step"><span class="fi">🧱</span>Paletizado<br><span style="font-weight:400">pallets homogéneos</span></span>
+        <span class="arrow">→</span>
+        <span class="step"><span class="fi">❄️</span>Frío y guarda<br><span style="font-weight:400">inventario y rotación</span></span>
+        <span class="arrow">→</span>
+        <span class="step result">🚚 Despacho</span>
+      </div>
+      <div class="note">
+        <strong>Idea fuerza:</strong> la central agrega valor cuando transforma volumen agrícola en un producto estandarizado, confiable y comercialmente apto para exportación.
+      </div>
+    </article>
+
+    <article class="node" id="detail-2" style="--accent:#1f5c8a">
+      <div class="node-head">
+        <span class="node-num">2</span>
+        <h2><span class="node-icon">❄️</span> Frío: Convencional vs. Atmósfera Controlada</h2>
+      </div>
+      <p class="hint">Ambos bajan la temperatura y conservan la fruta, pero no persiguen el mismo objetivo.</p>
+      <div class="stats">
+        <div class="stat"><b>🧊 Frío Convencional (FC)</b>Controla temperatura y humedad. Guarda corta, rotación rápida — clave en cerezas por su vida útil breve.</div>
+        <div class="stat"><b>🌬️ Atmósfera Controlada (AC)</b>Suma manejo de gases (menos oxígeno) para frenar la respiración de la fruta. Guarda prolongada — clave en manzanas.</div>
+      </div>
+      <h3 class="branch-title">Hidrocooler</h3>
+      <p class="hint">Enfriamiento rápido con agua fría recirculada que retira el calor de campo apenas cosechada la fruta — herramienta crítica en cerezas para mantener firmeza, color de pedicelo y vida útil.</p>
+      <div class="note">
+        <strong>Diferencia ejecutiva:</strong> Convencional conserva por frío; Atmósfera Controlada conserva por frío + control respiratorio de la fruta.
+      </div>
+    </article>
+
+    <article class="node" id="detail-3" style="--accent:#8a1826">
+      <div class="node-head">
+        <span class="node-num">3</span>
+        <h2><span class="node-icon">📅</span> Temporada y especies</h2>
+      </div>
+      <p class="hint">La temporada de Centrales va de noviembre a octubre del año siguiente: cereza abre el ciclo, manzana ocupa el resto del año operativo.</p>
+      <div class="pills">
+        <span class="pill">🍒 Cereza · Nov–Ene</span>
+        <span class="pill">🍎 Manzana · Feb–Oct</span>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>🍒 Fruta más delicada</b>Cereza: menor vida útil, sensible a golpes, deshidratación y partidura.</div>
+        <div class="stat"><b>💰 Fruta más rentable</b>Cereza: mayor rentabilidad y EBITDA unitario (real a oct-2025); manzana sostiene la escala y continuidad de la red.</div>
+      </div>
+    </article>
+
+    <article class="node" id="detail-4" style="--accent:#b8860b">
+      <div class="node-head">
+        <span class="node-num">4</span>
+        <h2><span class="node-icon">🏛️</span> Las tres centrales</h2>
+      </div>
+      <p class="hint">Lógica complementaria: cada central aporta desde una combinación distinta de especie, escala, infraestructura y rol.</p>
+      <div class="stats">
+        <div class="stat"><b>🌿 Talca</b>Mix de manzana y cereza, foco en flexibilidad. 28,28 MM kg · EBITDA 4,54 MMUSD · mayor EBITDA/kg de la red (USD 0,16/kg).</div>
+        <div class="stat"><b>⚙️ Angol</b>Central ancla en manzana, mayor escala y automatización. 44,29 MM kg (52% del volumen) · EBITDA 4,95 MMUSD.</div>
+        <div class="stat"><b>🛟 Lontué</b>Soporte y continuidad operacional. 12,64 MM kg · EBITDA 1,40 MMUSD · 57% de rentabilidad en cerezas.</div>
+      </div>
+    </article>
+
+    <article class="node" id="detail-5" style="--accent:#6a3d9a">
+      <div class="node-head">
+        <span class="node-num">5</span>
+        <h2><span class="node-icon">💰</span> Estado de resultado</h2>
+      </div>
+      <p class="hint">Consolidado real a octubre 2025.</p>
+      <div class="flow">
+        <span class="step">Ingresos<br><span style="font-weight:400">26,59 MMUSD</span></span>
+        <span class="arrow">→</span>
+        <span class="step">−Costos variables<br><span style="font-weight:400">11,91 MMUSD</span></span>
+        <span class="arrow">→</span>
+        <span class="step">−Gastos fijos<br><span style="font-weight:400">3,78 MMUSD</span></span>
+        <span class="arrow">→</span>
+        <span class="step result">EBITDA 10,89 MMUSD · 41%</span>
+      </div>
+      <div class="note">
+        <strong>Qué explica el resultado:</strong> el ingreso se sostiene en packing y frigorífico; en costos, la mano de obra (9,52 MMUSD) es la partida más determinante.
+      </div>
+    </article>
+
+    <article class="node" id="detail-6" style="--accent:#c0622a">
+      <div class="node-head">
+        <span class="node-num">6</span>
+        <h2><span class="node-icon">📦</span> Apertura de ingresos</h2>
+      </div>
+      <p class="hint">El ingreso no proviene solo de "procesar kilos": la central factura distintos servicios según programa comercial, especie y necesidad del cliente.</p>
+      <div class="stats">
+        <div class="stat"><b>📦 Packing</b>Sellado manual, armado de cajas, etiquetado, embolsado, re-etiquetado y reembalaje.</div>
+        <div class="stat"><b>❄️ Frigorífico</b>Frío Convencional y Atmósfera Controlada, según especie y estrategia comercial.</div>
+        <div class="stat"><b>🚢 Embarque</b>Inspección SAG, inspección USDA y estiba para habilitar la salida a mercado.</div>
+        <div class="stat"><b>📋 Arriendos</b>Bins plásticos (manzana) y bandejas cosecheras (cereza) para cosecha y traslado.</div>
+      </div>
+    </article>
+
+    <article class="node" id="detail-7" style="--accent:#0e7c86">
+      <div class="node-head">
+        <span class="node-num">7</span>
+        <h2><span class="node-icon">🤖</span> Tecnología</h2>
+      </div>
+      <p class="hint">La automatización no solo mejora productividad: asegura uniformidad, menor merma y mejor control de flujo.</p>
+      <div class="stats">
+        <div class="stat"><b>💵 Inversión Angol</b>USD 25 millones · más de 37.000 m² de planta ampliada.</div>
+        <div class="stat"><b>📈 Capacidad</b>De 80.000 a 150.000 bins por temporada (~60.000 ton).</div>
+      </div>
+      <div class="pills">
+        <span class="pill">🔎 Detección y preclasificación</span>
+        <span class="pill">📦 Embalaje y paletizado</span>
+        <span class="pill">🏬 Bodegaje inteligente</span>
+        <span class="pill">🍒 Precisión en cerezas</span>
+      </div>
+    </article>
+
+    <article class="node" id="detail-8" style="--accent:#2d7644">
+      <div class="node-head">
+        <span class="node-num">8</span>
+        <h2><span class="node-icon">🌍</span> Valor generado</h2>
+      </div>
+      <p class="hint">El valor de las centrales va más allá del procesamiento físico: sostienen la promesa comercial y permiten competir en mercados exigentes.</p>
+      <div class="stats">
+        <div class="stat"><b>👷 +3.000</b>colaboradores en temporada alta</div>
+        <div class="stat"><b>🌍 +40</b>mercados atendidos a través de la exportadora</div>
+        <div class="stat"><b>🏆 Top 1</b>exportador de manzanas en Chile</div>
+        <div class="stat"><b>📦 4 MM+</b>cajas de fruta de exportación</div>
+      </div>
+      <div class="note">
+        <strong>Talca, Angol y Lontué</strong> son una plataforma de servicio, calidad y eficiencia: combinan escala, automatización, flexibilidad y continuidad operativa para sostener una propuesta frutícola competitiva y trazable.
+      </div>
+    </article>
+
+  </div>
+
+  <div class="sources">
+    <strong>Fuentes:</strong> Infografía Centrales Frutícolas · Talca, Angol y Lontué (compendio ejecutivo, datos reales acumulados a octubre 2025).
+  </div>
+
+  <footer>Agrícola San Clemente · Diagrama de estudio</footer>
+</main>
+</body>
+</html>

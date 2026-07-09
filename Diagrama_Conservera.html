@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagrama Conservera | Agrícola San Clemente</title>
+<style>
+  :root{color-scheme:light dark}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(circle at 8% 0%, rgba(192,98,42,.10), transparent 30%),
+               radial-gradient(circle at 96% 4%, rgba(138,24,38,.08), transparent 26%),
+               linear-gradient(180deg,#fffcf8 0%,#f6f4ef 48%,#fffdfa 100%);
+    color:#1b2a20;
+    min-height:100vh;
+  }
+  main{max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3.5rem}
+
+  .hub{text-align:center;max-width:720px;margin:0 auto 1.5rem}
+  .hub .badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:3.2rem;height:3.2rem;border-radius:50%;
+    background:linear-gradient(135deg,#8a3f10,#c0622a);color:#fff;font-size:1.5rem;
+    margin-bottom:.75rem;box-shadow:0 6px 16px rgba(138,63,16,.25);
+  }
+  .hub h1{margin:0 0 .4rem;font-size:clamp(1.6rem,4vw,2.2rem);color:#8a3f10}
+  .hub p{margin:0;color:#4a5750;font-size:.98rem;line-height:1.5}
+
+  /* --- Overview radial diagram --- */
+  .overview{
+    position:relative;width:100%;max-width:420px;aspect-ratio:1;margin:0 auto 2.5rem;
+  }
+  .overview svg{position:absolute;inset:0;width:100%;height:100%}
+  .ov-center{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:clamp(84px,22vw,108px);height:clamp(84px,22vw,108px);border-radius:50%;
+    background:linear-gradient(135deg,#8a3f10,#c0622a);color:#fff;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-weight:700;font-size:clamp(.7rem,2.2vw,.8rem);line-height:1.25;
+    box-shadow:0 8px 20px rgba(138,63,16,.3);padding:.4rem;
+  }
+  .branch{
+    position:absolute;transform:translate(-50%,-50%);
+    width:clamp(58px,15vw,84px);height:clamp(58px,15vw,84px);border-radius:50%;
+    background:var(--bc);color:#fff;text-decoration:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    box-shadow:0 6px 16px rgba(0,0,0,.18);transition:transform .15s ease,box-shadow .15s ease;
+    padding:.3rem;
+  }
+  .branch:hover{transform:translate(-50%,-50%) scale(1.08);box-shadow:0 10px 22px rgba(0,0,0,.26)}
+  .branch .oi{font-size:clamp(1rem,3.4vw,1.4rem);line-height:1}
+  .branch .ol{font-size:clamp(.58rem,1.9vw,.7rem);font-weight:700;margin-top:.15rem;line-height:1.15}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.35rem}
+
+  .node{
+    background:#fff;border-radius:16px;padding:1.35rem 1.4rem 1.5rem;
+    box-shadow:0 6px 20px rgba(138,63,16,.08);border-top:5px solid var(--accent);
+    scroll-margin-top:4.5rem;
+  }
+  .node-head{display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem}
+  .node-num{
+    flex:0 0 auto;width:2.1rem;height:2.1rem;border-radius:50%;
+    background:var(--accent);color:#fff;font-weight:700;font-size:.95rem;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .node-head h2{margin:0;font-size:1.05rem;color:#16281c;line-height:1.3}
+  .node-icon{font-size:1.15rem}
+
+  h3.branch-title{
+    margin:1.1rem 0 .35rem;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--accent);font-weight:700;
+  }
+  h3.branch-title:first-of-type{margin-top:0}
+  p.hint{margin:0;font-size:.78rem;color:#5a685f;line-height:1.45}
+
+  /* --- Flow chips --- */
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin-top:.5rem}
+  .flow .step{
+    background:#f6f4ef;border-radius:10px;padding:.4rem .65rem;font-size:.74rem;font-weight:600;
+    color:#16281c;white-space:nowrap;text-align:center;
+  }
+  .flow .step .fi{display:block;font-size:1rem;margin-bottom:.1rem}
+  .flow .step.result{background:var(--accent);color:#fff}
+  .flow .arrow{color:#aab5ac;font-size:.85rem}
+
+  /* --- Stat boxes --- */
+  .stats{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.7rem}
+  .stat{flex:1 1 190px;background:#f6f4ef;border-radius:10px;padding:.55rem .75rem;font-size:.78rem;color:#3d4a41}
+  .stat b{display:block;color:#16281c;font-size:.84rem;margin-bottom:.1rem}
+
+  /* --- Note callout --- */
+  .note{
+    margin-top:.9rem;padding:.7rem .85rem;border-radius:10px;
+    background:#fff7e6;border:1px solid #f0d999;font-size:.78rem;line-height:1.5;color:#6b4f00;
+  }
+  .note strong{color:#4a3800}
+
+  /* --- Plant grid --- */
+  .var-grid{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-top:.7rem}
+  .var-chip{background:#f6f4ef;border-radius:10px;padding:.55rem .65rem}
+  .var-chip .vi{font-size:1.05rem}
+  .var-chip b{display:block;font-size:.78rem;color:#16281c;margin:.15rem 0 .1rem}
+  .var-chip p{margin:0;font-size:.68rem;color:#5a685f;line-height:1.35}
+
+  .sources{
+    margin-top:2rem;padding:1rem 1.2rem;border-radius:14px;background:#fff;
+    box-shadow:0 4px 14px rgba(138,63,16,.06);font-size:.78rem;color:#5a685f;line-height:1.6;
+  }
+  .sources strong{color:#16281c}
+
+  footer{margin-top:1.5rem;font-size:.78rem;color:#6b7a72;text-align:center}
+</style>
+</head>
+<body>
+<nav class="scnav">
+<style>
+.scnav{position:sticky;top:0;z-index:99999;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;padding:.55rem 1rem;background:#114425;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:.85rem;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.scnav a{color:#fff;text-decoration:none;opacity:.85}
+.scnav .scnav-home{font-weight:700;opacity:.9}
+.scnav .scnav-sep{opacity:.35}
+.scnav .scnav-current{font-weight:700;color:#fff;opacity:1}
+.scnav details{position:relative}
+.scnav summary{cursor:pointer;list-style:none;font-weight:700;display:inline-flex;align-items:center;gap:.3rem;color:#fff}
+.scnav summary::-webkit-details-marker{display:none}
+.scnav summary::after{content:'▾';font-size:.7em;transition:transform .15s ease}
+.scnav details[open] summary::after{transform:rotate(180deg)}
+.scnav .scnav-menu{position:absolute;top:calc(100% + .5rem);left:0;background:#fff;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.22);min-width:270px;overflow:hidden;padding:.35rem 0}
+.scnav .scnav-menu a{display:block;padding:.55rem 1rem;color:#16281c;font-weight:500;white-space:nowrap;opacity:1}
+.scnav .scnav-menu a:hover{background:#f1f4f0}
+.scnav .scnav-menu .scnav-current{display:block;padding:.55rem 1rem;color:#114425;font-weight:700;background:#eef5ef;white-space:nowrap}
+</style>
+  <a class="scnav-home" href="index.html">🏠 Inicio</a>
+  <span class="scnav-sep">|</span>
+    <a href="Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">🏭 Centrales Frutícolas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍒 Cerezas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍎 Manzanas</a>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📊 Infografías</summary>
+    <div class="scnav-menu">
+    <a href="Comparativa_Cerezas_vs_Manzanas.html">🍒🍎 Comparativa Cerezas vs Manzanas</a>
+    <a href="Diagrama_Agricola.html">🧠 Diagrama Agrícola</a>
+    <span class="scnav-current">🥫 Diagrama Conservera</span>
+    <a href="Diagrama_Central_Fruticola.html">🏭 Diagrama Central Frutícola</a>
+    <a href="Diagrama_Exportadora.html">🚢 Diagrama Exportadora</a>
+    <a href="Ciclos_y_Temporadas.html">📅 Ciclos y Temporadas</a>
+    <a href="Indicadores_de_Gestion.html">📊 Indicadores de Gestión</a>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📝 Cuestionarios</summary>
+    <div class="scnav-menu">
+    <a href="Cuestionario_Agricola.html">📝 Cuestionario Agrícola</a>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📈 Propuestas de mejora</summary>
+    <div class="scnav-menu">
+    <a href="auditoria/INFORME_AUDITORIA.html">🔍 Informe de Auditoría</a>
+    <a href="auditoria/propuesta_flujo.html">🗺️ Propuesta de Arquitectura</a>
+    </div>
+  </details>
+  <script>document.addEventListener('click',function(e){document.querySelectorAll('.scnav details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});</script>
+</nav>
+<main>
+  <div class="hub">
+    <div class="badge">🥫</div>
+    <h1>Diagrama Conservera</h1>
+    <p>El integrante más nuevo del holding — ubicada en San Felipe, procesa duraznos en conserva. Toca cualquier nodo para saltar al detalle.</p>
+  </div>
+
+  <div class="overview">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <line x1="50" y1="50" x2="50" y2="10" stroke="#ddd0c2" stroke-width="1"/>
+      <line x1="50" y1="50" x2="84.64" y2="70" stroke="#ddd0c2" stroke-width="1"/>
+      <line x1="50" y1="50" x2="15.36" y2="70" stroke="#ddd0c2" stroke-width="1"/>
+    </svg>
+    <div class="ov-center">Conservera<br>San Clemente</div>
+    <a class="branch" style="--bc:#c0622a;left:50%;top:10%" href="#detail-1"><span class="oi">🏭</span><span class="ol">Cuatro plantas</span></a>
+    <a class="branch" style="--bc:#1f5c8a;left:84.64%;top:70%" href="#detail-2"><span class="oi">📅</span><span class="ol">Temporada</span></a>
+    <a class="branch" style="--bc:#114425;left:15.36%;top:70%" href="#detail-3"><span class="oi">🔄</span><span class="ol">Proceso</span></a>
+  </div>
+
+  <div class="grid">
+
+    <article class="node" id="detail-1" style="--accent:#c0622a">
+      <div class="node-head">
+        <span class="node-num">1</span>
+        <h2><span class="node-icon">🏭</span> Cuatro plantas</h2>
+      </div>
+      <p class="hint">La conserva se organiza en cuatro plantas especializadas y secuenciales.</p>
+      <div class="var-grid">
+        <div class="var-chip"><span class="vi">1️⃣</span><b>Planta 1 · Proceso</b><p>Elabora el durazno en conserva y pulpas concentradas; control de calidad del semielaborado</p></div>
+        <div class="var-chip"><span class="vi">2️⃣</span><b>Planta 2 · Recepción</b><p>Pesaje, creación de lote y control de calidad (presión, calibre) antes de proceso o cámara de frío</p></div>
+        <div class="var-chip"><span class="vi">3️⃣</span><b>Planta 3 · Bodega</b><p>Incubación de 15 días, muestreo de calidad, etiquetado y despacho</p></div>
+        <div class="var-chip"><span class="vi">4️⃣</span><b>Planta 4 · Riles</b><p>Tratamiento de residuos líquidos industriales (ej. soda cáustica del pelado)</p></div>
+      </div>
+    </article>
+
+    <article class="node" id="detail-2" style="--accent:#1f5c8a">
+      <div class="node-head">
+        <span class="node-num">2</span>
+        <h2><span class="node-icon">📅</span> Temporada del durazno</h2>
+      </div>
+      <p class="hint">La recepción se concentra en pocos meses y supera con creces la capacidad instalada en el peak.</p>
+      <div class="stats">
+        <div class="stat"><b>📅 Recepción</b>Principalmente enero–marzo; los duraznos tempraneros llegan desde mediados de diciembre.</div>
+        <div class="stat"><b>📈 Curva tipo campana de Gauss</b>~50% de la fruta de la temporada llega en febrero, superando la capacidad instalada — por eso se arriendan cámaras de frío adicionales.</div>
+      </div>
+    </article>
+
+    <article class="node" id="detail-3" style="--accent:#114425">
+      <div class="node-head">
+        <span class="node-num">3</span>
+        <h2><span class="node-icon">🔄</span> Proceso productivo</h2>
+      </div>
+      <p class="hint">Línea continua desde la recepción de fruta hasta el paletizado del producto terminado.</p>
+      <div class="flow">
+        <span class="step">Recepción<br><span style="font-weight:400">0–5°C, máx. 2 sem.</span></span>
+        <span class="arrow">→</span>
+        <span class="step">Calibrado<br><span style="font-weight:400">descarta &lt;48 mm</span></span>
+        <span class="arrow">→</span>
+        <span class="step">Descarozado<br><span style="font-weight:400">torsión o cuchillo</span></span>
+        <span class="arrow">→</span>
+        <span class="step">Pelado<br><span style="font-weight:400">soda cáustica 2–3%</span></span>
+        <span class="arrow">→</span>
+        <span class="step">Envasado<br><span style="font-weight:400">+ almíbar 60°C</span></span>
+        <span class="arrow">→</span>
+        <span class="step">Esterilizado<br><span style="font-weight:400">90–95°C · vacío</span></span>
+        <span class="arrow">→</span>
+        <span class="step result">📦 Paletizado</span>
+      </div>
+      <div class="note">
+        <strong>¿Cuánto dura una conserva?</strong> El sellado al vacío tras la esterilización evita la proliferación de bacterias, lo que permite que el producto se conserve hasta <strong>4 años</strong>.
+      </div>
+    </article>
+
+  </div>
+
+  <div class="sources">
+    <strong>Fuentes:</strong> Manual de Inducción del Holding (glosario, Conservera San Clemente).
+  </div>
+
+  <footer>Agrícola San Clemente · Diagrama de estudio</footer>
+</main>
+</body>
+</html>

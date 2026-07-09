@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagrama Exportadora | Agrícola San Clemente</title>
+<style>
+  :root{color-scheme:light dark}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(circle at 8% 0%, rgba(21,79,43,.10), transparent 30%),
+               radial-gradient(circle at 96% 4%, rgba(138,24,38,.08), transparent 26%),
+               linear-gradient(180deg,#fffcf8 0%,#f6f4ef 48%,#fffdfa 100%);
+    color:#1b2a20;
+    min-height:100vh;
+  }
+  main{max-width:1180px;margin:0 auto;padding:2rem 1.25rem 3.5rem}
+
+  .hub{text-align:center;max-width:760px;margin:0 auto 1.5rem}
+  .hub .badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:3.2rem;height:3.2rem;border-radius:50%;
+    background:linear-gradient(135deg,#114425,#2d7644);color:#fff;font-size:1.5rem;
+    margin-bottom:.75rem;box-shadow:0 6px 16px rgba(17,68,37,.25);
+  }
+  .hub h1{margin:0 0 .4rem;font-size:clamp(1.6rem,4vw,2.2rem);color:#114425}
+  .hub p{margin:0;color:#4a5750;font-size:.98rem;line-height:1.5}
+
+  /* --- Overview radial diagram --- */
+  .overview{
+    position:relative;width:100%;max-width:480px;aspect-ratio:1;margin:0 auto 2.5rem;
+  }
+  .overview svg{position:absolute;inset:0;width:100%;height:100%}
+  .ov-center{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:clamp(84px,22vw,108px);height:clamp(84px,22vw,108px);border-radius:50%;
+    background:linear-gradient(135deg,#114425,#2d7644);color:#fff;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-weight:700;font-size:clamp(.65rem,2vw,.76rem);line-height:1.25;
+    box-shadow:0 8px 20px rgba(17,68,37,.3);padding:.4rem;
+  }
+  .branch{
+    position:absolute;transform:translate(-50%,-50%);
+    width:clamp(58px,15vw,80px);height:clamp(58px,15vw,80px);border-radius:50%;
+    background:var(--bc);color:#fff;text-decoration:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    box-shadow:0 6px 16px rgba(0,0,0,.18);transition:transform .15s ease,box-shadow .15s ease;
+    padding:.3rem;
+  }
+  .branch:hover{transform:translate(-50%,-50%) scale(1.08);box-shadow:0 10px 22px rgba(0,0,0,.26)}
+  .branch .oi{font-size:clamp(1rem,3.4vw,1.35rem);line-height:1}
+  .branch .ol{font-size:clamp(.55rem,1.8vw,.66rem);font-weight:700;margin-top:.15rem;line-height:1.15}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.35rem}
+
+  .node{
+    background:#fff;border-radius:16px;padding:1.35rem 1.4rem 1.5rem;
+    box-shadow:0 6px 20px rgba(17,68,37,.08);border-top:5px solid var(--accent);
+    scroll-margin-top:4.5rem;
+  }
+  .node-head{display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem}
+  .node-num{
+    flex:0 0 auto;width:2.1rem;height:2.1rem;border-radius:50%;
+    background:var(--accent);color:#fff;font-weight:700;font-size:.95rem;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .node-head h2{margin:0;font-size:1.05rem;color:#16281c;line-height:1.3}
+  .node-icon{font-size:1.15rem}
+
+  h3.branch-title{
+    margin:1.1rem 0 .35rem;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--accent);font-weight:700;
+  }
+  h3.branch-title:first-of-type{margin-top:0}
+  p.hint{margin:0;font-size:.78rem;color:#5a685f;line-height:1.45}
+
+  /* --- Flow chips --- */
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:.35rem;margin-top:.5rem}
+  .flow .step{
+    background:#f6f4ef;border-radius:10px;padding:.4rem .65rem;font-size:.74rem;font-weight:600;
+    color:#16281c;white-space:nowrap;text-align:center;
+  }
+  .flow .step .fi{display:block;font-size:1rem;margin-bottom:.1rem}
+  .flow .step.result{background:var(--accent);color:#fff}
+  .flow .arrow{color:#aab5ac;font-size:.85rem}
+
+  /* --- Stat boxes --- */
+  .stats{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.7rem}
+  .stat{flex:1 1 190px;background:#f6f4ef;border-radius:10px;padding:.55rem .75rem;font-size:.78rem;color:#3d4a41}
+  .stat b{display:block;color:#16281c;font-size:.84rem;margin-bottom:.1rem}
+
+  /* --- Pills --- */
+  .pills{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+  .pill{background:#fdf3da;color:#6b4f00;border-radius:999px;padding:.32rem .75rem;font-size:.74rem;font-weight:600}
+
+  /* --- Note callout --- */
+  .note{
+    margin-top:.9rem;padding:.7rem .85rem;border-radius:10px;
+    background:#fff7e6;border:1px solid #f0d999;font-size:.78rem;line-height:1.5;color:#6b4f00;
+  }
+  .note strong{color:#4a3800}
+
+  .sources{
+    margin-top:2rem;padding:1rem 1.2rem;border-radius:14px;background:#fff;
+    box-shadow:0 4px 14px rgba(17,68,37,.06);font-size:.78rem;color:#5a685f;line-height:1.6;
+  }
+  .sources strong{color:#16281c}
+
+  footer{margin-top:1.5rem;font-size:.78rem;color:#6b7a72;text-align:center}
+</style>
+</head>
+<body>
+<nav class="scnav">
+<style>
+.scnav{position:sticky;top:0;z-index:99999;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;padding:.55rem 1rem;background:#114425;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:.85rem;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.scnav a{color:#fff;text-decoration:none;opacity:.85}
+.scnav .scnav-home{font-weight:700;opacity:.9}
+.scnav .scnav-sep{opacity:.35}
+.scnav .scnav-current{font-weight:700;color:#fff;opacity:1}
+.scnav details{position:relative}
+.scnav summary{cursor:pointer;list-style:none;font-weight:700;display:inline-flex;align-items:center;gap:.3rem;color:#fff}
+.scnav summary::-webkit-details-marker{display:none}
+.scnav summary::after{content:'▾';font-size:.7em;transition:transform .15s ease}
+.scnav details[open] summary::after{transform:rotate(180deg)}
+.scnav .scnav-menu{position:absolute;top:calc(100% + .5rem);left:0;background:#fff;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.22);min-width:270px;overflow:hidden;padding:.35rem 0}
+.scnav .scnav-menu a{display:block;padding:.55rem 1rem;color:#16281c;font-weight:500;white-space:nowrap;opacity:1}
+.scnav .scnav-menu a:hover{background:#f1f4f0}
+.scnav .scnav-menu .scnav-current{display:block;padding:.55rem 1rem;color:#114425;font-weight:700;background:#eef5ef;white-space:nowrap}
+</style>
+  <a class="scnav-home" href="index.html">🏠 Inicio</a>
+  <span class="scnav-sep">|</span>
+    <a href="Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">🏭 Centrales Frutícolas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍒 Cerezas</a>
+  <span class="scnav-sep">|</span>
+  <a href="Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍎 Manzanas</a>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📊 Infografías</summary>
+    <div class="scnav-menu">
+    <a href="Comparativa_Cerezas_vs_Manzanas.html">🍒🍎 Comparativa Cerezas vs Manzanas</a>
+    <a href="Diagrama_Agricola.html">🧠 Diagrama Agrícola</a>
+    <a href="Diagrama_Conservera.html">🥫 Diagrama Conservera</a>
+    <a href="Diagrama_Central_Fruticola.html">🏭 Diagrama Central Frutícola</a>
+    <span class="scnav-current">🚢 Diagrama Exportadora</span>
+    <a href="Ciclos_y_Temporadas.html">📅 Ciclos y Temporadas</a>
+    <a href="Indicadores_de_Gestion.html">📊 Indicadores de Gestión</a>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📝 Cuestionarios</summary>
+    <div class="scnav-menu">
+    <a href="Cuestionario_Agricola.html">📝 Cuestionario Agrícola</a>
+    </div>
+  </details>
+  <span class="scnav-sep">|</span>
+  <details>
+    <summary>📈 Propuestas de mejora</summary>
+    <div class="scnav-menu">
+    <a href="auditoria/INFORME_AUDITORIA.html">🔍 Informe de Auditoría</a>
+    <a href="auditoria/propuesta_flujo.html">🗺️ Propuesta de Arquitectura</a>
+    </div>
+  </details>
+  <script>document.addEventListener('click',function(e){document.querySelectorAll('.scnav details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});</script>
+</nav>
+<main>
+  <div class="hub">
+    <div class="badge">🚢</div>
+    <h1>Diagrama Exportadora</h1>
+    <p>Ocho ramas del negocio de comercialización y exportación de fruta fresca. Toca cualquier nodo para saltar al detalle.</p>
+  </div>
+
+  <div class="overview">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <line x1="50" y1="50" x2="50" y2="10" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="78.28" y2="21.72" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="90" y2="50" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="78.28" y2="78.28" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="50" y2="90" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="21.72" y2="78.28" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="10" y2="50" stroke="#c9d3cc" stroke-width="1"/>
+      <line x1="50" y1="50" x2="21.72" y2="21.72" stroke="#c9d3cc" stroke-width="1"/>
+    </svg>
+    <div class="ov-center">Exportadora<br>San Clemente</div>
+    <a class="branch" style="--bc:#114425;left:50%;top:10%" href="#detail-1"><span class="oi">🏢</span><span class="ol">Qué es y ubicación</span></a>
+    <a class="branch" style="--bc:#6a3d9a;left:78.28%;top:21.72%" href="#detail-2"><span class="oi">💰</span><span class="ol">Comisión y RNP</span></a>
+    <a class="branch" style="--bc:#b8860b;left:90%;top:50%" href="#detail-3"><span class="oi">🎁</span><span class="ol">Rebate</span></a>
+    <a class="branch" style="--bc:#1f5c8a;left:78.28%;top:78.28%" href="#detail-4"><span class="oi">🚢</span><span class="ol">Estiba y transporte</span></a>
+    <a class="branch" style="--bc:#8a1826;left:50%;top:90%" href="#detail-5"><span class="oi">🍎</span><span class="ol">Calidad y calibres</span></a>
+    <a class="branch" style="--bc:#c0622a;left:21.72%;top:78.28%" href="#detail-6"><span class="oi">🏷️</span><span class="ol">Destinos de la fruta</span></a>
+    <a class="branch" style="--bc:#0e7c86;left:10%;top:50%" href="#detail-7"><span class="oi">🌍</span><span class="ol">Mercados</span></a>
+    <a class="branch" style="--bc:#2d7644;left:21.72%;top:21.72%" href="#detail-8"><span class="oi">📜</span><span class="ol">Glosario clave</span></a>
+  </div>
+
+  <div class="grid">
+
+    <article class="node" id="detail-1" style="--accent:#114425">
+      <div class="node-head">
+        <span class="node-num">1</span>
+        <h2><span class="node-icon">🏢</span> Qué es y ubicación</h2>
+      </div>
+      <p class="hint">Exportadora San Clemente es la empresa dedicada a la comercialización y exportación de fruta fresca — una de las más diversificadas del rubro en Chile, con relaciones comerciales de largo plazo.</p>
+      <div class="stats">
+        <div class="stat"><b>🏢 Casa matriz</b>Santiago — ahí se ubican la gerencia general, el equipo logístico y el equipo comercial.</div>
+        <div class="stat"><b>🌍 Oficinas comerciales</b>En el extranjero, en estrecho contacto con el equipo comercial de la casa matriz.</div>
+      </div>
+    </article>
+
+    <article class="node" id="detail-2" style="--accent:#6a3d9a">
+      <div class="node-head">
+        <span class="node-num">2</span>
+        <h2><span class="node-icon">💰</span> Cómo gana dinero: comisión y RNP</h2>
+      </div>
+      <p class="hint">La Exportadora gana a través de una comisión sobre la venta de la <b>caja equivalente</b> — la unidad estándar en que se transa la fruta entre Agrícola, Central Frutícola y Exportadora.</p>
+      <div class="flow">
+        <span class="step">Precio FOB</span>
+        <span class="arrow">→</span>
+        <span class="step">−Comisión</span>
+        <span class="arrow">→</span>
+        <span class="step">−Materiales + delta</span>
+        <span class="arrow">→</span>
+        <span class="step">−Flete + delta</span>
+        <span class="arrow">→</span>
+        <span class="step">−Packing y frigorífico</span>
+        <span class="arrow">→</span>
+        <span class="step">−Gastos de exportación</span>
+        <span class="arrow">→</span>
+        <span class="step result">Retorno Neto Productor</span>
+      </div>
+      <div class="note">
+        <strong>Efecto cadena:</strong> si el precio de venta que comercializa la Exportadora baja, la Agrícola es quien pierde proporcionalmente más — el impacto se multiplica hacia atrás en toda la cadena.
+      </div>
+    </article>
+
+    <article class="node" id="detail-3" style="--accent:#b8860b">
+      <div class="node-head">
+        <span class="node-num">3</span>
+        <h2><span class="node-icon">🎁</span> Rebate</h2>
+      </div>
+      <p class="hint">Descuento comercial sobre volúmenes de carga por tramos, cobrado a la naviera mediante una empresa externa y traspasado en un porcentaje a los productores.</p>
+      <div class="stats">
+        <div class="stat"><b>📊 Base del cálculo</b>Se pondera por especie según bultos y equivalencia de carga, descontando la comisión administrativa.</div>
+        <div class="stat"><b>🔁 A quién se traspasa</b>Un porcentaje del rebate neto se paga al productor; el resto queda como rebate cobrado por la Exportadora.</div>
+      </div>
+      <div class="note">
+        <strong>Cambio de tarifa:</strong> se dejó de usar la "Tarifa Neta" (valor conversado con el productor) para pasar a la "Tarifa Pública" (solo el valor del servicio), lo que reduce el rebate generado.
+      </div>
+    </article>
+
+    <article class="node" id="detail-4" style="--accent:#1f5c8a">
+      <div class="node-head">
+        <span class="node-num">4</span>
+        <h2><span class="node-icon">🚢</span> Estiba, transporte e inspecciones</h2>
+      </div>
+      <p class="hint">Antes de salir hacia destino, la fruta debe cumplir trámites logísticos y sanitarios.</p>
+      <div class="stats">
+        <div class="stat"><b>📐 Estiba</b>Distribución de la mercancía en las unidades de carga para maximizar el aprovechamiento del espacio de transporte disponible.</div>
+        <div class="stat"><b>🛂 Inspección SAG</b>Revisión fitosanitaria y documental que autoriza la salida de fruta según el mercado de destino.</div>
+        <div class="stat"><b>🛂 Inspección USDA</b>Requisito específico vinculado al mercado de Estados Unidos; su demanda varía según programa y cliente.</div>
+      </div>
+      <div class="pills">
+        <span class="pill">🚢 Barco</span>
+        <span class="pill">✈️ Vuelo charter (cereza)</span>
+      </div>
+      <p class="hint">La cereza se despacha típicamente por barco o mediante vuelos charter hacia el hemisferio norte, según oportunidad comercial y urgencia logística.</p>
+    </article>
+
+    <article class="node" id="detail-5" style="--accent:#8a1826">
+      <div class="node-head">
+        <span class="node-num">5</span>
+        <h2><span class="node-icon">🍎</span> Calidad y calibres</h2>
+      </div>
+      <p class="hint">La fruta se clasifica según defectos, color y peso antes de definir su destino comercial.</p>
+      <div class="pills">
+        <span class="pill">🥇 Primera calidad</span>
+        <span class="pill">🥈 Segunda calidad</span>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>🥇 Primera calidad</b>Sin defectos, o con marcas leves no consideradas defecto (Premium, Extrafancy AAA, Extrafancy AA o Fancy AA).</div>
+        <div class="stat"><b>🥈 Segunda calidad</b>Russet, golpe de sol o ramaleo leve a moderado, con coloración mínima (Extrafancy).</div>
+      </div>
+      <h3 class="branch-title">Calibres (manzana)</h3>
+      <p class="hint">Pesados individualmente en balanza digital y agrupados según variedad: Sobre-calibre (SC), Grande (G), Mediana (M), Chica (CH) y Pre-calibre (PC).</p>
+    </article>
+
+    <article class="node" id="detail-6" style="--accent:#c0622a">
+      <div class="node-head">
+        <span class="node-num">6</span>
+        <h2><span class="node-icon">🏷️</span> Destinos de la fruta</h2>
+      </div>
+      <p class="hint">No toda la fruta cosechada se exporta: parte se redirige según su calidad y calibre.</p>
+      <div class="stats">
+        <div class="stat"><b>🛒 Fruta Comercial</b>Venta en mercado nacional — principalmente Cat1 y descarte de packing considerado mercado interno.</div>
+        <div class="stat"><b>🇨🇱 Mercado Nacional</b>Fruta con sobre calibre, pre calibre o sin el color mínimo requerido para embalar como exportación.</div>
+        <div class="stat"><b>🚚 Venta Huerto</b>Diferencia entre lo cosechado y lo enviado a packing; se vende a San Clemente Foods o en mercados locales.</div>
+        <div class="stat"><b>♻️ Venta descarte packing</b>Diferencia entre lo enviado a proceso y lo finalmente exportado; se contabiliza como venta a mercado interno.</div>
+      </div>
+    </article>
+
+    <article class="node" id="detail-7" style="--accent:#0e7c86">
+      <div class="node-head">
+        <span class="node-num">7</span>
+        <h2><span class="node-icon">🌍</span> Mercados y contraestación</h2>
+      </div>
+      <p class="hint">Chile cosecha cuando el hemisferio norte está fuera de su temporada local — esa contraestación es la base del negocio exportador.</p>
+      <div class="stats">
+        <div class="stat"><b>🌍 Red de mercados</b>La Exportadora atiende una amplia red de mercados de destino en distintos continentes.</div>
+        <div class="stat"><b>🏆 Liderazgo</b>Referente en la exportación de manzanas chilenas.</div>
+        <div class="stat"><b>🎏 Cereza temprana</b>La que alcanza a exportarse antes del Año Nuevo Chino se paga mejor; pasada esa fecha de alta demanda en China, el precio baja considerablemente.</div>
+      </div>
+      <div class="pills">
+        <span class="pill">🇳🇿 Nueva Zelanda</span>
+        <span class="pill">🇿🇦 Sudáfrica</span>
+        <span class="pill">🇦🇷 Argentina</span>
+      </div>
+      <p class="hint">Principales competidores de contraestación: comparten con Chile la misma ventana exportadora del hemisferio sur.</p>
+    </article>
+
+    <article class="node" id="detail-8" style="--accent:#2d7644">
+      <div class="node-head">
+        <span class="node-num">8</span>
+        <h2><span class="node-icon">📜</span> Glosario clave</h2>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>📦 Caja equivalente</b>Unidad de venta estándar en que se transa la fruta entre Agrícola, Central Frutícola y Exportadora.</div>
+        <div class="stat"><b>🆔 CSG</b>Código SAG de Productor: identificador único que traza el origen de la fruta ante el SAG.</div>
+        <div class="stat"><b>🧾 Liquidación de temporada</b>Precio final pagado al productor: FOB exportado menos la comisión y los costos operacionales.</div>
+        <div class="stat"><b>🏷️ Cat1</b>Fruta que no logra la calidad de exportación, pero puede destinarse igual al extranjero o al mercado interno.</div>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="sources">
+    <strong>Fuentes:</strong> Manual de Inducción del Holding (sección 3.3 Exportadora, glosario), Cuestionario Agrícola, Diagrama Agrícola e infografía de Centrales Frutícolas.
+  </div>
+
+  <footer>Agrícola San Clemente · Diagrama de estudio</footer>
+</main>
+</body>
+</html>
