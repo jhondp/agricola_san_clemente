@@ -65,7 +65,7 @@ onAuthStateChanged(auth, async (usuario) => {
     // Expulsar si intenta entrar directo por URL a una página privada
     const paginaActual = window.location.pathname.split('/').pop();
     if (PAGINAS_PRIVADAS.includes(paginaActual)) {
-      window.location.href = "index.html";
+      window.location.href = "acceso_denegado.html";
     }
     return;
   }
