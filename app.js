@@ -76,6 +76,10 @@ onAuthStateChanged(auth, async (usuario) => {
   if (el.correoSesion) el.correoSesion.textContent = usuario.displayName || usuario.email;
   if (el.navRecursos) el.navRecursos.style.display = "inline-block";
 
+  // Quitar la cortina de privacidad para que se vea la página
+  const authGuard = document.getElementById("auth-guard");
+  if (authGuard) authGuard.remove();
+
   // ===== BYPASS DE API =====
   // Como el servidor de Python no está encendido, vamos a aprobar
   // automáticamente a cualquiera que inicie sesión con Google.
