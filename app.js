@@ -58,6 +58,7 @@ if (el.btnSalir) {
 onAuthStateChanged(auth, async (usuario) => {
   if (!usuario) {
     // ESTADO: NO LOGUEADO
+    localStorage.removeItem("userEstado");
     if (el.btnLogin) el.btnLogin.style.display = "inline-block";
     if (el.cajaSesion) el.cajaSesion.style.display = "none";
     if (el.navRecursos) el.navRecursos.style.display = "none";
@@ -79,7 +80,7 @@ onAuthStateChanged(auth, async (usuario) => {
     // === OPTIMISTIC UI (Caché rápido) ===
     // Si ya sabíamos que estaba aprobado en esta sesión, mostramos el menú de inmediato
     // para no hacer esperar al usuario mientras Render despierta.
-    const estadoCache = sessionStorage.getItem("userEstado");
+    const estadoCache = localStorage.getItem("userEstado");
     if (estadoCache === "aprobado") {
       if (el.navRecursos) el.navRecursos.style.display = "inline-block";
       const authGuard = document.getElementById("auth-guard");
@@ -102,7 +103,7 @@ onAuthStateChanged(auth, async (usuario) => {
     const datos = await respuesta.json();
     
     // Guardar en caché para la próxima vez que cambie de página
-    sessionStorage.setItem("userEstado", datos.estado);
+    localStorage.setItem("userEstado", datos.estado);
     
     if (datos.estado === "aprobado") {
       // ✅ APROBADO: Mostrar menú de Recursos y quitar cortina de privacidad
@@ -122,7 +123,7 @@ onAuthStateChanged(auth, async (usuario) => {
   } catch (error) {
     console.error("Error validando con la API:", error);
     mostrarError(error.message || "Hubo un problema conectando con el servidor. Intenta nuevamente más tarde.");
-    sessionStorage.removeItem("userEstado");
+    localStorage.removeItem("userEstado");
     signOut(auth);
   }
 });
