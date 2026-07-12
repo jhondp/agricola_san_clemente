@@ -13,7 +13,7 @@ from dataclasses import dataclass
 import psycopg2
 import psycopg2.extras
 
-from . import config
+import config
 
 
 def _conectar():
@@ -38,7 +38,7 @@ def obtener_o_crear_usuario(email: str) -> RegistroUsuario:
         fila = cur.fetchone()
         if fila is None:
             cur.execute(
-                "INSERT INTO usuarios (email, estado) VALUES (%s, 'aprobado') "
+                "INSERT INTO usuarios (email, estado) VALUES (%s, 'pendiente') "
                 "RETURNING email, estado, rol",
                 (email,),
             )

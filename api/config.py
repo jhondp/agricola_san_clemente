@@ -22,6 +22,7 @@ def _requerida(nombre: str) -> str:
 
 
 DATABASE_URL = _requerida("DATABASE_URL")
-ALLOWED_DOMAIN = _requerida("ALLOWED_DOMAIN")
-FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "http://127.0.0.1:5500")
-GOOGLE_APPLICATION_CREDENTIALS = _requerida("GOOGLE_APPLICATION_CREDENTIALS")
+ALLOWED_DOMAIN = os.environ.get("ALLOWED_DOMAIN", "sclem.cl")
+FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "https://jhondp.github.io")
+GOOGLE_APPLICATION_CREDENTIALS = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") or os.environ.get("FIREBASE_CREDENTIALS")
+FIREBASE_JSON_STR = os.environ.get("FIREBASE_JSON")

@@ -24,9 +24,14 @@ from fastapi import Depends, Header, HTTPException, status
 from firebase_admin import auth as firebase_auth
 from firebase_admin import credentials
 
-from . import config, db
+import json
+import config, db
 
-_app = firebase_admin.initialize_app(credentials.Certificate(config.GOOGLE_APPLICATION_CREDENTIALS))
+if config.FIREBASE_JSON_STR:
+    creds_dict = json.loads(config.FIREBASE_JSON_STR)
+    _app = firebase_admin.initialize_app(credentials.Certificate(creds_dict))
+else:
+    _app = firebase_admin.initialize_app(credentials.Certificate(config.GOOGLE_APPLICATION_CREDENTIALS))
 
 
 @dataclass

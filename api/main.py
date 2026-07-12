@@ -13,8 +13,8 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from . import config, db
-from .auth import RequiereAprobado, RequiereIdentidad, Usuario
+import config, db
+from auth import RequiereAprobado, RequiereIdentidad, Usuario
 
 app = FastAPI(title="Piloto SC — API")
 
