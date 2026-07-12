@@ -76,6 +76,16 @@ onAuthStateChanged(auth, async (usuario) => {
   if (el.correoSesion) el.correoSesion.textContent = usuario.displayName || usuario.email;
 
   try {
+    // === OPTIMISTIC UI (Caché rápido) ===
+    // Si ya sabíamos que estaba aprobado en esta sesión, mostramos el menú de inmediato
+    // para no hacer esperar al usuario mientras Render despierta.
+    const estadoCache = sessionStorage.getItem("userEstado");
+    if (estadoCache === "aprobado") {
+      if (el.navRecursos) el.navRecursos.style.display = "inline-block";
+      const authGuard = document.getElementById("auth-guard");
+      if (authGuard) authGuard.remove();
+    }
+
     // 1. Obtener token seguro de Google
     const token = await usuario.getIdToken();
     
@@ -87,6 +97,9 @@ onAuthStateChanged(auth, async (usuario) => {
     if (!respuesta.ok) throw new Error("El servidor rechazó la conexión.");
     
     const datos = await respuesta.json();
+    
+    // Guardar en caché para la próxima vez que cambie de página
+    sessionStorage.setItem("userEstado", datos.estado);
     
     if (datos.estado === "aprobado") {
       // ✅ APROBADO: Mostrar menú de Recursos y quitar cortina de privacidad
