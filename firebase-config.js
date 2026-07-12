@@ -1,5 +1,5 @@
 // Copiar este archivo a "firebase-config.js" (sin ".example") y pegar los
-// valores reales del panel de Firebase (MANUAL.md, sección 4, paso 2).
+// valores reales del panel de Firebase (modelo_piloto.md, sección 6).
 //
 // Nota: este "apiKey" NO es una contraseña — es un identificador público del
 // proyecto, diseñado para viajar en el navegador. No pasa nada si alguien lo ve.
@@ -27,5 +27,5 @@ export const firebaseConfig = {
 
 // El dominio de correo que la webapp sugiere en la ventana de Google.
 // Es solo una comodidad visual: el filtro real ocurre en el backend
-// (piloto_sc/api/auth.py) — ver MANUAL.md sección 4, nota de seguridad.
+// (api/auth.py) — ver modelo_piloto.md sección 6, nota de seguridad.
 export const DOMINIO_SUGERIDO = "sclem.cl";

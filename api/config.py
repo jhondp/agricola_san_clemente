@@ -16,7 +16,7 @@ def _requerida(nombre: str) -> str:
     if not valor:
         raise RuntimeError(
             f"Falta la variable de entorno {nombre}. "
-            f"Copiá .env.example a .env y completala (ver MANUAL.md)."
+            f"Copiá .env.example a .env y completala (ver modelo_piloto.md, sección 9)."
         )
     return valor
 

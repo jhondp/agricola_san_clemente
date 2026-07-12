@@ -22,3 +22,4 @@ __pycache__/
 # ===== BASES DE DATOS LOCALES =====
 *.sqlite3
 *.db
+modelo_piloto

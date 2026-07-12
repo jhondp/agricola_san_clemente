@@ -6,7 +6,7 @@ Cuatro rutas, nada más — el mínimo que sostiene todo el flujo de este piloto
   GET /visualizaciones/resumen   — el dato protegido, solo para aprobados
   (el ETL que llenará ese resumen con datos reales es una etapa posterior)
 
-Correr en local: ver MANUAL.md, sección 5.
+Correr en local: ver modelo_piloto.md, sección 9.
 """
 from __future__ import annotations
 

@@ -6,25 +6,30 @@
 <title>Agrícola San Clemente | Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --primary: #114425;
     --primary-light: #2d7644;
     --accent: #8a1826;
     --accent-light: #b8721c;
+    --forest-soft: #e7f3e5;
+    --cherry-soft: #ffe8ec;
+    --gold-soft: #fff0ce;
     --text-main: #1b2a20;
     --text-muted: #4a5750;
-    --bg-card: rgba(255, 255, 255, 0.95);
-    --border-color: rgba(17, 68, 37, 0.1);
+    --bg-card: #fffefb;
+    --border-color: rgba(17, 68, 37, 0.11);
+    --display: 'Fraunces', Georgia, serif;
+    --body-font: 'Inter', system-ui, -apple-system, sans-serif;
   }
-  
+
   * { box-sizing: border-box; }
-  
+
   body {
     margin: 0;
     min-height: 100vh;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--body-font);
     background: radial-gradient(circle at 8% 0%, rgba(21,79,43,.12), transparent 35%),
                radial-gradient(circle at 96% 4%, rgba(138,24,38,.08), transparent 30%),
                linear-gradient(180deg,#fffcf8 0%,#f4f1e9 50%,#fffdfa 100%);
@@ -33,424 +38,356 @@
     flex-direction: column;
   }
 
-  /* Header & Navigation */
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent-light); outline-offset: 3px; border-radius: 4px; }
+
+  .kicker {
+    font-family: var(--body-font); font-weight: 700; font-size: .72rem;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--accent-light);
+  }
+
+  /* ── Header & Navigation ─────────────────────────────────────────────── */
   header {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
+    background: rgba(255, 253, 250, 0.86);
+    backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
-    padding: 1rem 2rem;
+    box-shadow: 0 1px 0 rgba(17,68,37,.03);
   }
 
-  .nav-container {
-    max-width: 1200px;
+  .nav-inner {
+    max-width: 1240px;
     margin: 0 auto;
+    padding: .85rem 1.75rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 2.2rem;
   }
 
-  .nav-left {
+  .brand {
     display: flex;
     align-items: center;
-    gap: 2.5rem;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 700;
-    font-size: 1.25rem;
-    color: var(--primary);
+    gap: .6rem;
     text-decoration: none;
+    flex-shrink: 0;
   }
 
-  .nav-links {
-    list-style: none;
-    display: flex;
-    gap: 1.5rem;
-    margin: 0;
-    padding: 0;
+  .brand-mark {
+    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.15rem; color: #fff;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    box-shadow: 0 4px 12px rgba(17,68,37,.28);
   }
 
-  .nav-links > li > a {
-    text-decoration: none;
-    color: var(--text-main);
-    font-weight: 500;
-    font-size: 0.95rem;
-    transition: color 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 0;
+  .brand-text { line-height: 1.05; }
+  .brand-name { font-family: var(--display); font-weight: 600; font-size: 1.22rem; color: var(--primary); display: block; }
+  .brand-sub { font-family: var(--body-font); font-weight: 600; font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); display: block; margin-top: 1px; }
+
+  nav.primary { display: flex; align-items: center; gap: .3rem; }
+  nav.primary > details { position: relative; }
+  nav.primary > details > summary,
+  nav.primary > a {
+    cursor: pointer; list-style: none;
+    font-family: var(--body-font); font-weight: 600; font-size: .86rem; letter-spacing: .02em;
+    color: var(--text-main); text-decoration: none;
+    padding: .6rem .2rem; margin: 0 .75rem; display: flex; align-items: center; gap: .35rem;
+    position: relative;
   }
-
-  .nav-links a:hover { color: var(--primary-light); }
-
-  .dropdown { position: relative; }
-  
-  .dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: #fff;
-    box-shadow: 0 10px 40px rgba(17,68,37,0.08);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 0.5rem;
-    min-width: 240px;
-    list-style: none;
-    margin: 0;
-    z-index: 1000;
-    animation: slideUp 0.2s ease-out;
+  nav.primary > details > summary::-webkit-details-marker { display: none; }
+  nav.primary > details > summary::before,
+  nav.primary > a::before {
+    content: ''; position: absolute; left: .2rem; right: .2rem; bottom: .42rem; height: 2px;
+    background: var(--primary-light); transform: scaleX(0); transform-origin: left; transition: transform .2s ease;
   }
+  nav.primary > details[open] > summary::before,
+  nav.primary > a:hover::before { transform: scaleX(1); }
+  nav.primary > details > summary::after { content: '▾'; font-size: .6em; opacity: .55; margin-left: .1rem; }
+  nav.primary > details[open] > summary::after { transform: rotate(180deg); display: inline-block; }
 
-  .dropdown:hover > .dropdown-menu { display: block; }
-  
-  .dropdown-menu li { position: relative; }
-  
-  .dropdown-menu a {
-    padding: 0.75rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    text-decoration: none;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    border-radius: 8px;
-    transition: all 0.2s;
+  .dropdown {
+    position: absolute; top: calc(100% + .55rem); left: 0; z-index: 60;
+    background: #fff; min-width: 250px; padding: .5rem;
+    border-radius: 14px; box-shadow: 0 16px 40px rgba(17,68,37,.14);
+    border-top: 3px solid var(--primary-light);
+    animation: dropIn .16s ease-out;
   }
-
-  .dropdown-menu a:hover {
-    background: #f0f4f1;
-    color: var(--primary);
-    transform: translateX(3px);
+  details.res > .dropdown { border-top-color: var(--accent); }
+  @keyframes dropIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+  .dropdown a {
+    display: flex; align-items: center; gap: .65rem; padding: .6rem .7rem; border-radius: 9px;
+    text-decoration: none; color: var(--text-muted); font-size: .88rem; font-weight: 500;
+    transition: background .15s ease, color .15s ease, transform .15s ease;
   }
-
-  .dropdown-submenu:hover > .sub-menu { display: block; }
-  
-  .sub-menu {
-    top: 0;
-    left: 100%;
-    margin-left: 0.5rem;
+  .dropdown a:hover { background: var(--forest-soft); color: var(--primary); transform: translateX(2px); }
+  details.res .dropdown a:hover { background: var(--cherry-soft); color: var(--accent); }
+  details.nested { margin: .1rem 0; }
+  details.nested > summary {
+    display: flex; align-items: center; justify-content: space-between; gap: .5rem; cursor: pointer; list-style: none;
+    padding: .6rem .7rem; border-radius: 9px; font-size: .88rem; font-weight: 500; color: var(--text-muted);
   }
+  details.nested > summary::-webkit-details-marker { display: none; }
+  details.nested > summary:hover { background: var(--forest-soft); color: var(--primary); }
+  details.nested > summary::after { content: '▸'; font-size: .62em; color: #9aa79e; }
+  details.nested .dropdown { position: static; box-shadow: none; border: none; margin-top: .15rem; padding-left: .5rem; min-width: 0; }
 
-  .arrow {
-    font-size: 0.6em;
-    transition: transform 0.2s;
-    opacity: 0.6;
-  }
-
+  .nav-right { margin-left: auto; display: flex; align-items: center; gap: .9rem; flex-shrink: 0; }
   .btn-login {
-    background: var(--primary);
-    color: #fff;
-    padding: 0.6rem 1.4rem;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    border: 2px solid transparent;
+    font-family: var(--body-font); font-weight: 600; font-size: .85rem; text-decoration: none;
+    color: var(--primary); background: none; border: 1.5px solid var(--border-color);
+    padding: .55rem 1.25rem; border-radius: 999px; cursor: pointer;
+    transition: all .18s ease;
   }
+  .btn-login:hover { background: var(--primary); border-color: var(--primary); color: #fff; }
 
-  .btn-login:hover {
-    background: #fff;
-    color: var(--primary);
-    border-color: var(--primary);
-    box-shadow: 0 4px 15px rgba(17,68,37,0.15);
-  }
-
-  /* Main Content */
+  /* ── Main Content ─────────────────────────────────────────────────────── */
   main {
     flex: 1;
-    max-width: 1200px;
+    max-width: 1240px;
     margin: 0 auto;
     width: 100%;
-    padding: 3rem 2rem;
+    padding: 0 1.75rem 3rem;
   }
 
   .hero {
-    text-align: center;
-    margin-bottom: 4rem;
-    animation: fadeIn 0.8s ease-out;
+    display: grid; grid-template-columns: 1.15fr .95fr; gap: 2.6rem; align-items: center;
+    padding: 4.2rem 0 3.4rem;
+    animation: fadeIn .8s ease-out;
   }
+  .hero h1 {
+    font-family: var(--display); font-weight: 700; color: var(--primary);
+    font-size: clamp(2.1rem, 3.6vw, 3rem); line-height: 1.1; letter-spacing: -.01em;
+    margin: .7rem 0 1.15rem; text-wrap: balance;
+  }
+  .hero p.dek { font-size: 1.06rem; line-height: 1.65; color: var(--text-muted); max-width: 48ch; margin: 0; }
 
-  h1 {
-    font-size: clamp(2rem, 5vw, 3rem);
-    color: var(--primary);
-    margin: 0 0 1rem;
-    letter-spacing: -0.03em;
+  .facts { display: grid; gap: .9rem; }
+  .fact {
+    background: var(--bg-card); border-radius: 18px; padding: 1.15rem 1.3rem 1.1rem;
+    box-shadow: 0 10px 28px rgba(17,68,37,.07); border: 1px solid var(--border-color);
   }
+  .fact .cap { display: block; font-family: var(--body-font); font-weight: 800; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .5rem; }
+  .fact.f-red .cap { color: var(--accent); }
+  .fact.f-gold .cap { color: #8a5f0a; }
+  .fact.f-green .cap { color: var(--primary); }
+  .fact h3 { font-family: var(--display); font-weight: 600; font-size: 1.5rem; color: var(--text-main); margin: 0 0 .4rem; letter-spacing: -.01em; }
+  .fact p { margin: 0; font-size: .86rem; line-height: 1.5; color: var(--text-muted); }
+  .mini-pill { display: inline-block; margin-top: .7rem; padding: .32rem .65rem; border-radius: 999px; font-size: .68rem; font-weight: 800; }
+  .mini-pill.red { background: var(--cherry-soft); color: #972234; }
+  .mini-pill.gold { background: var(--gold-soft); color: #84550c; }
+  .mini-pill.green { background: var(--forest-soft); color: #2d6231; }
 
-  .hero p {
-    color: var(--text-muted);
-    font-size: 1.15rem;
-    max-width: 600px;
-    margin: 0 auto;
-    line-height: 1.6;
+  /* ── Sections & Cards ─────────────────────────────────────────────────── */
+  .section { padding-top: 2.8rem; }
+  .section-head { margin-bottom: 1.6rem; }
+  .section-head .kicker { display: block; margin-bottom: .35rem; }
+  .section-head h2 {
+    font-family: var(--display); font-weight: 600; color: var(--primary);
+    font-size: 1.9rem; margin: 0 0 .9rem; letter-spacing: -.01em;
   }
+  .section-head .rule { height: 1px; background: var(--border-color); }
 
-  .section-title {
-    font-size: 1.4rem;
-    color: var(--primary);
-    margin: 3rem 0 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  
-  .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border-color);
-  }
-
-  /* Cards Grid */
-  .cards {
-    display: grid;
-    gap: 1.5rem;
-    grid-template-columns: 1fr;
-  }
+  .cards { display: grid; gap: 1.4rem; grid-template-columns: 1fr; }
   @media (min-width: 640px) { .cards { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 960px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 980px) { .cards { grid-template-columns: repeat(3, 1fr); } }
 
   .card {
-    background: var(--bg-card);
-    border-radius: 16px;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    text-decoration: none;
-    color: var(--text-main);
-    box-shadow: 0 4px 20px rgba(17,68,37,0.04);
-    border: 1px solid var(--border-color);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    position: relative;
-    overflow: hidden;
+    background: var(--bg-card); border-radius: 16px; padding: 1.5rem 1.5rem 1.4rem;
+    display: flex; flex-direction: column; gap: .9rem; text-decoration: none; color: var(--text-main);
+    border: 1px solid var(--border-color); border-top: 4px solid var(--primary-light);
+    box-shadow: 0 6px 20px rgba(17,68,37,.05);
+    transition: transform .25s cubic-bezier(.2,.8,.3,1), box-shadow .25s ease;
   }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 4px;
-    background: linear-gradient(90deg, var(--primary), var(--primary-light));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(17,68,37,0.1);
-    background: #fff;
-  }
-
-  .card:hover::before { opacity: 1; }
-
-  .card.alt::before { background: linear-gradient(90deg, var(--accent), var(--accent-light)); }
-
+  .card.alt { border-top-color: var(--accent); }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 16px 34px rgba(17,68,37,.12); }
   .card .icon-wrapper {
-    width: 52px; height: 52px;
-    border-radius: 12px;
-    background: rgba(17,68,37,0.06);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.6rem;
-    transition: transform 0.3s ease, background 0.3s ease;
+    width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 1.35rem; color: #fff; background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    box-shadow: 0 5px 14px rgba(17,68,37,.24); transition: transform .25s ease;
   }
-
-  .card.alt .icon-wrapper { background: rgba(138,24,38,0.06); }
-  
-  .card:hover .icon-wrapper { 
-    transform: scale(1.1) rotate(5deg);
-    background: rgba(17,68,37,0.1);
-  }
-  
-  .card.alt:hover .icon-wrapper { background: rgba(138,24,38,0.1); }
-
-  .card .title {
-    font-weight: 700;
-    font-size: 1.15rem;
-    line-height: 1.3;
-    color: var(--primary);
-  }
-  
+  .card.alt .icon-wrapper { background: linear-gradient(135deg, var(--accent), var(--accent-light)); box-shadow: 0 5px 14px rgba(138,24,38,.24); }
+  .card:hover .icon-wrapper { transform: scale(1.08) rotate(-4deg); }
+  .card .title { font-family: var(--display); font-weight: 600; font-size: 1.14rem; line-height: 1.28; color: var(--primary); }
   .card.alt .title { color: var(--accent); }
-
-  .card .desc {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
+  .card .desc { font-size: .89rem; color: var(--text-muted); line-height: 1.5; margin: 0; }
 
   footer {
     margin-top: auto;
-    padding: 2rem;
+    padding: 2.1rem 1.75rem;
     text-align: center;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: .86rem;
     border-top: 1px solid var(--border-color);
   }
 
-  /* Animations */
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
+  @keyframes fadeIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
 
-  /* Mobile Nav Toggle */
-  .mobile-menu-btn {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: var(--primary);
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding: 2.6rem 0 2rem; }
   }
-
-  @media (max-width: 768px) {
-    .nav-links, .auth-section { display: none; }
-    .mobile-menu-btn { display: block; }
-    .nav-left { width: 100%; justify-content: space-between; }
+  @media (max-width: 760px) {
+    .nav-inner { flex-wrap: wrap; row-gap: .5rem; }
+    nav.primary { order: 3; width: 100%; flex-wrap: wrap; justify-content: flex-start; padding-top: .5rem; border-top: 1px solid var(--border-color); }
   }
 </style>
 </head>
 <body>
 
   <header>
-    <div class="nav-container">
-      <div class="nav-left">
-        <a href="index.html" class="logo">
-          <span>🌿</span> San Clemente
-        </a>
-        <button class="mobile-menu-btn">☰</button>
-        <ul class="nav-links">
-          <li><a href="index.html">Inicio</a></li>
-          <li class="dropdown">
-            <a href="#">Infografías <span class="arrow">▼</span></a>
-            <ul class="dropdown-menu">
-              <li><a href="Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">Centrales Frutícolas</a></li>
-              <li class="dropdown-submenu">
-                <a href="#">Agrícola <span class="arrow right">▶</span></a>
-                <ul class="dropdown-menu sub-menu">
-                  <li><a href="Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">Cerezas</a></li>
-                  <li><a href="Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">Manzanas</a></li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-                    <li class="dropdown" id="nav-recursos" style="display: none;">
-            <a href="#">Recursos <span class="arrow">▼</span></a>
-            <ul class="dropdown-menu">
-              <li><a href="Comparativa_Cerezas_vs_Manzanas.html">Comparativa Cerezas vs Manzanas</a></li>
-              <li><a href="Ciclos_y_Temporadas.html">Ciclos y Temporadas</a></li>
-              <li><a href="Indicadores_de_Gestion.html">Indicadores de Gestión</a></li>
-              <li class="dropdown-submenu">
-                <a href="#">Diagramas <span class="arrow right">▶</span></a>
-                <ul class="dropdown-menu sub-menu">
-                  <li><a href="Diagrama_Agricola.html">Agrícola</a></li>
-                  <li><a href="Diagrama_Conservera.html">Conservera</a></li>
-                  <li><a href="Diagrama_Central_Fruticola.html">Central Frutícola</a></li>
-                  <li><a href="Diagrama_Exportadora.html">Exportadora</a></li>
-                </ul>
-              </li>
-              <li class="dropdown-submenu">
-                <a href="#">Preguntas Frecuentes <span class="arrow right">▶</span></a>
-                <ul class="dropdown-menu sub-menu">
-                  <li><a href="Cuestionario_Agricola.html">Agrícola</a></li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-        </ul>
+    <div class="nav-inner">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">🌿</span>
+        <span class="brand-text">
+          <span class="brand-name">San Clemente</span>
+          <span class="brand-sub">Portal agrícola</span>
+        </span>
+      </a>
+
+      <nav class="primary">
+        <a href="index.html">Inicio</a>
+        <details>
+          <summary>Infografías</summary>
+          <div class="dropdown">
+            <a href="Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">🏭 Centrales Frutícolas</a>
+            <a href="Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍒 Cerezas</a>
+            <a href="Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍎 Manzanas</a>
+          </div>
+        </details>
+        <details class="res" id="nav-recursos" style="display: none;">
+          <summary>Recursos</summary>
+          <div class="dropdown">
+            <a href="Comparativa_Cerezas_vs_Manzanas.html">⚖️ Comparativa Cerezas vs Manzanas</a>
+            <a href="Ciclos_y_Temporadas.html">📅 Ciclos y Temporadas</a>
+            <a href="Indicadores_de_Gestion.html">📊 Indicadores de Gestión</a>
+            <a href="Cuestionario_Agricola.html">📝 Cuestionarios</a>
+            <details class="nested">
+              <summary>Diagramas</summary>
+              <div class="dropdown">
+                <a href="Diagrama_Agricola.html">🧠 Agrícola</a>
+                <a href="Diagrama_Conservera.html">🥫 Conservera</a>
+                <a href="Diagrama_Central_Fruticola.html">🏭 Central Frutícola</a>
+                <a href="Diagrama_Exportadora.html">🚢 Exportadora</a>
+              </div>
+            </details>
+          </div>
+        </details>
+      </nav>
+
+      <div class="nav-right">
+        <button id="btn-login" class="btn-login" style="display: none;">Iniciar sesión</button>
+        <div id="caja-sesion" style="display: none; align-items: center; gap: 1rem;">
+          <span id="correo-sesion" style="font-size: 0.85rem; color: var(--primary); font-weight: 600;"></span>
+          <button id="btn-salir" class="btn-login" style="background: var(--accent); border-color: transparent; color: #fff;">Cerrar sesión</button>
+        </div>
       </div>
-          <div class="auth-section">
-      <button id="btn-login" class="btn-login" style="display: none;">Iniciar sesión</button>
-      <div id="caja-sesion" style="display: none; align-items: center; gap: 1rem;">
-        <span id="correo-sesion" style="font-size: 0.85rem; color: var(--primary); font-weight: 600;"></span>
-        <button id="btn-salir" class="btn-login" style="background: var(--accent); border-color: transparent;">Cerrar sesión</button>
-      </div>
-    </div>
     </div>
   </header>
 
   <main>
     <section class="hero">
-      <h1>Portal de Conocimiento</h1>
-      <p>Accede a todas las infografías, diagramas y recursos de Agrícola San Clemente para optimizar nuestra gestión.</p>
+      <div>
+        <span class="kicker">Portal interno · Agrícola San Clemente</span>
+        <h1>El campo, el packing y la exportación — en un solo portal.</h1>
+        <p class="dek">Infografías, indicadores y diagramas de nuestra operación agrícola, frutícola y exportadora, pensados para consultarse rápido antes de una reunión o una decisión de temporada.</p>
+      </div>
+      <div class="facts">
+        <div class="fact f-red">
+          <span class="cap">Temporada</span>
+          <h3>T25–26</h3>
+          <p>Se homologó al calendario de manzanas: va de mayo a abril, aunque la cosecha ocurre antes.</p>
+          <span class="mini-pill green">Mayo → Abril</span>
+        </div>
+        <div class="fact f-gold">
+          <span class="cap">Cosecha</span>
+          <h3>Nov – Ene</h3>
+          <p>Ventana corta y exigente: concentra volumen, mano de obra y decisiones comerciales.</p>
+          <span class="mini-pill red">Alta presión operativa</span>
+        </div>
+        <div class="fact f-green">
+          <span class="cap">Especies</span>
+          <h3>Cerezas y manzanas</h3>
+          <p>Los dos compendios centrales del portal, con mapeo y control de cosecha propios.</p>
+          <span class="mini-pill gold">2 compendios activos</span>
+        </div>
+      </div>
     </section>
 
-    <h2 class="section-title">Infografías</h2>
-    <div class="cards">
-      <a class="card" href="Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">
-        <div class="icon-wrapper">🏭</div>
-        <div class="title">Centrales Frutícolas</div>
-        <div class="desc">Talca, Angol y Lontué</div>
-      </a>
-      <a class="card" href="Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">
-        <div class="icon-wrapper">🍒</div>
-        <div class="title">Cerezas</div>
-        <div class="desc">Compendio Mundo Agrícola</div>
-      </a>
-      <a class="card" href="Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">
-        <div class="icon-wrapper">🍎</div>
-        <div class="title">Manzanas</div>
-        <div class="desc">Compendio Mundo Agrícola</div>
-      </a>
-    </div>
+    <section class="section">
+      <div class="section-head">
+        <span class="kicker">Catálogo — 01</span>
+        <h2>Infografías</h2>
+        <div class="rule"></div>
+      </div>
+      <div class="cards">
+        <a class="card" href="Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">
+          <div class="icon-wrapper">🏭</div>
+          <div class="title">Centrales Frutícolas</div>
+          <p class="desc">Talca, Angol y Lontué</p>
+        </a>
+        <a class="card" href="Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">
+          <div class="icon-wrapper">🍒</div>
+          <div class="title">Cerezas</div>
+          <p class="desc">Compendio Mundo Agrícola</p>
+        </a>
+        <a class="card" href="Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">
+          <div class="icon-wrapper">🍎</div>
+          <div class="title">Manzanas</div>
+          <p class="desc">Compendio Mundo Agrícola</p>
+        </a>
+      </div>
+    </section>
 
-    <h2 class="section-title">Recursos</h2>
-    <div class="cards">
-      <a class="card" href="Comparativa_Cerezas_vs_Manzanas.html">
-        <div class="icon-wrapper">⚖️</div>
-        <div class="title">Comparativa Cerezas vs Manzanas</div>
-        <div class="desc">Compendio Mundo Agrícola</div>
-      </a>
-      <a class="card" href="Diagrama_Agricola.html">
-        <div class="icon-wrapper">🧠</div>
-        <div class="title">Diagrama Agrícola</div>
-        <div class="desc">Mapa mental del ciclo del negocio</div>
-      </a>
-      <a class="card" href="Diagrama_Conservera.html">
-        <div class="icon-wrapper">🥫</div>
-        <div class="title">Diagrama Conservera</div>
-        <div class="desc">Mapa mental de la Conservera San Clemente</div>
-      </a>
-      <a class="card" href="Diagrama_Central_Fruticola.html">
-        <div class="icon-wrapper">🏭</div>
-        <div class="title">Diagrama Central Frutícola</div>
-        <div class="desc">Mapa mental de Talca, Angol y Lontué</div>
-      </a>
-      <a class="card" href="Diagrama_Exportadora.html">
-        <div class="icon-wrapper">🚢</div>
-        <div class="title">Diagrama Exportadora</div>
-        <div class="desc">Mapa mental de Exportadora San Clemente</div>
-      </a>
-      <a class="card" href="Ciclos_y_Temporadas.html">
-        <div class="icon-wrapper">📅</div>
-        <div class="title">Ciclos y Temporadas</div>
-        <div class="desc">Calendario comparado de cosechas</div>
-      </a>
-      <a class="card" href="Indicadores_de_Gestion.html">
-        <div class="icon-wrapper">📊</div>
-        <div class="title">Indicadores de Gestión</div>
-        <div class="desc">Productividad, calidad y financieros</div>
-      </a>
-      <a class="card" href="Cuestionario_Agricola.html">
-        <div class="icon-wrapper">📝</div>
-        <div class="title">Cuestionarios</div>
-        <div class="desc">150 preguntas de estudio</div>
-      </a>
-    </div>
+    <section class="section">
+      <div class="section-head">
+        <span class="kicker">Catálogo — 02</span>
+        <h2>Recursos</h2>
+        <div class="rule"></div>
+      </div>
+      <div class="cards">
+        <a class="card alt" href="Comparativa_Cerezas_vs_Manzanas.html">
+          <div class="icon-wrapper">⚖️</div>
+          <div class="title">Comparativa Cerezas vs Manzanas</div>
+          <p class="desc">Compendio Mundo Agrícola</p>
+        </a>
+        <a class="card" href="Diagrama_Agricola.html">
+          <div class="icon-wrapper">🧠</div>
+          <div class="title">Diagrama Agrícola</div>
+          <p class="desc">Mapa mental del ciclo del negocio</p>
+        </a>
+        <a class="card" href="Diagrama_Conservera.html">
+          <div class="icon-wrapper">🥫</div>
+          <div class="title">Diagrama Conservera</div>
+          <p class="desc">Mapa mental de la Conservera San Clemente</p>
+        </a>
+        <a class="card" href="Diagrama_Central_Fruticola.html">
+          <div class="icon-wrapper">🏭</div>
+          <div class="title">Diagrama Central Frutícola</div>
+          <p class="desc">Mapa mental de Talca, Angol y Lontué</p>
+        </a>
+        <a class="card alt" href="Diagrama_Exportadora.html">
+          <div class="icon-wrapper">🚢</div>
+          <div class="title">Diagrama Exportadora</div>
+          <p class="desc">Mapa mental de Exportadora San Clemente</p>
+        </a>
+        <a class="card" href="Ciclos_y_Temporadas.html">
+          <div class="icon-wrapper">📅</div>
+          <div class="title">Ciclos y Temporadas</div>
+          <p class="desc">Calendario comparado de cosechas</p>
+        </a>
+        <a class="card" href="Indicadores_de_Gestion.html">
+          <div class="icon-wrapper">📊</div>
+          <div class="title">Indicadores de Gestión</div>
+          <p class="desc">Productividad, calidad y financieros</p>
+        </a>
+        <a class="card alt" href="Cuestionario_Agricola.html">
+          <div class="icon-wrapper">📝</div>
+          <div class="title">Cuestionarios</div>
+          <p class="desc">150 preguntas de estudio</p>
+        </a>
+      </div>
+    </section>
 
   </main>
 

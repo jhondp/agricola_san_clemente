@@ -10,7 +10,7 @@
 --     "lista para el ETL" desde ya, pero NINGÚN dato entra todavía: eso es
 --     una etapa posterior, no incluida en este piloto.
 --
---  Cómo se aplica y qué validar en cada paso: ver MANUAL.md, sección 3.
+--  Cómo se aplica y qué validar en cada paso: ver modelo_piloto.md, sección 8.
 -- ============================================================================
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;  -- para generar UUID en auditoria_acceso
@@ -106,12 +106,12 @@ CREATE TABLE fact_eerr_mensual (
 --
 --  ¡OJO! Este archivo se sube al repositorio (no está en .gitignore). La
 --  contraseña de abajo es SOLO un valor de arranque para practicar en local
---  (Docker, MANUAL.md sección 3-A). En Supabase o cualquier base real, NO
---  ejecutes esta línea con esta clave: cambiala primero, o corré después
---  (directo en el editor SQL de Supabase, sin guardarlo en ningún archivo):
+--  (Docker). En Supabase o cualquier base real, NO ejecutes esta línea con
+--  esta clave: cambiala primero, o corré después (directo en el editor SQL
+--  de Supabase, sin guardarlo en ningún archivo):
 --    ALTER ROLE app_api PASSWORD 'una-clave-fuerte-que-no-se-commitea';
 --  Esa clave real va solo en tu .env local / en las variables de entorno de
---  Render — nunca en un archivo que se suba a git (MANUAL.md sección 3 y 8.3).
+--  Render — nunca en un archivo que se suba a git (modelo_piloto.md, sección 8).
 -- ============================================================================
 CREATE ROLE app_api LOGIN PASSWORD 'CAMBIAR_ESTA_CLAVE';
 GRANT SELECT, INSERT, UPDATE ON usuarios TO app_api;
