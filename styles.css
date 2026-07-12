@@ -1,0 +1,159 @@
+/* ============================================================================
+   piloto_sc — hoja de estilos
+   Reutiliza el sistema visual ya establecido en el resto del sitio de
+   Agrícola San Clemente (Diagrama_Agricola.html, Indicadores_de_Gestion.html,
+   Ciclos_y_Temporadas.html, etc.): fondo crema con gradientes radiales,
+   verde bosque de marca, insignias circulares con degradado, tarjetas
+   blancas redondeadas con borde superior de color, system-ui sans-serif.
+   Esta página es la única del sitio con estados de sesión — pero comparte
+   la misma paleta y los mismos componentes (badge, card, tag) para que se
+   sienta parte de la misma familia, no una pieza aparte.
+   ============================================================================ */
+
+:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #1b2a20;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(21,79,43,.10), transparent 30%),
+    radial-gradient(circle at 96% 4%, rgba(138,24,38,.08), transparent 26%),
+    linear-gradient(180deg, #fffcf8 0%, #f6f4ef 48%, #fffdfa 100%);
+  display: flex; flex-direction: column;
+}
+
+/* ── Topbar ─────────────────────────────────────────────────────────────
+   Mismo lenguaje visual que el "scnav" del resto del sitio (barra sólida
+   verde bosque, sticky, menús desplegables con <details>), fusionado con
+   los controles de sesión propios de esta página. ──────────────────────── */
+.topbar {
+  position: sticky; top: 0; z-index: 999;
+  display: flex; flex-wrap: wrap; align-items: center; gap: .6rem;
+  padding: .6rem 1.1rem;
+  background: #114425; color: #fff;
+  font-size: .85rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+.topbar a { color: #fff; text-decoration: none; opacity: .85; }
+.topbar a:hover { opacity: 1; }
+.marca { font-weight: 700; opacity: .95; }
+.topbar-sep { opacity: .35; }
+.topbar details { position: relative; }
+.topbar summary {
+  cursor: pointer; list-style: none; font-weight: 700;
+  display: inline-flex; align-items: center; gap: .3rem; color: #fff;
+}
+.topbar summary::-webkit-details-marker { display: none; }
+.topbar summary::after { content: '▾'; font-size: .7em; transition: transform .15s ease; }
+.topbar details[open] summary::after { transform: rotate(180deg); }
+.topbar-menu {
+  position: absolute; top: calc(100% + .5rem); left: 0; z-index: 1000;
+  background: #fff; border-radius: 10px; box-shadow: 0 10px 24px rgba(0,0,0,.22);
+  min-width: 270px; overflow: hidden; padding: .35rem 0;
+}
+.topbar-menu a { display: block; padding: .55rem 1rem; color: #16281c; font-weight: 500; white-space: nowrap; opacity: 1; }
+.topbar-menu a:hover { background: #f1f4f0; }
+
+/* Submenú anidado (p.ej. "Agrícola" dentro de "Infografías"): se despliega
+   como acordeón dentro del mismo panel, no como un flotante aparte — así
+   nunca se sale de la pantalla ni necesita lógica de posición extra. */
+.topbar-menu details.submenu { border-top: 1px solid #eee7d8; }
+.topbar-menu details.submenu summary {
+  padding: .55rem 1rem; color: #16281c; font-weight: 500; cursor: pointer; list-style: none;
+  display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+}
+.topbar-menu details.submenu summary:hover { background: #f1f4f0; }
+.topbar-menu details.submenu summary::-webkit-details-marker { display: none; }
+.topbar-menu details.submenu summary::after { content: '▾'; font-size: .7em; color: #8a978f; transition: transform .15s ease; }
+.topbar-menu details.submenu[open] summary::after { transform: rotate(180deg); }
+.topbar-menu details.submenu .topbar-menu {
+  position: static; box-shadow: none; border-radius: 0; min-width: 0; background: #f9f8f5; padding: 0;
+}
+.topbar-menu details.submenu .topbar-menu a { padding-left: 2rem; }
+
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+.tab-activo {
+  font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+  padding: .3rem .7rem; border-radius: 999px; background: rgba(255,255,255,.16); color: #fff;
+}
+.topbar-sesion { display: flex; align-items: center; gap: 12px; font-size: .82rem; color: rgba(255,255,255,.85); }
+.btn-texto {
+  background: none; border: none; color: rgba(255,255,255,.85); font: inherit;
+  font-size: .78rem; text-decoration: underline; cursor: pointer; padding: 0;
+}
+.btn-texto:hover { color: #fff; }
+
+main { flex: 1; display: flex; flex-direction: column; }
+
+/* ── Hero público: mismo patrón "hub" del resto del sitio ─────────────────
+   (badge circular con degradado + h1 + p, centrado) ────────────────────── */
+.hero { flex: 1; display: flex; align-items: center; justify-content: center; padding: 3rem 1.25rem 4rem; }
+.hub { text-align: center; max-width: 560px; }
+.badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 3.6rem; height: 3.6rem; border-radius: 50%;
+  background: linear-gradient(135deg, #114425, #2d7644); color: #fff; font-size: 1.7rem;
+  margin-bottom: .9rem; box-shadow: 0 6px 16px rgba(17,68,37,.3);
+}
+.hub h1 { margin: 0 0 .6rem; font-size: clamp(1.7rem, 4.2vw, 2.35rem); color: #114425; line-height: 1.18; }
+.hub p.dek { margin: 0 auto 1.7rem; color: #4a5750; font-size: 1rem; line-height: 1.55; max-width: 46ch; }
+
+.btn-primario {
+  font: inherit; font-size: .95rem; font-weight: 700;
+  background: linear-gradient(135deg, #114425, #2d7644); color: #fff; border: none;
+  padding: .85rem 1.7rem; border-radius: 999px; cursor: pointer;
+  box-shadow: 0 6px 16px rgba(17,68,37,.25);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn-primario:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(17,68,37,.32); }
+.btn-primario:focus-visible { outline: 2px solid #b8721c; outline-offset: 3px; }
+.nota-dominio { font-size: .78rem; color: #8a978f; margin: .9rem 0 0; }
+.mensaje-error {
+  margin-top: 1rem; font-size: .85rem; color: #8a1826;
+  background: #fbe9e6; padding: .6rem .9rem; border-radius: 10px; max-width: 50ch;
+  margin-left: auto; margin-right: auto;
+}
+
+/* ── Paneles de estado (pendiente / rechazado): tarjeta con borde superior,
+   igual convención que .gantt-card / .kpi-group del resto del sitio ────── */
+.panel-estado { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 1.25rem; }
+.tarjeta-cuartel {
+  max-width: 460px; text-align: left; background: #fff; border-radius: 16px;
+  padding: 1.6rem 1.7rem 1.7rem; box-shadow: 0 6px 20px rgba(17,68,37,.08);
+  border-top: 5px solid #0e7a8a;
+}
+.tarjeta-rechazada { border-top-color: #8a1826; }
+.etiqueta-cuartel {
+  display: inline-block; font-size: .68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .04em; padding: .2rem .6rem; border-radius: 999px;
+  background: #e6f3f5; color: #0e7a8a; margin-bottom: .9rem;
+}
+.tarjeta-rechazada .etiqueta-cuartel { background: #fbe9e6; color: #8a1826; }
+.tarjeta-cuartel h2 { margin: 0 0 .6rem; font-size: 1.3rem; color: #16281c; }
+.tarjeta-cuartel p { margin: 0; color: #4a5750; font-size: .92rem; line-height: 1.55; }
+
+/* ── Visualizaciones ────────────────────────────────────────────────────── */
+.panel-visualizaciones { padding: 2.75rem 1.25rem 3.5rem; max-width: 900px; margin: 0 auto; width: 100%; }
+.panel-visualizaciones .hub { max-width: 640px; margin: 0 auto 1.8rem; }
+.grilla-tarjetas { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: .9rem; }
+.tarjeta-dato {
+  background: #f9f8f5; border: 1px dashed #d8d2c2; border-radius: 12px; padding: 1rem 1.1rem;
+}
+.tarjeta-dato-label {
+  display: block; font-size: .72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .04em; color: #8a978f; margin-bottom: .5rem;
+}
+.tarjeta-dato-valor { font-size: .92rem; color: #8a978f; font-style: italic; }
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.pie {
+  display: flex; justify-content: space-between; padding: 1rem 1.75rem;
+  border-top: 1px solid #eee7d8; font-size: .78rem; color: #8a978f;
+}
+
+@media (max-width: 640px) {
+  .topbar { padding: 12px 18px; flex-wrap: wrap; }
+  .hero, .pie, .panel-visualizaciones { padding-left: 18px; padding-right: 18px; }
+}

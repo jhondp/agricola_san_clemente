@@ -1,4 +1,24 @@
 .claude
 CLAUDE.md
 informacion_md
+pagina_md
+videos_procesamientos
+piloto_sc
+piloto_claude_final
 
+# ===== SEGURIDAD CRÍTICA DEL BACKEND =====
+# Nunca subir contraseñas ni claves de servidor
+api/.env
+api/firebase-service-account.json
+
+# ===== PYTHON =====
+# Evitar subir el entorno virtual o archivos basura de Python
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+
+# ===== BASES DE DATOS LOCALES =====
+*.sqlite3
+*.db

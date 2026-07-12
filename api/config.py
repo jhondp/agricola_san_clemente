@@ -1,0 +1,27 @@
+"""
+Configuración: todo lo que cambia entre "en mi máquina" y "en la nube" vive
+acá, leído de variables de entorno — nunca escrito a mano en otro archivo.
+"""
+from __future__ import annotations
+
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()  # lee el archivo .env si existe (no hace nada en producción real)
+
+
+def _requerida(nombre: str) -> str:
+    valor = os.environ.get(nombre)
+    if not valor:
+        raise RuntimeError(
+            f"Falta la variable de entorno {nombre}. "
+            f"Copiá .env.example a .env y completala (ver MANUAL.md)."
+        )
+    return valor
+
+
+DATABASE_URL = _requerida("DATABASE_URL")
+ALLOWED_DOMAIN = _requerida("ALLOWED_DOMAIN")
+FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "http://127.0.0.1:5500")
+GOOGLE_APPLICATION_CREDENTIALS = _requerida("GOOGLE_APPLICATION_CREDENTIALS")

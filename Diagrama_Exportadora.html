@@ -111,62 +111,206 @@
 
   footer{margin-top:1.5rem;font-size:.78rem;color:#6b7a72;text-align:center}
 </style>
+
+<style>
+  :root {
+    --primary: #114425;
+    --primary-light: #2d7644;
+    --accent: #8a1826;
+    --accent-light: #b8721c;
+    --text-main: #1b2a20;
+    --text-muted: #4a5750;
+    --bg-card: rgba(255, 255, 255, 0.95);
+    --border-color: rgba(17, 68, 37, 0.1);
+  }
+  .global-header {
+    position: sticky;
+    top: 0;
+    z-index: 999999;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+    padding: 1rem 2rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    margin: 0 !important;
+  }
+  .global-header * {
+    box-sizing: border-box;
+  }
+  .global-header .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .global-header .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+  }
+  .global-header .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--primary);
+    text-decoration: none;
+  }
+  .global-header .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+  }
+  .global-header .nav-links > li > a {
+    text-decoration: none;
+    color: var(--text-main);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0;
+  }
+  .global-header .nav-links a:hover { color: var(--primary-light); }
+  .global-header .dropdown { position: relative; }
+  .global-header .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    box-shadow: 0 10px 40px rgba(17,68,37,0.08);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.5rem;
+    min-width: 240px;
+    list-style: none;
+    margin: 0;
+    z-index: 1000;
+    animation: slideUpNav 0.2s ease-out;
+  }
+  .global-header .dropdown:hover > .dropdown-menu { display: block; }
+  .global-header .dropdown-menu li { position: relative; }
+  .global-header .dropdown-menu a {
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .global-header .dropdown-menu a:hover {
+    background: #f0f4f1;
+    color: var(--primary);
+    transform: translateX(3px);
+  }
+  .global-header .dropdown-submenu:hover > .sub-menu { display: block; }
+  .global-header .sub-menu {
+    top: 0;
+    left: 100%;
+    margin-left: 0.5rem;
+  }
+  .global-header .arrow {
+    font-size: 0.6em;
+    transition: transform 0.2s;
+    opacity: 0.6;
+  }
+  .global-header .btn-login {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 1.4rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+  }
+  .global-header .btn-login:hover {
+    background: #fff;
+    color: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 4px 15px rgba(17,68,37,0.15);
+  }
+  @keyframes slideUpNav {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .global-header .mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--primary);
+  }
+  @media (max-width: 768px) {
+    .global-header .nav-links, .global-header .auth-section { display: none; }
+    .global-header .mobile-menu-btn { display: block; }
+    .global-header .nav-left { width: 100%; justify-content: space-between; }
+  }
+</style>
 </head>
 <body>
-<nav class="scnav">
-<style>
-.scnav{position:sticky;top:0;z-index:99999;display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;padding:.55rem 1rem;background:#114425;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:.85rem;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-.scnav a{color:#fff;text-decoration:none;opacity:.85}
-.scnav .scnav-home{font-weight:700;opacity:.9}
-.scnav .scnav-sep{opacity:.35}
-.scnav .scnav-current{font-weight:700;color:#fff;opacity:1}
-.scnav details{position:relative}
-.scnav summary{cursor:pointer;list-style:none;font-weight:700;display:inline-flex;align-items:center;gap:.3rem;color:#fff}
-.scnav summary::-webkit-details-marker{display:none}
-.scnav summary::after{content:'▾';font-size:.7em;transition:transform .15s ease}
-.scnav details[open] summary::after{transform:rotate(180deg)}
-.scnav .scnav-menu{position:absolute;top:calc(100% + .5rem);left:0;background:#fff;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.22);min-width:270px;overflow:hidden;padding:.35rem 0}
-.scnav .scnav-menu a{display:block;padding:.55rem 1rem;color:#16281c;font-weight:500;white-space:nowrap;opacity:1}
-.scnav .scnav-menu a:hover{background:#f1f4f0}
-.scnav .scnav-menu .scnav-current{display:block;padding:.55rem 1rem;color:#114425;font-weight:700;background:#eef5ef;white-space:nowrap}
-</style>
-  <a class="scnav-home" href="index.html">🏠 Inicio</a>
-  <span class="scnav-sep">|</span>
-    <a href="Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">🏭 Centrales Frutícolas</a>
-  <span class="scnav-sep">|</span>
-  <a href="Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍒 Cerezas</a>
-  <span class="scnav-sep">|</span>
-  <a href="Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">🍎 Manzanas</a>
-  <span class="scnav-sep">|</span>
-  <details>
-    <summary>📊 Infografías</summary>
-    <div class="scnav-menu">
-    <a href="Comparativa_Cerezas_vs_Manzanas.html">🍒🍎 Comparativa Cerezas vs Manzanas</a>
-    <a href="Diagrama_Agricola.html">🧠 Diagrama Agrícola</a>
-    <a href="Diagrama_Conservera.html">🥫 Diagrama Conservera</a>
-    <a href="Diagrama_Central_Fruticola.html">🏭 Diagrama Central Frutícola</a>
-    <span class="scnav-current">🚢 Diagrama Exportadora</span>
-    <a href="Ciclos_y_Temporadas.html">📅 Ciclos y Temporadas</a>
-    <a href="Indicadores_de_Gestion.html">📊 Indicadores de Gestión</a>
+
+<header class="global-header">
+  <div class="nav-container">
+    <div class="nav-left">
+      <a href="index.html" class="logo">
+        <span>🌿</span> San Clemente
+      </a>
+      <button class="mobile-menu-btn">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Inicio</a></li>
+        <li class="dropdown">
+          <a href="#">Infografías <span class="arrow">▼</span></a>
+          <ul class="dropdown-menu">
+            <li><a href="Infografia_Centrales_Fruticolas_Talca_Angol_Lontue_v6.html">Centrales Frutícolas</a></li>
+            <li class="dropdown-submenu">
+              <a href="#">Agrícola <span class="arrow right">▶</span></a>
+              <ul class="dropdown-menu sub-menu">
+                <li><a href="Infograf%C3%ADa_Cerezas_Compendio%20Mundo%20Agr%C3%ADcola.html">Cerezas</a></li>
+                <li><a href="Infograf%C3%ADa_Manzanas_Compendio%20Mundo%20Agr%C3%ADcola.html">Manzanas</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#">Recursos <span class="arrow">▼</span></a>
+          <ul class="dropdown-menu">
+            <li><a href="Comparativa_Cerezas_vs_Manzanas.html">Comparativa Cerezas vs Manzanas</a></li>
+            <li><a href="Diagrama_Agricola.html">Diagrama Agrícola</a></li>
+            <li><a href="Diagrama_Conservera.html">Diagrama Conservera</a></li>
+            <li><a href="Diagrama_Central_Fruticola.html">Diagrama Central Frutícola</a></li>
+            <li><a href="Diagrama_Exportadora.html">Diagrama Exportadora</a></li>
+            <li><a href="Ciclos_y_Temporadas.html">Ciclos y Temporadas</a></li>
+            <li><a href="Indicadores_de_Gestion.html">Indicadores de Gestión</a></li>
+            <li><a href="Cuestionario_Agricola.html">Cuestionarios</a></li>
+          </ul>
+        </li>
+      </ul>
     </div>
-  </details>
-  <span class="scnav-sep">|</span>
-  <details>
-    <summary>📝 Cuestionarios</summary>
-    <div class="scnav-menu">
-    <a href="Cuestionario_Agricola.html">📝 Cuestionario Agrícola</a>
+        <div class="auth-section">
+      <button id="btn-login" class="btn-login">Iniciar sesión</button>
+      <div id="caja-sesion" style="display: none; align-items: center; gap: 1rem;">
+        <span id="correo-sesion" style="font-size: 0.85rem; color: var(--primary); font-weight: 600;"></span>
+        <button id="btn-salir" class="btn-login" style="background: var(--accent); border-color: transparent;">Cerrar sesión</button>
+      </div>
     </div>
-  </details>
-  <span class="scnav-sep">|</span>
-  <details>
-    <summary>📈 Propuestas de mejora</summary>
-    <div class="scnav-menu">
-    <a href="auditoria/INFORME_AUDITORIA.html">🔍 Informe de Auditoría</a>
-    <a href="auditoria/propuesta_flujo.html">🗺️ Propuesta de Arquitectura</a>
-    </div>
-  </details>
-  <script>document.addEventListener('click',function(e){document.querySelectorAll('.scnav details[open]').forEach(function(d){if(!d.contains(e.target))d.removeAttribute('open');});});</script>
-</nav>
+  </div>
+</header>
+
+
 <main>
   <div class="hub">
     <div class="badge">🚢</div>
@@ -341,5 +485,6 @@
 
   <footer>Agrícola San Clemente · Diagrama de estudio</footer>
 </main>
+<script type="module" src="app.js"></script>
 </body>
 </html>
