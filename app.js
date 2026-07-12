@@ -94,7 +94,10 @@ onAuthStateChanged(auth, async (usuario) => {
       headers: { "Authorization": `Bearer ${token}` }
     });
     
-    if (!respuesta.ok) throw new Error("El servidor rechazó la conexión.");
+    if (!respuesta.ok) {
+      const errData = await respuesta.json().catch(() => ({}));
+      throw new Error(errData.detail || "El servidor rechazó la conexión.");
+    }
     
     const datos = await respuesta.json();
     
@@ -118,6 +121,8 @@ onAuthStateChanged(auth, async (usuario) => {
     }
   } catch (error) {
     console.error("Error validando con la API:", error);
-    mostrarError("Hubo un problema conectando con el servidor. Intenta nuevamente más tarde.");
+    mostrarError(error.message || "Hubo un problema conectando con el servidor. Intenta nuevamente más tarde.");
+    sessionStorage.removeItem("userEstado");
+    signOut(auth);
   }
 });

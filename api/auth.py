@@ -68,6 +68,13 @@ def identidad_verificada(authorization: str = Header(default="")) -> Usuario:
             "El correo electrónico no está verificado",
         )
 
+    if dominio != config.ALLOWED_DOMAIN:
+        db.registrar_intento(email, "/quien-soy", "dominio_invalido")
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            f"Solo se admiten correos @{config.ALLOWED_DOMAIN}",
+        )
+
     registro = db.obtener_o_crear_usuario(email)
     return Usuario(email=registro.email, estado=registro.estado, rol=registro.rol)
 
