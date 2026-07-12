@@ -17,7 +17,8 @@ const el = {
   btnLogin: document.getElementById("btn-login"),
   btnSalir: document.getElementById("btn-salir"),
   cajaSesion: document.getElementById("caja-sesion"),
-  correoSesion: document.getElementById("correo-sesion")
+  correoSesion: document.getElementById("correo-sesion"),
+  navRecursos: document.getElementById("nav-recursos")
 };
 
 // Función auxiliar para mostrar errores de forma simple
@@ -47,6 +48,7 @@ onAuthStateChanged(auth, async (usuario) => {
     // ESTADO: NO LOGUEADO
     if (el.btnLogin) el.btnLogin.style.display = "inline-block";
     if (el.cajaSesion) el.cajaSesion.style.display = "none";
+    if (el.navRecursos) el.navRecursos.style.display = "none";
     return;
   }
 
@@ -54,6 +56,7 @@ onAuthStateChanged(auth, async (usuario) => {
   if (el.btnLogin) el.btnLogin.style.display = "none";
   if (el.cajaSesion) el.cajaSesion.style.display = "flex";
   if (el.correoSesion) el.correoSesion.textContent = usuario.displayName || usuario.email;
+  if (el.navRecursos) el.navRecursos.style.display = "inline-block";
 
   // ===== BYPASS DE API =====
   // Como el servidor de Python no está encendido, vamos a aprobar
