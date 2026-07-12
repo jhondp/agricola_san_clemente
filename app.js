@@ -21,6 +21,18 @@ const el = {
   navRecursos: document.getElementById("nav-recursos")
 };
 
+// Lista de páginas que requieren sesión iniciada
+const PAGINAS_PRIVADAS = [
+  "Comparativa_Cerezas_vs_Manzanas.html",
+  "Ciclos_y_Temporadas.html",
+  "Indicadores_de_Gestion.html",
+  "Diagrama_Agricola.html",
+  "Diagrama_Conservera.html",
+  "Diagrama_Central_Fruticola.html",
+  "Diagrama_Exportadora.html",
+  "Cuestionario_Agricola.html"
+];
+
 // Función auxiliar para mostrar errores de forma simple
 function mostrarError(mensaje) {
   alert(mensaje);
@@ -49,6 +61,12 @@ onAuthStateChanged(auth, async (usuario) => {
     if (el.btnLogin) el.btnLogin.style.display = "inline-block";
     if (el.cajaSesion) el.cajaSesion.style.display = "none";
     if (el.navRecursos) el.navRecursos.style.display = "none";
+
+    // Expulsar si intenta entrar directo por URL a una página privada
+    const paginaActual = window.location.pathname.split('/').pop();
+    if (PAGINAS_PRIVADAS.includes(paginaActual)) {
+      window.location.href = "index.html";
+    }
     return;
   }
 
