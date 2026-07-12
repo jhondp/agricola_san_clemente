@@ -74,17 +74,37 @@ onAuthStateChanged(auth, async (usuario) => {
   if (el.btnLogin) el.btnLogin.style.display = "none";
   if (el.cajaSesion) el.cajaSesion.style.display = "flex";
   if (el.correoSesion) el.correoSesion.textContent = usuario.displayName || usuario.email;
-  if (el.navRecursos) el.navRecursos.style.display = "inline-block";
 
-  // Quitar la cortina de privacidad para que se vea la página
-  const authGuard = document.getElementById("auth-guard");
-  if (authGuard) authGuard.remove();
-
-  // ===== BYPASS DE API =====
-  // Como el servidor de Python no está encendido, vamos a aprobar
-  // automáticamente a cualquiera que inicie sesión con Google.
-  console.log("Usuario autenticado con Google:", usuario.email);
-  // (Aquí se llamaría a fetch('/quien-soy') cuando tengas la API y la base de datos encendida)
-  
-  // ¡El usuario puede ver el portal!
+  try {
+    // 1. Obtener token seguro de Google
+    const token = await usuario.getIdToken();
+    
+    // 2. Preguntarle al cerebro (Python en Render) si esta persona está aprobada
+    const respuesta = await fetch("https://agricola-san-clemente.onrender.com/quien-soy", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    
+    if (!respuesta.ok) throw new Error("El servidor rechazó la conexión.");
+    
+    const datos = await respuesta.json();
+    
+    if (datos.estado === "aprobado") {
+      // ✅ APROBADO: Mostrar menú de Recursos y quitar cortina de privacidad
+      if (el.navRecursos) el.navRecursos.style.display = "inline-block";
+      const authGuard = document.getElementById("auth-guard");
+      if (authGuard) authGuard.remove();
+    } else {
+      // ⏳ PENDIENTE O RECHAZADO
+      if (el.navRecursos) el.navRecursos.style.display = "none";
+      
+      const paginaActual = window.location.pathname.split('/').pop();
+      if (PAGINAS_PRIVADAS.includes(paginaActual)) {
+        alert("Tu cuenta ha sido registrada y está en estado: PENDIENTE. Un administrador debe aprobarte para ver esta sección.");
+        window.location.href = "index.html";
+      }
+    }
+  } catch (error) {
+    console.error("Error validando con la API:", error);
+    mostrarError("Hubo un problema conectando con el servidor. Intenta nuevamente más tarde.");
+  }
 });
